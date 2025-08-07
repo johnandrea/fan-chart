@@ -5,7 +5,7 @@ A program which will produce a full circle genealogy fan chart from a GEDCOM inp
 Reasons for making my own program:
 
 - scriptable
-- orient the text for printed sheet: horizontal to outside edge and consistently clockwise
+- orient the text for reading on a large printed sheet: horizontal to outside edge and consistently clockwise
 
 ## Features
 
