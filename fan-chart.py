@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.1'
+    return '0.0.2'
 
 
 def load_my_module( module_name, relative_path ):
@@ -97,6 +97,23 @@ def get_program_options():
     return results
 
 
+def find_generation_count( indi, n_gen ):
+    global generation_count
+
+    children = []
+
+    if n_gen <= options['generations']:
+       if 'fams' in data[ikey][indi]:
+          for fam in data[ikey][indi]['fams']:
+              if 'chil' in data[fkey][fam]:
+                 for child in data[fkey][fam]['chil']:
+                     generation_count[n_gen] += 1
+                     children.append( child )
+
+       for child in children:
+           find_generation_count( child, n_gen + 1 )
+
+
 options = get_program_options()
 print( options ) #debug
 
@@ -120,7 +137,36 @@ if len(id_match) == 1:
 
    start_person = id_match[0]
 
-   print( data[ikey][start_person]['name'][0]['html'] )
+   print( data[ikey][start_person]['name'][0]['html'] ) #debug
+
+   # find the number of people in each generation
+   generation_count = [0 for _ in range( options['generations'] + 1 )]
+   find_generation_count( start_person, 1 )
+
+   # and where is the biggest
+   biggest_generation = 1
+   # well the first should have 1 (at least)
+   generation_count[0] = 1
+   for i in range( options['generations'] + 1 ):
+       if generation_count[i] == max( generation_count ):
+          biggest_generation = i
+          # and stop once the first time the max is found
+          break
+   print( generation_count ) #debug
+   print( generation_count[biggest_generation], 'at', biggest_generation ) #debug
+
+   # and skip if too many have been set as an option
+   max_generations = 1
+   for i in range( options['generations'] + 1 ):
+       if generation_count[i] == 0:
+          max_generations = i - 1
+          break
+
+   if max_generations > 1:
+      print( 'limited to', max_generations ) #debug
+
+   else:
+      print( 'Selected person has no children.', file=sys.stderr )
 
 else:
    if len(id_match) > 1:
