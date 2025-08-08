@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.3'
+    return '0.0.4'
 
 
 def load_my_module( module_name, relative_path ):
@@ -97,10 +97,10 @@ def get_program_options():
     return results
 
 
-def find_max_generations( indi, n_gen ):
+def find_max_generations( indi, max_gen, n_gen ):
     gen_count = n_gen
 
-    if n_gen <= options['generations']:
+    if n_gen <= max_gen:
        children = []
        if 'fams' in data[ikey][indi]:
           for fam in data[ikey][indi]['fams']:
@@ -109,9 +109,13 @@ def find_max_generations( indi, n_gen ):
                      children.append( child )
 
        for child in children:
-           gen_count = max( gen_count, find_max_generations( child, n_gen + 1 ) )
+           gen_count = max( gen_count, find_max_generations( child, max_gen, n_gen + 1 ) )
 
     return gen_count
+
+
+def compute_max_gen_children( indi, max_gen, n_gen ):
+    return 27  #fake
 
 
 options = get_program_options()
@@ -142,10 +146,28 @@ if len(id_match) == 1:
    # find the actual maximum number of generations
    # in case a too large number was given in the options
 
-   max_generations = find_max_generations( start_person, 1 )
+   max_generations = find_max_generations( start_person, options['generations'], 1 )
 
    if max_generations > 1:
       print( 'max gen', max_generations ) #debug
+
+      # slice size is computed by
+      # 360 degrees divided by the number of people reaching the outermost layer
+      #
+      # to get that number of people we have to pretend that every family has children
+      # out to the max generation
+
+      max_slices = compute_max_gen_children( start_person, max_generations, 1 )
+
+      slice_size = 360.0 / max_slices
+
+      # and the floating point division might not be exact,
+      # so the (tiny) remainder should be added to the first slice in each generation
+
+      slice_remainder = 360.0 - slice_size * max_slices
+
+      print( 'slice', slice_size ) #debug
+      print( 'remainder', slice_remainder ) #debug
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
