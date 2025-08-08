@@ -54,7 +54,7 @@ Currently only black and white (BW). Default BW.
 
 --dates=none or year or full
 
-Include dates in the output. Default is no option=none.
+Include dates in the output. Default is none.
 
 --libpath=directory-containing-readgedcom
 
