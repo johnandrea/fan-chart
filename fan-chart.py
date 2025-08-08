@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.2'
+    return '0.0.3'
 
 
 def load_my_module( module_name, relative_path ):
@@ -97,21 +97,21 @@ def get_program_options():
     return results
 
 
-def find_generation_count( indi, n_gen ):
-    global generation_count
-
-    children = []
+def find_max_generations( indi, n_gen ):
+    gen_count = n_gen
 
     if n_gen <= options['generations']:
+       children = []
        if 'fams' in data[ikey][indi]:
           for fam in data[ikey][indi]['fams']:
               if 'chil' in data[fkey][fam]:
                  for child in data[fkey][fam]['chil']:
-                     generation_count[n_gen] += 1
                      children.append( child )
 
        for child in children:
-           find_generation_count( child, n_gen + 1 )
+           gen_count = max( gen_count, find_max_generations( child, n_gen + 1 ) )
+
+    return gen_count
 
 
 options = get_program_options()
@@ -139,31 +139,13 @@ if len(id_match) == 1:
 
    print( data[ikey][start_person]['name'][0]['html'] ) #debug
 
-   # find the number of people in each generation
-   generation_count = [0 for _ in range( options['generations'] + 1 )]
-   find_generation_count( start_person, 1 )
+   # find the actual maximum number of generations
+   # in case a too large number was given in the options
 
-   # and where is the biggest
-   biggest_generation = 1
-   # well the first should have 1 (at least)
-   generation_count[0] = 1
-   for i in range( options['generations'] + 1 ):
-       if generation_count[i] == max( generation_count ):
-          biggest_generation = i
-          # and stop once the first time the max is found
-          break
-   print( generation_count ) #debug
-   print( generation_count[biggest_generation], 'at', biggest_generation ) #debug
-
-   # and skip if too many have been set as an option
-   max_generations = 1
-   for i in range( options['generations'] + 1 ):
-       if generation_count[i] == 0:
-          max_generations = i - 1
-          break
+   max_generations = find_max_generations( start_person, 1 )
 
    if max_generations > 1:
-      print( 'limited to', max_generations ) #debug
+      print( 'max gen', max_generations ) #debug
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
