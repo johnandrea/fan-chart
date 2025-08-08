@@ -1,12 +1,12 @@
 #!/usr/local/bin/python3
-#import sys
+import sys
 import argparse
 import importlib.util
 import os
 
 
 def get_version():
-    return '0.0.0'
+    return '0.0.1'
 
 
 def load_my_module( module_name, relative_path ):
@@ -98,13 +98,13 @@ def get_program_options():
 
 
 options = get_program_options()
-print( options )
+print( options ) #debug
 
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
 # these are keys into the parsed sections of the returned data structure
-i_key = readgedcom.PARSED_INDI
-f_key = readgedcom.PARSED_FAM
+ikey = readgedcom.PARSED_INDI
+fkey = readgedcom.PARSED_FAM
 
 data_opts = dict()
 data_opts['display-gedcom-warnings'] = True
@@ -114,3 +114,16 @@ data_opts['exit-on-missing-families'] = True
 data_opts['only-birth'] = True
 
 data = readgedcom.read_file( options['infile'], data_opts )
+
+id_match = readgedcom.find_individuals( data, options['id-item'], options['personid'] )
+if len(id_match) == 1:
+
+   start_person = id_match[0]
+
+   print( data[ikey][start_person]['name'][0]['html'] )
+
+else:
+   if len(id_match) > 1:
+      print( 'More than one person matches the given id', file=sys.stderr )
+   else:
+      print( 'No person matches the given id', file=sys.stderr )
