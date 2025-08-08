@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.4'
+    return '0.0.5'
 
 
 def load_my_module( module_name, relative_path ):
@@ -115,6 +115,9 @@ def find_max_generations( indi, max_gen, n_gen ):
 
 
 def compute_max_gen_children( indi, max_gen, n_gen ):
+    # if every family had at least one descendant which reached the
+    # maximum generation, how many children would that be at that generation
+
     return 27  #fake
 
 
@@ -159,6 +162,8 @@ if len(id_match) == 1:
 
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
+      # truncate to a few decimal points ?
+ 
       slice_size = 360.0 / max_slices
 
       # and the floating point division might not be exact,
