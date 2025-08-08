@@ -16,7 +16,7 @@ Reasons for making my own program:
 ## Limitations
 
 - Requires Python 3.6+
-- GEDCOM input ought to be well formed
+- GEDCOM input ought to be well formed (use a verification tool)
 
 ## Installation
 
