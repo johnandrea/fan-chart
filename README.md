@@ -50,12 +50,11 @@ sized hardcopy paper sheet.
 
 --colour=colour scheme
 
-Currently only black and white.
-Default BW.
+Currently only black and white (BW). Default BW.
 
---dates
+--dates=none or year or full
 
-Include dates in the output. Default is no option=no date.
+Include dates in the output. Default is no option=none.
 
 --libpath=directory-containing-readgedcom
 
