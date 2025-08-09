@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.6'
+    return '0.0.8'
 
 
 def load_my_module( module_name, relative_path ):
@@ -122,7 +122,7 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
 
 
 options = get_program_options()
-print( options ) #debug
+#print( options ) #debug
 
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
@@ -163,13 +163,14 @@ if len(id_match) == 1:
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
       # truncate to a few decimal points because the output can't be infinitely exact
- 
-      slice_size = round( 360.0 / max_slices, 2 )
+      slice_decimals = 1 
+
+      slice_size = round( 360.0 / max_slices, slice_decimals )
 
       # and the floating point division might not be exact,
       # so the (tiny) remainder should be added to the first slice in each generation
 
-      slice_remainder = round( 360.0 - slice_size * max_slices, 2 )
+      slice_remainder = round( 360.0 - slice_size * max_slices, slice_decimals )
 
       print( 'slice', slice_size ) #debug
       print( 'remainder', slice_remainder ) #debug
