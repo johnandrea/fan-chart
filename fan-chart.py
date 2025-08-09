@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.8'
+    return '0.0.9'
 
 
 def load_my_module( module_name, relative_path ):
@@ -38,7 +38,7 @@ def load_my_module( module_name, relative_path ):
 
 
 def get_program_options():
-    results = dict()
+    results = {}
 
     date_types = ['none', 'year', 'full']
     colour_types = ['bw']
@@ -115,14 +115,64 @@ def find_max_generations( indi, max_gen, n_gen ):
 
 
 def compute_max_gen_children( indi, max_gen, n_gen ):
+    print( 'indi,max,gen', indi, max_gen, n_gen ) #debug
     # if every family had at least one descendant which reached the
     # maximum generation, how many children would that be at that generation
 
-    return 27  #fake
+    n = 0
+
+    if n_gen > max_gen:
+       print( 'past max' ) #debug
+       # the person (or person with spouse) at the end
+       # counts as one slice
+
+       n = 1
+
+    else:
+
+       n_fam = 0
+       children = []
+
+       if 'fams' in data[ikey][indi]:
+          print( 'has fams' ) #debug
+          for fam in data[ikey][indi]['fams']:
+              print( 'fam', fam ) #debug
+              n_fam += 1
+              if 'chil' in data[fkey][fam]:
+                 print( 'has children' ) #debug
+                 for child in data[fkey][fam]['chil']:
+                     children.append( child )
+
+       n_children = len( children )
+
+       if n_fam == 0:
+          # no families, so can't go any further
+          # this person counts as 1 slice
+
+          n = 1
+
+       elif n_children > 0:
+          # go deeper
+          for child in children:
+              n += compute_max_gen_children( child, max_gen, n_gen + 1 )
+
+       else:
+          # families, but no children,
+          # so can't go deeper,
+          # but each family counts as a slice
+
+          n = n_fam
+
+    print( 'returning', n ) #debug
+    return n
 
 
 options = get_program_options()
 #print( options ) #debug
+
+if options['generations'] < 1:
+   print( 'Generations must be more than zero', file=sys.stderr )
+   sys.exit(1)
 
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
@@ -130,7 +180,7 @@ readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 ikey = readgedcom.PARSED_INDI
 fkey = readgedcom.PARSED_FAM
 
-data_opts = dict()
+data_opts = {}
 data_opts['display-gedcom-warnings'] = True
 data_opts['exit-on-no-families'] = True
 data_opts['exit-on-missing-individuals'] = True
@@ -162,8 +212,10 @@ if len(id_match) == 1:
 
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
+      print( 'slices', max_slices ) #debug
+
       # truncate to a few decimal points because the output can't be infinitely exact
-      slice_decimals = 1 
+      slice_decimals = 1
 
       slice_size = round( 360.0 / max_slices, slice_decimals )
 
@@ -177,9 +229,11 @@ if len(id_match) == 1:
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
+      sys.exit(1)
 
 else:
    if len(id_match) > 1:
       print( 'More than one person matches the given id', file=sys.stderr )
    else:
       print( 'No person matches the given id', file=sys.stderr )
+   sys.exit(1)
