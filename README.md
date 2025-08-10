@@ -81,4 +81,5 @@ This code is provided with neither support nor warranty.
 - Describe ways to convert svg to pdf
 - Handle non-ASCII names in a manner better for SVG output.
 - An ancestor direction too
+- Output to SVG or PDF
 
