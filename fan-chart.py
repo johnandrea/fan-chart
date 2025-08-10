@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.11'
+    return '0.0.13'
 
 
 def load_my_module( module_name, relative_path ):
@@ -115,17 +115,17 @@ def find_max_generations( indi, max_gen, n_gen ):
 
 
 def compute_max_gen_children( indi, max_gen, n_gen ):
-    indent = '  ' * ( n_gen - 1 ) #debug
-    print( '' ) #debug
-    print( indent, 'indi,max,gen', indi, max_gen, n_gen ) #debug
-    print( indent, data[ikey][indi]['name'][0]['html'] ) #debug
+    #indent = '  ' * ( n_gen - 1 ) #debug
+    #print( '' ) #debug
+    #print( indent, 'indi,max,gen', indi, max_gen, n_gen ) #debug
+    #print( indent, data[ikey][indi]['name'][0]['html'] ) #debug
     # if every family had at least one descendant which reached the
     # maximum generation, how many children would that be at that generation
 
     n = 0
 
     if n_gen > max_gen:
-       print( indent, 'past max' ) #debug
+       #print( indent, 'past max' ) #debug
        # the person (or person with spouse) at the end
        # counts as one slice
 
@@ -134,43 +134,49 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
     else:
 
        n_fam = 0
+       n_fam_with_children = 0
        children = []
 
        if 'fams' in data[ikey][indi]:
           #print( indent, 'has fams' ) #debug
           for fam in data[ikey][indi]['fams']:
-              print( indent, 'fam', fam ) #debug
+              fam_has_children = False
+              #print( indent, 'fam', fam ) #debug
               n_fam += 1
               if 'chil' in data[fkey][fam]:
                  #print( indent, 'has children' ) #debug
                  for child in data[fkey][fam]['chil']:
+                     fam_has_children = True
                      children.append( child )
+              if fam_has_children:
+                 n_fam_with_children += 1
 
        n_children = len( children )
 
        if n_fam == 0:
           # no families, so can't go any further
           # this person counts as 1 slice
-          print( indent, 'no fam' ) #debug
+          #print( indent, 'no fam' ) #debug
 
           n = 1
 
        elif n_children > 0:
-          # --- what about the person's families with no children
-          print( indent, 'descend to children', n_children ) #debug
+          #print( indent, 'descend to children', n_children ) #debug
           # go deeper
+          # but consider the childless families this person might have had
+          n = n_fam - n_fam_with_children
           for child in children:
               n += compute_max_gen_children( child, max_gen, n_gen + 1 )
 
        else:
-          print( indent, 'fam but no children' ) #debug
+          #print( indent, 'fam but no children' ) #debug
           # families, but no children,
           # so can't go deeper,
           # but each family counts as a slice
 
           n = n_fam
 
-    print( indent, 'returning', n ) #debug
+    #print( indent, 'returning', n ) #debug
     return n
 
 
