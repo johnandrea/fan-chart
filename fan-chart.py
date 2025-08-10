@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.9'
+    return '0.0.10'
 
 
 def load_my_module( module_name, relative_path ):
@@ -115,14 +115,16 @@ def find_max_generations( indi, max_gen, n_gen ):
 
 
 def compute_max_gen_children( indi, max_gen, n_gen ):
-    print( 'indi,max,gen', indi, max_gen, n_gen ) #debug
+    indent = '  ' * ( n_gen - 1 ) #debug
+    print( indent, 'indi,max,gen', indi, max_gen, n_gen ) #debug
+    print( indent, data[ikey][indi]['name'][0]['html'] ) #debug
     # if every family had at least one descendant which reached the
     # maximum generation, how many children would that be at that generation
 
     n = 0
 
     if n_gen > max_gen:
-       print( 'past max' ) #debug
+       print( indent, 'past max' ) #debug
        # the person (or person with spouse) at the end
        # counts as one slice
 
@@ -134,12 +136,12 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
        children = []
 
        if 'fams' in data[ikey][indi]:
-          print( 'has fams' ) #debug
+          print( indent, 'has fams' ) #debug
           for fam in data[ikey][indi]['fams']:
-              print( 'fam', fam ) #debug
+              print( indent, 'fam', fam ) #debug
               n_fam += 1
               if 'chil' in data[fkey][fam]:
-                 print( 'has children' ) #debug
+                 print( indent, 'has children' ) #debug
                  for child in data[fkey][fam]['chil']:
                      children.append( child )
 
@@ -163,7 +165,7 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
 
           n = n_fam
 
-    print( 'returning', n ) #debug
+    print( indent, 'returning', n ) #debug
     return n
 
 
@@ -194,7 +196,7 @@ if len(id_match) == 1:
 
    start_person = id_match[0]
 
-   print( data[ikey][start_person]['name'][0]['html'] ) #debug
+   #print( data[ikey][start_person]['name'][0]['html'] ) #debug
 
    # find the actual maximum number of generations
    # in case a too large number was given in the options
@@ -224,8 +226,8 @@ if len(id_match) == 1:
 
       slice_remainder = round( 360.0 - slice_size * max_slices, slice_decimals )
 
-      print( 'slice', slice_size ) #debug
-      print( 'remainder', slice_remainder ) #debug
+      #print( 'slice', slice_size ) #debug
+      #print( 'remainder', slice_remainder ) #debug
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
