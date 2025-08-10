@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.10'
+    return '0.0.11'
 
 
 def load_my_module( module_name, relative_path ):
@@ -116,6 +116,7 @@ def find_max_generations( indi, max_gen, n_gen ):
 
 def compute_max_gen_children( indi, max_gen, n_gen ):
     indent = '  ' * ( n_gen - 1 ) #debug
+    print( '' ) #debug
     print( indent, 'indi,max,gen', indi, max_gen, n_gen ) #debug
     print( indent, data[ikey][indi]['name'][0]['html'] ) #debug
     # if every family had at least one descendant which reached the
@@ -136,12 +137,12 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
        children = []
 
        if 'fams' in data[ikey][indi]:
-          print( indent, 'has fams' ) #debug
+          #print( indent, 'has fams' ) #debug
           for fam in data[ikey][indi]['fams']:
               print( indent, 'fam', fam ) #debug
               n_fam += 1
               if 'chil' in data[fkey][fam]:
-                 print( indent, 'has children' ) #debug
+                 #print( indent, 'has children' ) #debug
                  for child in data[fkey][fam]['chil']:
                      children.append( child )
 
@@ -150,15 +151,19 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
        if n_fam == 0:
           # no families, so can't go any further
           # this person counts as 1 slice
+          print( indent, 'no fam' ) #debug
 
           n = 1
 
        elif n_children > 0:
+          # --- what about the person's families with no children
+          print( indent, 'descend to children', n_children ) #debug
           # go deeper
           for child in children:
               n += compute_max_gen_children( child, max_gen, n_gen + 1 )
 
        else:
+          print( indent, 'fam but no children' ) #debug
           # families, but no children,
           # so can't go deeper,
           # but each family counts as a slice
