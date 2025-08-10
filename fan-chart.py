@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.13'
+    return '0.0.14'
 
 
 def load_my_module( module_name, relative_path ):
@@ -180,6 +180,68 @@ def compute_max_gen_children( indi, max_gen, n_gen ):
     return n
 
 
+def count_slices( indi, max_gen, n_gen ):
+    # determine the number of slices for each person/family
+    # which depends on the number of slices of descendants
+    global diagram_data
+
+    diagram_data[indi] = {}
+    diagram_data[indi]['fams'] = []
+
+    n = 0
+
+    if n_gen > max_gen:
+       # the person (or person with spouse) at the end
+       # counts as one slice
+
+       n = 1
+
+    else:
+
+       n_fam = 0
+       n_fam_with_children = 0
+
+       if 'fams' in data[ikey][indi]:
+          for fam in data[ikey][indi]['fams']:
+              fam_data = {}
+              fam_data['fam'] = fam
+              fam_data['slices'] = 0
+
+              fam_has_children = False
+              n_fam += 1
+              n_children_slices = 0
+              if 'chil' in data[fkey][fam]:
+                 for child in data[fkey][fam]['chil']:
+                     fam_has_children = True
+                     # descend at this point because the count
+                     # belongs to this family
+                     n_children_slices += count_slices( child, max_gen, n_gen+1 )
+              if fam_has_children:
+                 n_fam_with_children += 1
+                 fam_data['slices'] = n_children_slices
+                 n += n_children_slices
+
+              # save this family
+              diagram_data[indi]['fams'].append( fam_data )
+
+       if n_fam == 0:
+          # no families, so can't go any further
+          # this person counts as 1 slice
+          #print( indent, 'no fam' ) #debug
+
+          n = 1
+
+       else:
+          # had families, already counted children's slices, maybe none
+          # consider the childless families this person might have had
+          n += n_fam - n_fam_with_children
+
+    # save this person
+    diagram_data[indi]['slices'] = n
+
+    return n
+
+
 options = get_program_options()
 #print( options ) #debug
 
@@ -239,6 +301,12 @@ if len(id_match) == 1:
 
       #print( 'slice', slice_size ) #debug
       #print( 'remainder', slice_remainder ) #debug
+
+      diagram_data = {}
+
+      count_slices( start_person, max_generations, 1 )
+
+      print( diagram_data ) #debug
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
