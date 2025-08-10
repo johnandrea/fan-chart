@@ -1,1 +1,11 @@
 Input files for testing
+
+test-1
+Has some people with families and no children and some families at the maximum generation.
+4 generations in total
+Should have 11 slices
+
+test-2
+Is similar to test-1 but adds more childless families beside a family with children.
+4 generations in total
+Should have 13 slices
