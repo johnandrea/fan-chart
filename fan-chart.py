@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.16'
+    return '0.0.17'
 
 
 def load_my_module( module_name, relative_path ):
@@ -220,6 +220,9 @@ def count_slices( indi, max_gen, n_gen ):
                  n_fam_with_children += 1
                  fam_data['slices'] = n_children_slices
                  n += n_children_slices
+              else:
+                 # this family has only the one slice
+                 fam_data['slices'] = 1
 
               # save this family
               diagram_data[indi]['fams'].append( fam_data )
