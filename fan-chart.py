@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.15'
+    return '0.0.16'
 
 
 def load_my_module( module_name, relative_path ):
@@ -310,7 +310,7 @@ if len(id_match) == 1:
       for indi in diagram_data:
           print( '' )
           print( indi, data[ikey][indi]['name'][0]['html'] )
-          print( indi, 'slices', diagram_data[indi]['slices'] )
+          print( 'slices', diagram_data[indi]['slices'] )
           if diagram_data[indi]['fams']:
              print( 'fams:' )
              for fam_data in diagram_data[indi]['fams']:
