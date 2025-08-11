@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.14'
+    return '0.0.15'
 
 
 def load_my_module( module_name, relative_path ):
@@ -306,7 +306,22 @@ if len(id_match) == 1:
 
       count_slices( start_person, max_generations, 1 )
 
-      print( diagram_data ) #debug
+      #print( diagram_data ) #debug
+      for indi in diagram_data:
+          print( '' )
+          print( indi, data[ikey][indi]['name'][0]['html'] )
+          print( indi, 'slices', diagram_data[indi]['slices'] )
+          if diagram_data[indi]['fams']:
+             print( 'fams:' )
+             for fam_data in diagram_data[indi]['fams']:
+                 fam = fam_data['fam']
+                 husb = data[fkey][fam]['husb'][0]
+                 wife = data[fkey][fam]['wife'][0]
+                 other = husb
+                 if indi == husb:
+                    other = wife
+                 print( 'with', data[ikey][other]['name'][0]['html'] )
+                 print( 'fam', fam_data['fam'], 'slices', fam_data['slices'] )
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
