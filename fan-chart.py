@@ -6,7 +6,7 @@ import os
 
 
 def get_version():
-    return '0.0.17'
+    return '0.0.18'
 
 
 def load_my_module( module_name, relative_path ):
@@ -280,7 +280,7 @@ if len(id_match) == 1:
    max_generations = find_max_generations( start_person, options['generations'], 1 )
 
    if max_generations > 1:
-      print( 'max gen', max_generations ) #debug
+      print( 'max gen', max_generations, file=sys.stderr ) #debug
 
       # slice size is computed by
       # 360 degrees divided by the number of people reaching the outermost layer
@@ -290,7 +290,7 @@ if len(id_match) == 1:
 
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
-      print( 'slices', max_slices ) #debug
+      print( 'slices', max_slices, file=sys.stderr ) #debug
 
       # truncate to a few decimal points because the output can't be infinitely exact
       slice_decimals = 1
@@ -311,11 +311,11 @@ if len(id_match) == 1:
 
       #print( diagram_data ) #debug
       for indi in diagram_data:
-          print( '' )
-          print( indi, data[ikey][indi]['name'][0]['html'] )
-          print( 'slices', diagram_data[indi]['slices'] )
+          print( '', file=sys.stderr)
+          print( indi, data[ikey][indi]['name'][0]['html'], file=sys.stderr )
+          print( 'slices', diagram_data[indi]['slices'], file=sys.stderr )
           if diagram_data[indi]['fams']:
-             print( 'fams:' )
+             print( 'fams:', file=sys.stderr )
              for fam_data in diagram_data[indi]['fams']:
                  fam = fam_data['fam']
                  husb = data[fkey][fam]['husb'][0]
@@ -323,8 +323,8 @@ if len(id_match) == 1:
                  other = husb
                  if indi == husb:
                     other = wife
-                 print( 'with', data[ikey][other]['name'][0]['html'] )
-                 print( 'fam', fam_data['fam'], 'slices', fam_data['slices'] )
+                 print( 'with', data[ikey][other]['name'][0]['html'], file=sys.stderr )
+                 print( 'fam', fam_data['fam'], 'slices', fam_data['slices'], file=sys.stderr )
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
