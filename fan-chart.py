@@ -4,9 +4,24 @@ import argparse
 import importlib.util
 import os
 
+# define an svg page size
+# arbitrary and square
+page_size = 500
+
 
 def get_version():
-    return '0.0.18'
+    return '0.0.19'
+
+
+def output_header():
+    print( '<?xml version="1.0" standalone="no"?>' )
+    print( '<svg width="' + str(page_size) + '" height="' + str(page_size) + '" version="1.1"' )
+    print( ' xmlns="http://www.w3.org/2000/svg"' )
+    print( ' xmlns:xlink="http://www.w3.org/1999/xlink">' )
+
+
+def output_trailer():
+    print( '</svg>' )
 
 
 def load_my_module( module_name, relative_path ):
@@ -325,6 +340,9 @@ if len(id_match) == 1:
                     other = wife
                  print( 'with', data[ikey][other]['name'][0]['html'], file=sys.stderr )
                  print( 'fam', fam_data['fam'], 'slices', fam_data['slices'], file=sys.stderr )
+
+      output_header()
+      output_trailer()
 
    else:
       print( 'Selected person has no children.', file=sys.stderr )
