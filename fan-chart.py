@@ -6,11 +6,11 @@ import os
 
 # define an svg page size
 # arbitrary and square
-page_size = 500
+page_size = 600
 
 
 def get_version():
-    return '0.0.23'
+    return '0.0.24'
 
 
 def roundstr( x ):
@@ -71,27 +71,36 @@ def output_header():
     print( ' xmlns:xlink="http://www.w3.org/1999/xlink">' )
 
 
-def generation_circles( n_gen ):
+def calculate_generation_rings( n_gen ):
     # generation zero circle surrounded by rings for the other generations
     # Show the complete circles because it helps to visualize families which
     # don't reach the maximum generations.
+    #
+    # return a list with computed dimensions for each ring
+    # with the index being the generation number
 
-    # page is square, get the center
-    cx = roundstr( page_size / 2 )
-    cy = cx
-
-    # width of each ring
+    # width of each ring - for now each is the same width
     # a little smaller then the whole page to leave a margin
     width = ( page_size - 20 ) / 2 / n_gen
 
-    circle = '<circle cx="' + cx + '" cy="' + cy + '" fill="none" stroke="grey" r="'
+    results = []
 
     # inside circle radius is the ring width
+    inner = 0
     r = width
     for _ in range( n_gen ):
-        print( circle + str(r) + '"/>' )
+        results.append( {'r':r, 'inner':inner} )
         # increase radius for each generation
+        inner = r
         r += width
+
+    return results
+
+
+def show_generation_rings( rings ):
+    circle = '<circle cx="' + cx + '" cy="' + cy + '" fill="none" stroke="grey" r="'
+    for detail in rings:
+        print( circle + str(detail['r']) + '"/>' )
 
 
 def output_trailer():
@@ -333,6 +342,11 @@ def count_slices( indi, max_gen, n_gen ):
 
     return n
 
+# more globals
+# page is square, get the center
+cx = roundstr( page_size / 2.0 )
+cy = cx
+
 
 options = get_program_options()
 #print( options ) #debug
@@ -417,7 +431,8 @@ if len(id_match) == 1:
 
       output_header()
 
-      generation_circles( max_generations )
+      ring_sizes = calculate_generation_rings( max_generations )
+      show_generation_rings( ring_sizes )
 
       # try showing some text
       test_string = 'test a family'
