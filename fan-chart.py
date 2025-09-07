@@ -10,12 +10,54 @@ page_size = 500
 
 
 def get_version():
-    return '0.0.22'
+    return '0.0.23'
 
 
 def roundstr( x ):
     # output of 2 digits ought to be fine
     return str( round( x, 2 ) )
+
+
+def string_width( font_size, s ):
+    # this is where i miss Postscript
+    #
+    # For a given font size, return the approximate pixel
+    # width of the string.
+    #
+    # Numbers come from a display of characters on a grid
+    # them fitting the results to a line (which was suprisingly straight).
+    # Probably should do it with a specific font rather than the default
+    # and do it for each letter.
+    #
+    # y = mx + b
+    # pixels_per_char = slope * font_size + intercept
+    #
+    # lowercase: slope=0.4615, intercept=0
+    # uppercase: slope=0.657, intercept=-0.375
+
+    # start with everything as upper case
+    # which also takes care of digits, non-alpha, etc
+
+    n_upper = len( s )
+
+    # reduce by the number of lowercase
+    # (is this pythonic)
+    n_lower = 0
+    for c in list( 'abcdefghijklmnopqrstuvwxyz' ):
+        n_lower += s.count( c )
+
+    pixels = ( n_upper - n_lower ) * ( 0.657 * font_size - 0.375 )
+    pixels += n_lower * ( 0.4615 * font_size )
+
+    return pixels
+
+
+def font_to_fit_string( width, s ):
+    # return the font size that will fit the given string to the width
+    trial_font = 25
+    pixels = string_width( trial_font, s )
+    # assume a linear relationship between fonts and widths
+    return trial_font * pixels / width
 
 
 def output_header():
@@ -376,6 +418,11 @@ if len(id_match) == 1:
       output_header()
 
       generation_circles( max_generations )
+
+      # try showing some text
+      test_string = 'test a family'
+      font_size = font_to_fit_string( 100, test_string )
+      print( '<text font-size="' + roundstr(font_size) + '" x="100" y="100">' + test_string + '</text>' )
 
       output_trailer()
 
