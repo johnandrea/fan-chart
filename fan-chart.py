@@ -10,7 +10,7 @@ page_size = 600
 
 
 def get_version():
-    return '0.0.24'
+    return '0.0.26'
 
 
 def roundstr( x ):
@@ -98,7 +98,7 @@ def calculate_generation_rings( n_gen ):
 
 
 def show_generation_rings( rings ):
-    circle = '<circle cx="' + cx + '" cy="' + cy + '" fill="none" stroke="grey" r="'
+    circle = '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '" fill="none" stroke="grey" r="'
     for detail in rings:
         print( circle + str(detail['r']) + '"/>' )
 
@@ -344,7 +344,7 @@ def count_slices( indi, max_gen, n_gen ):
 
 # more globals
 # page is square, get the center
-cx = roundstr( page_size / 2.0 )
+cx = page_size / 2.0
 cy = cx
 
 
@@ -435,9 +435,23 @@ if len(id_match) == 1:
       show_generation_rings( ring_sizes )
 
       # try showing some text
+      # try putting it inside the inner circle
       test_string = 'test a family'
-      font_size = font_to_fit_string( 100, test_string )
-      print( '<text font-size="' + roundstr(font_size) + '" x="100" y="100">' + test_string + '</text>' )
+      # size of that circle is twice its radius
+      font_size = font_to_fit_string( 2*ring_sizes[0]['r'], test_string )
+      # x is radius left of circle
+      x = roundstr( cx - ring_sizes[0]['r'] )
+      # y is center offset by half the font size
+      y = roundstr( cy + font_size / 2 )
+      print( '<text font-size="' + roundstr(font_size) + '"' )
+      print( ' x="' + x + '" y="' + y + '">' + test_string + '</text>' )
+
+      # show those places with dots
+      print( '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '"' )
+      print( ' fill="red" stroke="red" r="2" />' )
+      print( '<circle cx="' + x + '" cy="' + y + '"' )
+      print( ' fill="blue" stroke="blue" r="2" />' )
+
 
       output_trailer()
 
