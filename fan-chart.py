@@ -8,13 +8,13 @@ import os
 # arbitrary and square, but scalable
 page_size = 600
 
-slice_colours = ['thistle', 'mistyrose', 'lightseagreen','lightblue']
-slice_colours.extend( ['tan', 'khakin', 'darkorange', 'teal'] )
-slice_colours.extend( ['yellowgreen', 'coral', 'lightsteelblue', 'salmon','springgreen'] )
+slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
+slice_colours.extend( ['coral', 'khakin', 'darkorange', 'teal'] )
+slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
 
 
 def get_version():
-    return '0.0.30'
+    return '0.0.31'
 
 
 def roundstr( x ):
@@ -408,21 +408,21 @@ if len(id_match) == 1:
 
       count_slices( start_person, max_generations, 1 )
 
-      for indi in diagram_data:
-          print( '', file=sys.stderr)
-          print( indi, data[ikey][indi]['name'][0]['html'], file=sys.stderr )
-          print( 'slices', diagram_data[indi]['slices'], file=sys.stderr )
-          if diagram_data[indi]['fams']:
-             print( 'fams:', file=sys.stderr )
-             for fam_data in diagram_data[indi]['fams']:
-                 fam = fam_data['fam']
-                 husb = data[fkey][fam]['husb'][0]
-                 wife = data[fkey][fam]['wife'][0]
-                 other = husb
-                 if indi == husb:
-                    other = wife
-                 print( 'with', data[ikey][other]['name'][0]['html'], file=sys.stderr )
-                 print( 'fam', fam_data['fam'], 'slices', fam_data['slices'], file=sys.stderr )
+      #for indi in diagram_data:
+      #    print( '', file=sys.stderr)
+      #    print( indi, data[ikey][indi]['name'][0]['html'], file=sys.stderr )
+      #    print( 'slices', diagram_data[indi]['slices'], file=sys.stderr )
+      #    if diagram_data[indi]['fams']:
+      #       print( 'fams:', file=sys.stderr )
+      #       for fam_data in diagram_data[indi]['fams']:
+      #           fam = fam_data['fam']
+      #           husb = data[fkey][fam]['husb'][0]
+      #           wife = data[fkey][fam]['wife'][0]
+      #           other = husb
+      #           if indi == husb:
+      #              other = wife
+      #           print( 'with', data[ikey][other]['name'][0]['html'], file=sys.stderr )
+      #           print( 'fam', fam_data['fam'], 'slices', fam_data['slices'], file=sys.stderr )
 
       output_header()
 
