@@ -10,7 +10,7 @@ page_size = 600
 
 
 def get_version():
-    return '0.0.28'
+    return '0.0.29'
 
 
 def roundstr( x ):
@@ -425,29 +425,27 @@ if len(id_match) == 1:
       ring_sizes = calculate_generation_rings( max_generations )
       show_generation_rings( ring_sizes )
 
-      # try showing some text
-      # try putting it inside the inner circle
-      test_string = 'test fitting text in circle'
-      # size of that circle is twice its radius
-      font_size = font_to_fit_string( 2*ring_sizes[0]['outer'], test_string )
-      # ok, what's the width going to be
-      string_width = estimate_string_width( font_size, test_string )
-      # x is center offset by half the string
-      x = cx - string_width / 2
-      # y is center offset by half the font size
-      y = cy + font_size / 2
-      output_text( x, y, font_size, test_string )
-
-      # what are those numbers
-      print( '<text font-size="10" x="10" y="20">d:' + roundstr(2*ring_sizes[0]['outer']) + '</text>' )
-      print( '<text font-size="10" x="10" y="40">font:' + roundstr(font_size) + '</text>' )
-      print( '<text font-size="10" x="10" y="60">width:' + roundstr(string_width) + '</text>' )
-
-      # show those places with dots
-      print( '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '"' )
-      print( ' fill="red" stroke="red" r="2" />' )
-      print( '<circle cx="' + roundstr(x) + '" cy="' + roundstr(y) + '"' )
-      print( ' fill="blue" stroke="blue" r="2" />' )
+      ## try showing some text
+      ## try putting it inside the inner circle
+      #test_string = 'test fitting text in circle'
+      ## size of that circle is twice its radius
+      #font_size = font_to_fit_string( 2*ring_sizes[0]['outer'], test_string )
+      ## ok, what's the width going to be
+      #string_width = estimate_string_width( font_size, test_string )
+      ## x is center offset by half the string
+      #x = cx - string_width / 2
+      ## y is center offset by half the font size
+      #y = cy + font_size / 2
+      #output_text( x, y, font_size, test_string )
+      ## what are those numbers
+      #print( '<text font-size="10" x="10" y="20">d:' + roundstr(2*ring_sizes[0]['outer']) + '</text>' )
+      #print( '<text font-size="10" x="10" y="40">font:' + roundstr(font_size) + '</text>' )
+      #print( '<text font-size="10" x="10" y="60">width:' + roundstr(string_width) + '</text>' )
+      ## show those places with dots
+      #print( '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '"' )
+      #print( ' fill="red" stroke="red" r="2" />' )
+      #print( '<circle cx="' + roundstr(x) + '" cy="' + roundstr(y) + '"' )
+      #print( ' fill="blue" stroke="blue" r="2" />' )
 
       output_trailer()
 
