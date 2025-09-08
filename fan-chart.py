@@ -9,12 +9,12 @@ import os
 page_size = 600
 
 slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
-slice_colours.extend( ['coral', 'khakin', 'darkorange', 'teal'] )
+slice_colours.extend( ['coral', 'khakin', 'lemonchiffon', 'teal'] )
 slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
 
 
 def get_version():
-    return '0.0.31'
+    return '0.0.32'
 
 
 def roundstr( x ):
@@ -382,7 +382,7 @@ if len(id_match) == 1:
    max_generations = find_max_generations( start_person, options['generations'], 1 )
 
    if max_generations > 1:
-      print( 'max gen', max_generations, file=sys.stderr ) #debug
+      #print( 'max gen', max_generations, file=sys.stderr ) #debug
 
       # slice size is computed by
       # 360 degrees divided by the number of people reaching the outermost layer
@@ -392,7 +392,7 @@ if len(id_match) == 1:
 
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
-      print( 'slices', max_slices, file=sys.stderr ) #debug
+      #print( 'slices', max_slices, file=sys.stderr ) #debug
 
       # truncate to a few decimal points because the output can't be infinitely exact
       slice_decimals = 1
@@ -450,6 +450,44 @@ if len(id_match) == 1:
       #print( ' fill="red" stroke="red" r="2" />' )
       #print( '<circle cx="' + roundstr(x) + '" cy="' + roundstr(y) + '"' )
       #print( ' fill="blue" stroke="blue" r="2" />' )
+
+      # first steps to show slices
+
+      # each slice rotates around the center
+      trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
+
+      # generation 1
+      colour_index = 1
+
+      # do this test even though we know it must be try - might need it later on
+      if 'fams' in data[ikey][start_person]:
+         for fam in data[ikey][start_person]['fams']:
+             first_child = True
+             rotation = 0
+             for child in data[fkey][fam]['chil']:
+                 #print( first_child, 'child', child, file=sys.stderr ) #debug
+                 colour = slice_colours[colour_index]
+                 # negative rotation
+                 rotate = ' rotate(-' + roundstr(rotation) + ',0,0)'
+                 # each child gets their own graphic context
+                 print( '<g transform="' + trans + rotate + '">' )
+                 slice_degrees = degrees_per_slice * diagram_data[child]['slices']
+                 if first_child:
+                    first_child = False
+                    slice_degrees += slice_remainder
+                 print( '<path style="stroke:grey; fill:' + slice_colours[colour_index] +';"' )
+                 print( '      d="M-50,50' )
+                 print( '      l-40,100' )
+                 print( '      a180,180 0 0 0 180,0' )
+                 print( '      l-40,-100' )
+                 print( '      a80,80 0 0 1 -100,0' )
+                 print( 'z" />' )
+                 print( '</g>' )
+                 rotation += slice_degrees
+                 colour_index += 1
+                 if colour_index > len( slice_colours ):
+                    colour_index = 1
+
 
       output_trailer()
 
