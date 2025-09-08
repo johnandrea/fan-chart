@@ -8,13 +8,17 @@ import os
 # arbitrary and square, but scalable
 page_size = 600
 
+slice_colours = ['thistle', 'mistyrose', 'lightseagreen','lightblue']
+slice_colours.extend( ['tan', 'khakin', 'darkorange', 'teal'] )
+slice_colours.extend( ['yellowgreen', 'coral', 'lightsteelblue', 'salmon','springgreen'] )
+
 
 def get_version():
-    return '0.0.29'
+    return '0.0.30'
 
 
 def roundstr( x ):
-    # output of 2 digits ought to be fine
+    # output of 2 digits ought to be enough
     return str( round( x, 2 ) )
 
 
