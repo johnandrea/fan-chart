@@ -3,18 +3,19 @@ import sys
 import argparse
 import importlib.util
 import os
+import math
 
 # define an svg page size
 # arbitrary and square, but scalable
 page_size = 600
 
 slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
-slice_colours.extend( ['coral', 'khakin', 'lemonchiffon', 'teal'] )
+slice_colours.extend( ['coral', 'khaki', 'lemonchiffon', 'lavenderblush'] )
 slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
 
 
 def get_version():
-    return '0.0.32'
+    return '0.0.34'
 
 
 def roundstr( x ):
@@ -93,7 +94,9 @@ def calculate_generation_rings( n_gen ):
 
 
 def show_generation_rings( rings ):
-    circle = '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '" fill="none" stroke="grey" r="'
+    # increase stroke width in order to hide any small drawing errors
+    circle = '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy)
+    circle += '" fill="none" stroke-width="2" stroke="grey" r="'
     for detail in rings:
         print( circle + str(detail['outer']) + '"/>' )
 
@@ -343,6 +346,68 @@ def output_text( x, y, size, s ):
     print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
+def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
+    def draw_slice( d, inner, outer, colour ):
+        half_d = math.radians( d/2.0 )
+
+        p1_x = inner * math.cos(half_d)
+        p1_y = - inner * math.sin(half_d)
+        p1 = roundstr(p1_x) + ',' + roundstr(p1_y)
+
+        p2_x = p1_x
+        p2_y = - p1_y
+        p2 = roundstr(p2_x) + ',' + roundstr(p2_y)
+
+        p3_x = outer * math.cos(half_d)
+        p3_y = outer * math.sin(half_d)
+        p3 = roundstr(p3_x) + ',' + roundstr(p3_y)
+
+        p4_x = p3_x
+        p4_y = - p3_y
+        p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
+
+        print( '<path style="stroke:grey; fill:' + colour +';"' )
+        print( 'd="M' + p1 )
+        r = roundstr(inner) + ',' + roundstr(inner)
+        print( 'A' + r + ' 0 0 1 ' + p2 )
+        print( 'L' + p3 )
+        r = roundstr(outer) + ',' + roundstr(outer)
+        print( 'A' + r + ' 0 0 0 ' + p4 )
+        print( 'z" />' )
+
+
+    # each slice rotates around the center
+    trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
+
+    # generation 1
+    gen = 1
+    colour_index = 1
+
+    # all the same gor this one generation
+    inner = ring_data[gen]['inner']
+    outer = ring_data[gen]['outer']
+
+    # do this test even though we know it must be try - might need it later on
+    if 'fams' in data[ikey][start_indi]:
+       for fam in data[ikey][start_indi]['fams']:
+           first_child = True
+           rotation = 0
+           for child in data[fkey][fam]['chil']:
+               # negative rotation
+               rotate = ' rotate(-' + roundstr(rotation) + ',0,0)'
+               # each child gets their own graphic context
+               print( '<g transform="' + trans + rotate + '">' )
+               slice_degrees = degrees_per_slice * diagram_data[child]['slices']
+               if first_child:
+                  first_child = False
+                  slice_degrees += slice_extra
+               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
+               print( '</g>' )
+               rotation += slice_degrees
+               colour_index += 1
+               if colour_index > len( slice_colours ):
+                  colour_index = 1
+
 
 # more globals
 # page is square, get the center
@@ -427,7 +492,6 @@ if len(id_match) == 1:
       output_header()
 
       ring_sizes = calculate_generation_rings( max_generations )
-      show_generation_rings( ring_sizes )
 
       ## try showing some text
       ## try putting it inside the inner circle
@@ -452,42 +516,10 @@ if len(id_match) == 1:
       #print( ' fill="blue" stroke="blue" r="2" />' )
 
       # first steps to show slices
+      output_slices( start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
-      # each slice rotates around the center
-      trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
-
-      # generation 1
-      colour_index = 1
-
-      # do this test even though we know it must be try - might need it later on
-      if 'fams' in data[ikey][start_person]:
-         for fam in data[ikey][start_person]['fams']:
-             first_child = True
-             rotation = 0
-             for child in data[fkey][fam]['chil']:
-                 #print( first_child, 'child', child, file=sys.stderr ) #debug
-                 colour = slice_colours[colour_index]
-                 # negative rotation
-                 rotate = ' rotate(-' + roundstr(rotation) + ',0,0)'
-                 # each child gets their own graphic context
-                 print( '<g transform="' + trans + rotate + '">' )
-                 slice_degrees = degrees_per_slice * diagram_data[child]['slices']
-                 if first_child:
-                    first_child = False
-                    slice_degrees += slice_remainder
-                 print( '<path style="stroke:grey; fill:' + slice_colours[colour_index] +';"' )
-                 print( '      d="M-50,50' )
-                 print( '      l-40,100' )
-                 print( '      a180,180 0 0 0 180,0' )
-                 print( '      l-40,-100' )
-                 print( '      a80,80 0 0 1 -100,0' )
-                 print( 'z" />' )
-                 print( '</g>' )
-                 rotation += slice_degrees
-                 colour_index += 1
-                 if colour_index > len( slice_colours ):
-                    colour_index = 1
-
+      # show the rings on top of the slices
+      show_generation_rings( ring_sizes )
 
       output_trailer()
 
