@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.0.34'
+    return '0.0.35'
 
 
 def roundstr( x ):
@@ -377,7 +377,7 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
 
 
     # each slice rotates around the center
-    trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
+    g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
     # generation 1
     gen = 1
@@ -387,20 +387,24 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
     inner = ring_data[gen]['inner']
     outer = ring_data[gen]['outer']
 
+    # on the first generation the first child starts at the top
+    # rotate it up from the axis
+    rotation = -90.0
+
     # do this test even though we know it must be try - might need it later on
     if 'fams' in data[ikey][start_indi]:
        for fam in data[ikey][start_indi]['fams']:
            first_child = True
-           rotation = 0
            for child in data[fkey][fam]['chil']:
-               # negative rotation
-               rotate = ' rotate(-' + roundstr(rotation) + ',0,0)'
-               # each child gets their own graphic context
-               print( '<g transform="' + trans + rotate + '">' )
                slice_degrees = degrees_per_slice * diagram_data[child]['slices']
                if first_child:
                   first_child = False
                   slice_degrees += slice_extra
+                  # and the first child also needs to move back down
+                  rotation += slice_degrees / 2.0
+               g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
+               # each child gets their own graphic context
+               print( '<g transform="' + g_trans + g_rotate + '">' )
                draw_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
                print( '</g>' )
                rotation += slice_degrees
