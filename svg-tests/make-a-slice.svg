@@ -1,0 +1,70 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="400pt" height="400pt"
+ viewBox="0.00 0.00 400.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="15">d is the internal angle of the slice</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="30">translate graphic context to center</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="45">1: move to P1: x=inner*cos(d/2), y=-inner*sin(d/2)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="60">2: arc to P2: x=same, y=-y, sweep=1</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="75">3: line to P3: x=outer*cos(d/2), y=outer*sin(d/2)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="90">4: arc to P4: x=same, y=-y, sweep=0</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="105">5: close path</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="280">arcs in a path:</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="295">start at current point</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="310">radiusX,radiusY</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="325">space x-axis-roatation (usually zero)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="340">space large-arc-flag (usually zero)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="355">space sweep-flag (zero or one depending on direction)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="370">space endX,endY</text>
+<path d="M200.0,200.0 400.0,200.0" style="stroke:blue;" />
+<circle cx="200.0" cy="200.0"
+ fill="red" stroke="red" r="2" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="80" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="198.0">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="211.0">y &#8595;</text>
+<g transform="translate(200.0,200.0)">
+<circle cx="75.18" cy="-27.36"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="75.18" y="-32.36">P1</text>
+<circle cx="75.18" cy="27.36"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="75.18" y="39.36">P2</text>
+<circle cx="140.95" cy="51.3"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="145.95" y="51.3">P3</text>
+<circle cx="140.95" cy="-51.3"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="144.95" y="-51.3">P4</text>
+<path style="stroke:grey; fill:lightgreen;"
+d="M75.18,-27.36
+A80,80 0 0 1 75.18,27.36
+L140.95,51.3
+A150,150 0 0 0 140.95,-51.3
+z" />
+</g>
+</svg>
