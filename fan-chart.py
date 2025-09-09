@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.0.35'
+    return '0.0.36'
 
 
 def roundstr( x ):
@@ -347,7 +347,8 @@ def output_text( x, y, size, s ):
 
 
 def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
-    def draw_slice( d, inner, outer, colour ):
+    def draw_slice( d, inner, outer, colour, i ):
+        print( 'drawing slice of', colour, file=sys.stderr ) #debug
         half_d = math.radians( d/2.0 )
 
         p1_x = inner * math.cos(half_d)
@@ -375,6 +376,9 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
         print( 'A' + r + ' 0 0 0 ' + p4 )
         print( 'z" />' )
 
+        # debug text
+        print( '<text font-size="16" x="' +roundstr(p1_x)+ '" y="' +roundstr(p1_y)+ '">' +str(i)+ '</text>' )
+
 
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
@@ -391,21 +395,28 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
     # rotate it up from the axis
     rotation = -90.0
 
+    n = 0 #debug
+
     # do this test even though we know it must be try - might need it later on
     if 'fams' in data[ikey][start_indi]:
        for fam in data[ikey][start_indi]['fams']:
            first_child = True
            for child in data[fkey][fam]['chil']:
+               n += 1 #debug
+               print( '', file=sys.stderr ) #debug
+               print( n, file=sys.stderr ) #debug
                slice_degrees = degrees_per_slice * diagram_data[child]['slices']
+               print( 'degrees', roundstr(slice_degrees), file=sys.stderr ) #debug
                if first_child:
                   first_child = False
                   slice_degrees += slice_extra
                   # and the first child also needs to move back down
                   rotation += slice_degrees / 2.0
+               print( 'rotated', roundstr(rotation), file=sys.stderr ) #debug
                g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
                # each child gets their own graphic context
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
+               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index], n )
                print( '</g>' )
                rotation += slice_degrees
                colour_index += 1
