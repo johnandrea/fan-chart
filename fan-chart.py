@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.0.36'
+    return '0.0.37'
 
 
 def roundstr( x ):
@@ -347,7 +347,7 @@ def output_text( x, y, size, s ):
 
 
 def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
-    def draw_slice( d, inner, outer, colour, i ):
+    def draw_slice( d, inner, outer, colour, name ):
         print( 'drawing slice of', colour, file=sys.stderr ) #debug
         half_d = math.radians( d/2.0 )
 
@@ -377,7 +377,7 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
         print( 'z" />' )
 
         # debug text
-        print( '<text font-size="16" x="' +roundstr(p1_x)+ '" y="' +roundstr(p1_y)+ '">' +str(i)+ '</text>' )
+        print( '<text font-size="14" x="' +roundstr(p1_x)+ '" y="' +roundstr(p1_y)+ '">' +name+ '</text>' )
 
 
     # each slice rotates around the center
@@ -403,8 +403,9 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
            first_child = True
            for child in data[fkey][fam]['chil']:
                n += 1 #debug
+               name = data[ikey][child]['name'][0]['html'] #debug
                print( '', file=sys.stderr ) #debug
-               print( n, file=sys.stderr ) #debug
+               print( n, name, file=sys.stderr ) #debug
                slice_degrees = degrees_per_slice * diagram_data[child]['slices']
                print( 'degrees', roundstr(slice_degrees), file=sys.stderr ) #debug
                if first_child:
@@ -416,7 +417,7 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
                g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
                # each child gets their own graphic context
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index], n )
+               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index], str(n) + ':' + name )
                print( '</g>' )
                rotation += slice_degrees
                colour_index += 1
