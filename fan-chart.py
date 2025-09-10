@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.0'
+    return '0.1.1'
 
 
 def roundstr( x ):
@@ -93,7 +93,7 @@ def calculate_generation_rings( n_gen ):
     return results
 
 
-def show_generation_rings( rings ):
+def outline_generations( rings ):
     # increase stroke width in order to hide any small drawing errors
     circle = '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy)
     circle += '" fill="none" stroke-width="2" stroke="grey" r="'
@@ -346,42 +346,45 @@ def output_text( x, y, size, s ):
     print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
-def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
-    def draw_slice( d, inner, outer, colour ):
-        half_d = math.radians( d/2.0 )
+def output_a_slice( d, inner, outer, colour ):
+    # slice of a ring given inner and outer radius
+    # with center at 0,0 and centered on the x-axis
 
-        p1_x = inner * math.cos(half_d)
-        p1_y = - inner * math.sin(half_d)
-        p1 = roundstr(p1_x) + ',' + roundstr(p1_y)
+    half_d = math.radians( d/2.0 )
 
-        p2_x = p1_x
-        p2_y = - p1_y
-        p2 = roundstr(p2_x) + ',' + roundstr(p2_y)
+    p1_x = inner * math.cos(half_d)
+    p1_y = - inner * math.sin(half_d)
+    p1 = roundstr(p1_x) + ',' + roundstr(p1_y)
 
-        p3_x = outer * math.cos(half_d)
-        p3_y = outer * math.sin(half_d)
-        p3 = roundstr(p3_x) + ',' + roundstr(p3_y)
+    p2_x = p1_x
+    p2_y = - p1_y
+    p2 = roundstr(p2_x) + ',' + roundstr(p2_y)
 
-        p4_x = p3_x
-        p4_y = - p3_y
-        p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
+    p3_x = outer * math.cos(half_d)
+    p3_y = outer * math.sin(half_d)
+    p3 = roundstr(p3_x) + ',' + roundstr(p3_y)
 
-        print( '<path style="stroke:grey; fill:' + colour +';"' )
-        print( 'd="M' + p1 )
-        r = roundstr(inner) + ',' + roundstr(inner)
-        print( 'A' + r + ' 0 0 1 ' + p2 )
-        print( 'L' + p3 )
-        r = roundstr(outer) + ',' + roundstr(outer)
-        print( 'A' + r + ' 0 0 0 ' + p4 )
-        print( 'z" />' )
+    p4_x = p3_x
+    p4_y = - p3_y
+    p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
+
+    print( '<path style="stroke:grey; fill:' + colour +';"' )
+    print( 'd="M' + p1 )
+    r = roundstr(inner) + ',' + roundstr(inner)
+    print( 'A' + r + ' 0 0 1 ' + p2 )
+    print( 'L' + p3 )
+    r = roundstr(outer) + ',' + roundstr(outer)
+    print( 'A' + r + ' 0 0 0 ' + p4 )
+    print( 'z" />' )
 
 
+def output_slices( gen, start_rotation, start_colour, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
-    # generation 1
-    gen = 1
-    colour_index = 1
+    # --- doing only 1 generation so far
+
+    colour_index = start_colour
 
     # all the same gor this one generation
     inner = ring_data[gen]['inner']
@@ -389,7 +392,7 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
 
     # on the first generation the first child starts at the top
     # rotate it up from the axis
-    rotation = -90.0
+    rotation = start_rotation
 
     # do this test even though we know it must be try - might need it later on
     if 'fams' in data[ikey][start_indi]:
@@ -407,7 +410,7 @@ def output_slices( start_indi, degrees_per_slice, slice_extra, ring_data, diagra
                # each child gets their own graphic context
 
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               draw_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
+               output_a_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
                print( '</g>' )
                # make the next one start where this ended
                rotation += slice_degrees / 2.0
@@ -522,11 +525,17 @@ if len(id_match) == 1:
       #print( '<circle cx="' + roundstr(x) + '" cy="' + roundstr(y) + '"' )
       #print( ' fill="blue" stroke="blue" r="2" />' )
 
-      # first steps to show slices
-      output_slices( start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
+      # generation 0 is special - it is in the inner circle
+      # there must be another generation or else the program would have exited
+      # special case when start person has multiple families - handle in future
+
+      # the first child starts at the top, so rotate it -90 deg from the x-axis
+      # need to do something with colours too, first child should match parents
+
+      output_slices( 1, -90.0, 0, start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
-      show_generation_rings( ring_sizes )
+      outline_generations( ring_sizes )
 
       output_trailer()
 
