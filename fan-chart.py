@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.2'
+    return '0.1.3'
 
 
 def roundstr( x ):
@@ -378,11 +378,16 @@ def output_a_slice( d, inner, outer, colour ):
     print( 'z" />' )
 
 
-def output_slices( gen, start_rotation, start_colour, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
+def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
     colour_index = start_colour
+
+    # colour skip is used so that children don't get the same colour as
+    # a parents sibling, but don't let it get too big
+    if colour_skip > 5:
+       colour_skip = 2
 
     # rotate it up from the x-axis
     rotation = start_rotation
@@ -409,11 +414,12 @@ def output_slices( gen, start_rotation, start_colour, start_indi, degrees_per_sl
                print( '</g>' )
 
                # next generation
-               output_slices( gen+1, rotation, colour_index, child, degrees_per_slice, slice_extra, ring_data, diagram_data )
+               child_rotation = rotation - slice_degrees / 2.0
+               output_slices( gen+1, child_rotation, colour_index, colour_skip+2, child, degrees_per_slice, slice_extra, ring_data, diagram_data )
 
                # make the next one start where this ended
                rotation += slice_degrees / 2.0
-               colour_index += 1
+               colour_index += colour_skip
                if colour_index > len( slice_colours ):
                   colour_index = 1
 
@@ -531,7 +537,7 @@ if len(id_match) == 1:
       # the first child starts at the top, so rotate it -90 deg from the x-axis
       # need to do something with colours too, first child should match parents
 
-      output_slices( 1, -90.0, 0, start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
+      output_slices( 1, -90.0, 0, 1, start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
       outline_generations( ring_sizes )
