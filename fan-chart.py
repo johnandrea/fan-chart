@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.1'
+    return '0.1.2'
 
 
 def roundstr( x ):
@@ -382,16 +382,9 @@ def output_slices( gen, start_rotation, start_colour, start_indi, degrees_per_sl
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
-    # --- doing only 1 generation so far
-
     colour_index = start_colour
 
-    # all the same gor this one generation
-    inner = ring_data[gen]['inner']
-    outer = ring_data[gen]['outer']
-
-    # on the first generation the first child starts at the top
-    # rotate it up from the axis
+    # rotate it up from the x-axis
     rotation = start_rotation
 
     # do this test even though we know it must be try - might need it later on
@@ -406,12 +399,18 @@ def output_slices( gen, start_rotation, start_colour, start_indi, degrees_per_sl
                   slice_degrees += slice_extra
                # rotate this much more as if it lined up with the x-axis
                rotation += slice_degrees / 2.0
-               g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
-               # each child gets their own graphic context
 
+               # each child gets their own graphic context
+               g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               output_a_slice( slice_degrees, inner, outer, slice_colours[colour_index] )
+
+               output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
+
                print( '</g>' )
+
+               # next generation
+               output_slices( gen+1, rotation, colour_index, child, degrees_per_slice, slice_extra, ring_data, diagram_data )
+
                # make the next one start where this ended
                rotation += slice_degrees / 2.0
                colour_index += 1
