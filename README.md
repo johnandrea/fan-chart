@@ -1,6 +1,6 @@
 # fan-chart.py
 
-A program which will produce a full circle genealogy fan chart from a GEDCOM input.
+A program which will produce a full circle genealogy descendant fan chart from a GEDCOM input.
 
 Reasons for making my own program:
 
