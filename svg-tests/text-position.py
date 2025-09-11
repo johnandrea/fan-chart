@@ -50,34 +50,17 @@ output_header()
 x = 8
 y = 15
 f = 13
-output_text( x, y, f, 'd is the internal angle of the slice' )
+output_text( x, y, f, 'put names about 3/4 down slice' )
 y += f + 2
-output_text( x, y, f, 'translate graphic context to center' )
+output_text( x, y, f, 'from P5 to P6' )
 y += f + 2
-output_text( x, y, f, '1: move to P1: x=inner*cos(d/2), y=-inner*sin(d/2)' )
+output_text( x, y, f, 'P5: x=factor*outer*cos(d/2), y=factor*outer*sin(d/2)' )
 y += f + 2
-output_text( x, y, f, '2: arc to P2: x=same, y=-y, sweep=1' )
+output_text( x, y, f, 'P6: x=same, y=-y' )
 y += f + 2
-output_text( x, y, f, '3: line to P3: x=outer*cos(d/2), y=outer*sin(d/2)' )
+output_text( x, y, f, 'width = 2 * y' )
 y += f + 2
-output_text( x, y, f, '4: arc to P4: x=same, y=-y, sweep=0' )
-y += f + 2
-output_text( x, y, f, '5: close path' )
-
-y = 400 - 120
-output_text( x, y, f, 'arcs in a path:' )
-y += f + 2
-output_text( x, y, f, 'start at current point' )
-y += f + 2
-output_text( x, y, f, 'radiusX,radiusY' )
-y += f + 2
-output_text( x, y, f, 'space x-axis-roatation (usually zero)' )
-y += f + 2
-output_text( x, y, f, 'space large-arc-flag (usually zero)' )
-y += f + 2
-output_text( x, y, f, 'space sweep-flag (zero or one depending on direction)' )
-y += f + 2
-output_text( x, y, f, 'space endX,endY' )
+output_text( x, y, f, 'middle M: x=same, y=0' )
 
 # line along the x axis
 print( '<path d="M' + center + ' ' + roundstr(cx+page_size/2) + ',' + roundstr(cy) + '" style="stroke:blue;" />' )
@@ -135,24 +118,35 @@ output_text( p4_x + 4, p4_y, 10, 'P4' )
 
 # begin the sector
 print( '<path style="stroke:grey; fill:lightgreen;"' )
-
-# step 1
 print( 'd="M' + p1 )
-
-# step 2
 r = roundstr(inner) + ',' + roundstr(inner)
 print( 'A' + r + ' 0 0 1 ' + p2 )
-
-# step 3
 print( 'L' + p3 )
-
-# step 4
 r = roundstr(outer) + ',' + roundstr(outer)
 print( 'A' + r + ' 0 0 0 ' + p4 )
-
-# step 5 ends the sector path
 print( 'z" />' )
 
+p5_x = outer * 0.85 * math.cos(half_d)
+p5_y = outer * 0.85 * math.sin(half_d)
+blue_dot( p5_x, p5_y )
+output_text( p5_x + 4, p5_y, 10, 'P5' )
+p5 = roundstr(p5_x) + ',' + roundstr(p5_y)
+
+p6_x = p5_x
+p6_y = - p5_y
+blue_dot( p6_x, p6_y )
+output_text( p6_x + 4, p6_y, 10, 'P6' )
+p6 = roundstr(p6_x) + ',' + roundstr(p6_y)
+
+# connect with a line
+print( '<path d="M' + p5 + ' ' + p6 + '" style="stroke:blue;" />' )
+
+m_x = p5_x
+m_y = 0
+blue_dot( m_x, m_y )
+output_text( m_x + 4, m_y, 8, 'M' )
+
 print( '</g>' )
+
 
 output_trailer()

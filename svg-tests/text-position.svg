@@ -1,0 +1,67 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="400pt" height="400pt"
+ viewBox="0.00 0.00 400.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="15">put names about 3/4 down slice</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="30">from P5 to P6</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="45">P5: x=factor*outer*cos(d/2), y=factor*outer*sin(d/2)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="60">P6: x=same, y=-y</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="75">width = 2 * y</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="90">middle M: x=same, y=0</text>
+<path d="M200.0,200.0 400.0,200.0" style="stroke:blue;" />
+<circle cx="200.0" cy="200.0"
+ fill="red" stroke="red" r="2" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="80" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="198.0">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="211.0">y &#8595;</text>
+<g transform="translate(200.0,200.0)">
+<circle cx="75.18" cy="-27.36"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="75.18" y="-32.36">P1</text>
+<circle cx="75.18" cy="27.36"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="75.18" y="39.36">P2</text>
+<circle cx="140.95" cy="51.3"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="145.95" y="51.3">P3</text>
+<circle cx="140.95" cy="-51.3"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="144.95" y="-51.3">P4</text>
+<path style="stroke:grey; fill:lightgreen;"
+d="M75.18,-27.36
+A80,80 0 0 1 75.18,27.36
+L140.95,51.3
+A150,150 0 0 0 140.95,-51.3
+z" />
+<circle cx="119.81" cy="43.61"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="123.81" y="43.61">P5</text>
+<circle cx="119.81" cy="-43.61"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="123.81" y="-43.61">P6</text>
+<path d="M119.81,43.61 119.81,-43.61" style="stroke:blue;" />
+<circle cx="119.81" cy="0"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="8" font-family="Times New Roman,serif"
+ x="123.81" y="0">M</text>
+</g>
+</svg>
