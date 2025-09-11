@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="400pt" height="400pt"
+ viewBox="0.00 0.00 400.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="15">narrow slices require sideway text</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="30">from P7 to P8</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="45">P7: x=inner, y=0</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="60">P8: x=outer, y=0</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="75">width = outer - inner</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="90">middle N: x=inner + (outer-inner)/2, y=0</text>
+<path d="M200.0,200.0 400.0,200.0" style="stroke:blue;" />
+<circle cx="200.0" cy="200.0"
+ fill="red" stroke="red" r="2" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="80" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="198.0">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190.0" y="211.0">y &#8595;</text>
+<g transform="translate(200.0,200.0)">
+<circle cx="79.32" cy="-10.44"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="79.32" cy="10.44"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="148.72" cy="19.58"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="148.72" cy="-19.58"
+ fill="blue" stroke="blue" r="2" />
+<path style="stroke:grey; fill:lightgreen;"
+d="M79.32,-10.44
+A80,80 0 0 1 79.32,10.44
+L148.72,19.58
+A150,150 0 0 0 148.72,-19.58
+z" />
+<circle cx="80" cy="0"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="84" y="-2">P7</text>
+<circle cx="150" cy="0"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="154" y="-2">P8</text>
+<circle cx="115.0" cy="0"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="8" font-family="Times New Roman,serif"
+ x="115.0" y="-4">N</text>
+<path d="M80,0 150,0" style="stroke:red;" />
+</g>
+</svg>
