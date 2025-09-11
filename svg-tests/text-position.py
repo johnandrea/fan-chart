@@ -54,7 +54,9 @@ output_text( x, y, f, 'put names about 3/4 down slice' )
 y += f + 2
 output_text( x, y, f, 'from P5 to P6' )
 y += f + 2
-output_text( x, y, f, 'P5: x=factor*outer*cos(d/2), y=factor*outer*sin(d/2)' )
+output_text( x, y, f, 'len = inner + factor * ( outer - inner )' )
+y += f + 2
+output_text( x, y, f, 'P5: x=len*cos(d/2), y=len*sin(d/2)' )
 y += f + 2
 output_text( x, y, f, 'P6: x=same, y=-y' )
 y += f + 2
@@ -126,8 +128,9 @@ r = roundstr(outer) + ',' + roundstr(outer)
 print( 'A' + r + ' 0 0 0 ' + p4 )
 print( 'z" />' )
 
-p5_x = outer * 0.85 * math.cos(half_d)
-p5_y = outer * 0.85 * math.sin(half_d)
+length = inner + 0.85 * ( outer - inner )
+p5_x = length * math.cos(half_d)
+p5_y = length * math.sin(half_d)
 blue_dot( p5_x, p5_y )
 output_text( p5_x + 4, p5_y, 10, 'P5' )
 p5 = roundstr(p5_x) + ',' + roundstr(p5_y)

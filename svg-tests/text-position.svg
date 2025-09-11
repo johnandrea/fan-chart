@@ -9,13 +9,15 @@
 <text font-size="13" font-family="Times New Roman,serif"
  x="8" y="30">from P5 to P6</text>
 <text font-size="13" font-family="Times New Roman,serif"
- x="8" y="45">P5: x=factor*outer*cos(d/2), y=factor*outer*sin(d/2)</text>
+ x="8" y="45">len = inner + factor * ( outer - inner )</text>
 <text font-size="13" font-family="Times New Roman,serif"
- x="8" y="60">P6: x=same, y=-y</text>
+ x="8" y="60">P5: x=len*cos(d/2), y=len*sin(d/2)</text>
 <text font-size="13" font-family="Times New Roman,serif"
- x="8" y="75">width = 2 * y</text>
+ x="8" y="75">P6: x=same, y=-y</text>
 <text font-size="13" font-family="Times New Roman,serif"
- x="8" y="90">middle M: x=same, y=0</text>
+ x="8" y="90">width = 2 * y</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="105">middle M: x=same, y=0</text>
 <path d="M200.0,200.0 400.0,200.0" style="stroke:blue;" />
 <circle cx="200.0" cy="200.0"
  fill="red" stroke="red" r="2" />
@@ -50,18 +52,18 @@ A80,80 0 0 1 75.18,27.36
 L140.95,51.3
 A150,150 0 0 0 140.95,-51.3
 z" />
-<circle cx="119.81" cy="43.61"
+<circle cx="131.09" cy="47.71"
  fill="blue" stroke="blue" r="2" />
 <text font-size="10" font-family="Times New Roman,serif"
- x="123.81" y="43.61">P5</text>
-<circle cx="119.81" cy="-43.61"
+ x="135.09" y="47.71">P5</text>
+<circle cx="131.09" cy="-47.71"
  fill="blue" stroke="blue" r="2" />
 <text font-size="10" font-family="Times New Roman,serif"
- x="123.81" y="-43.61">P6</text>
-<path d="M119.81,43.61 119.81,-43.61" style="stroke:blue;" />
-<circle cx="119.81" cy="0"
+ x="135.09" y="-47.71">P6</text>
+<path d="M131.09,47.71 131.09,-47.71" style="stroke:blue;" />
+<circle cx="131.09" cy="0"
  fill="blue" stroke="blue" r="2" />
 <text font-size="8" font-family="Times New Roman,serif"
- x="123.81" y="0">M</text>
+ x="135.09" y="0">M</text>
 </g>
 </svg>
