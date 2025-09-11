@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.3'
+    return '0.1.5'
 
 
 def roundstr( x ):
@@ -377,19 +377,22 @@ def output_a_slice( d, inner, outer, colour ):
     print( 'A' + r + ' 0 0 0 ' + p4 )
     print( 'z" />' )
 
+    # for debugging text, put a line at the bottom of the slice
+    print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
+
 
 def output_name( d, inner, outer, indi ):
-    f = 0.85
+    #f = 0.85
+    # for debugging, put it at the bottom
+    f = 1.0
     name = data[ikey][indi]['name'][0]['html']
     half_d = math.radians( d/2.0 )
     length = inner + f * ( outer - inner )
     x = length * math.cos( half_d )
     y = length * math.sin( half_d )
-    r = -90 + d/2
-    g_translate = ' translate( ' + roundstr(x) + ',' + roundstr(y) + ')'
-    g_rotate = ' rotate(' + roundstr(r) + ',0,0)'
-    print( '<g transform="' + g_translate + g_rotate + '">' )
-    output_text( 0, 0, 16, name )
+    g_rotate = ' rotate(-90' + ',' + roundstr(x) + ',' + roundstr(y) + ')'
+    print( '<g transform="' + g_rotate + '">' )
+    output_text( x, y, 16, name )
     print( '</g>' )
 
 
