@@ -378,6 +378,21 @@ def output_a_slice( d, inner, outer, colour ):
     print( 'z" />' )
 
 
+def output_name( d, inner, outer, indi ):
+    f = 0.85
+    name = data[ikey][indi]['name'][0]['html']
+    half_d = math.radians( d/2.0 )
+    length = inner + f * ( outer - inner )
+    x = length * math.cos( half_d )
+    y = length * math.sin( half_d )
+    r = -90 + d/2
+    g_translate = ' translate( ' + roundstr(x) + ',' + roundstr(y) + ')'
+    g_rotate = ' rotate(' + roundstr(r) + ',0,0)'
+    print( '<g transform="' + g_translate + g_rotate + '">' )
+    output_text( 0, 0, 16, name )
+    print( '</g>' )
+
+
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
@@ -410,6 +425,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, d
                print( '<g transform="' + g_trans + g_rotate + '">' )
 
                output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
+               output_name( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], child )
 
                print( '</g>' )
 
