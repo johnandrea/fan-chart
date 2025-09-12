@@ -15,7 +15,41 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.7'
+    return '0.1.9'
+
+
+def output_name( d, inner, outer, indi ):
+    distance_factor = 0.85
+    font_size = 16
+
+    name = data[ikey][indi]['name'][0]['html']
+    #half_string = estimate_string_width( font_size, name ) / 2.0
+
+    half_d = math.radians( d/2.0 )
+    length = inner + distance_factor * ( outer - inner )
+    x = length * math.cos( half_d )
+    y = length * math.sin( half_d )
+
+    # put the text on a curve,
+    # no need for a separate graphic context
+    path_id = 'text' + str(indi)
+    path = 'M' + roundstr(x) +','+ roundstr(y)
+    path += ' A' + roundstr(length) +','+ roundstr(length)
+    path += ' 0 0 0'
+    path += ' ' + roundstr(x) +','+ roundstr(-y)
+
+    # try to center it on the curve
+    offset = "10%"
+
+    print( '<defs>' )
+    print( '  <path id="' + path_id + '" d="' + path + '" />' )
+    print( '</defs>' )
+    print( '<text font-size="' + roundstr(font_size) + '" font-family="Times New Roman,serif">' )
+    print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
+    print( '</text>' )
+
+    # draw the path to debug - why is it not an arc
+    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
 def roundstr( x ):
@@ -379,22 +413,6 @@ def output_a_slice( d, inner, outer, colour ):
 
     ## for debugging text, put a line at the bottom of the slice
     #print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
-
-
-def output_name( d, inner, outer, indi ):
-    f = 0.9
-    offset = 15
-    ## for debugging, put it at the bottom
-    #f = 1.0
-    name = data[ikey][indi]['name'][0]['html']
-    half_d = math.radians( d/2.0 )
-    length = inner + f * ( outer - inner )
-    x = length * math.cos( half_d )
-    y = length * math.sin( half_d )
-    g_rotate = ' rotate(-90' + ',' + roundstr(x) + ',' + roundstr(y) + ')'
-    print( '<g transform="' + g_rotate + '">' )
-    output_text( offset + x, y, 16, name )
-    print( '</g>' )
 
 
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
