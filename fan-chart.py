@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.10'
+    return '0.1.12'
 
 
 def output_name( d, inner, outer, indi ):
@@ -24,6 +24,8 @@ def output_name( d, inner, outer, indi ):
 
     name = data[ikey][indi]['name'][0]['html']
     string_length = estimate_string_width( font_size, name ) / 2.0
+    # increase that estimate a bit for now
+    string_length *= 1.33
 
     half_d = math.radians( d/2.0 )
     text_distance = inner + distance_factor * ( outer - inner )
@@ -39,19 +41,16 @@ def output_name( d, inner, outer, indi ):
     path += ' ' + roundstr(x) +','+ roundstr(-y)
 
     # try to center it on the curve
-    # trig formuls: length = r * theta
-    arc_length = text_distance * d
-    # but its like the string estimate is in different units
-    # or is really wrong
-    offset = arc_length / 2 - 95 * string_length / 2
-    print( '<!-- string:', string_length, '-->' )
-    print( '<!-- arc:', arc_length, '-->' )
-    print( '<!-- offset:', offset, '-->' )
-    #offset = "10%"
+
+    # trig formuls: length = r * angle
+    # and shorten a bit for margins
+    arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
+
+    offset = arc_length / 2 - string_length / 2
+
     # change to a percent
     offset = 100.0 * offset / arc_length
     offset = roundstr( offset ) + '%'
-    print( '<!-- percent:', offset, '-->' )
 
     print( '<defs>' )
     print( '  <path id="' + path_id + '" d="' + path + '" />' )
@@ -60,8 +59,12 @@ def output_name( d, inner, outer, indi ):
     print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
 
-    # draw the path to debug - why is it not an arc
-    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+    ## draw the path to debug - why is it not an arc
+    #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+
+
+def subtract_a_percentage( x, p ):
+    return x - x * p / 100.0
 
 
 def roundstr( x ):
@@ -386,10 +389,10 @@ def output_trailer():
     print( '</svg>' )
 
 
-def output_text( x, y, size, s ):
-    # need to escape characters in the text
-    print( '<text font-size="' + roundstr(size) + '" font-family="Times New Roman,serif"' )
-    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
+#def output_text( x, y, size, s ):
+#    # need to escape characters in the text
+#    print( '<text font-size="' + roundstr(size) + '" font-family="Times New Roman,serif"' )
+#    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
 def output_a_slice( d, inner, outer, colour ):
