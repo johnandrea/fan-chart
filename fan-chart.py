@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.9'
+    return '0.1.10'
 
 
 def output_name( d, inner, outer, indi ):
@@ -23,23 +23,35 @@ def output_name( d, inner, outer, indi ):
     font_size = 16
 
     name = data[ikey][indi]['name'][0]['html']
-    #half_string = estimate_string_width( font_size, name ) / 2.0
+    string_length = estimate_string_width( font_size, name ) / 2.0
 
     half_d = math.radians( d/2.0 )
-    length = inner + distance_factor * ( outer - inner )
-    x = length * math.cos( half_d )
-    y = length * math.sin( half_d )
+    text_distance = inner + distance_factor * ( outer - inner )
+    x = text_distance * math.cos( half_d )
+    y = text_distance * math.sin( half_d )
 
     # put the text on a curve,
     # no need for a separate graphic context
     path_id = 'text' + str(indi)
     path = 'M' + roundstr(x) +','+ roundstr(y)
-    path += ' A' + roundstr(length) +','+ roundstr(length)
+    path += ' A' + roundstr(text_distance) +','+ roundstr(text_distance)
     path += ' 0 0 0'
     path += ' ' + roundstr(x) +','+ roundstr(-y)
 
     # try to center it on the curve
-    offset = "10%"
+    # trig formuls: length = r * theta
+    arc_length = text_distance * d
+    # but its like the string estimate is in different units
+    # or is really wrong
+    offset = arc_length / 2 - 95 * string_length / 2
+    print( '<!-- string:', string_length, '-->' )
+    print( '<!-- arc:', arc_length, '-->' )
+    print( '<!-- offset:', offset, '-->' )
+    #offset = "10%"
+    # change to a percent
+    offset = 100.0 * offset / arc_length
+    offset = roundstr( offset ) + '%'
+    print( '<!-- percent:', offset, '-->' )
 
     print( '<defs>' )
     print( '  <path id="' + path_id + '" d="' + path + '" />' )
