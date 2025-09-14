@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.0'
+    return '0.2.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -355,7 +355,6 @@ def output_name( d, inner, outer, indi ):
     font_size = 16
 
     name = data[ikey][indi]['name'][0]['html']
-    #print( 'output', name, file=sys.stderr ) #debug
     string_length = estimate_string_width( font_size, name ) / 2.0
     # increase that estimate a bit for now
     string_length *= 1.33
@@ -450,6 +449,9 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         n_slices = diagram_data[child]['slices']
         slice_degrees = degrees_per_slice * n_slices
 
+        # how many familes does this person have
+        n_fams = len( diagram_data[child]['fams'] )
+
         if first_child:
            first_child = False
            slice_degrees += slice_extra
@@ -462,16 +464,24 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         print( '<g transform="' + g_trans + g_rotate + '">' )
 
         output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
-        output_name( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], child )
+
+        # a person with no families takes up the whole slice
+        # but with families the person gets the upper half
+        # and the spouse gets the lower half
+        ring_inner = ring_data[gen]['inner']
+        ring_outer = ring_data[gen]['outer']
+        if n_fams > 0:
+           ring_outer = ring_inner + ( ring_outer - ring_inner ) / 2.0
+
+        output_name( slice_degrees, ring_inner, ring_outer, child )
 
         print( '</g>' )
 
         # next generation
-        if len( diagram_data[child]['fams'] ) > 0:
+        if n_fams > 0:
            child_rotation = rotation - slice_degrees / 2.0
            for next_fam_data in diagram_data[child]['fams']:
                next_fam = next_fam_data['fam']
-			   #print( gen, 'going to fam', next_fam, file=sys.stderr ) #debug
                output_slices( gen+1, child_rotation, colour_index, colour_skip+2, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
                next_slices = next_fam_data['slices']
                child_rotation += next_slices * degrees_per_slice
