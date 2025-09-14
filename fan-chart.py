@@ -15,52 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.1.12'
-
-
-def output_name( d, inner, outer, indi ):
-    distance_factor = 0.85
-    font_size = 16
-
-    name = data[ikey][indi]['name'][0]['html']
-    string_length = estimate_string_width( font_size, name ) / 2.0
-    # increase that estimate a bit for now
-    string_length *= 1.33
-
-    half_d = math.radians( d/2.0 )
-    text_distance = inner + distance_factor * ( outer - inner )
-    x = text_distance * math.cos( half_d )
-    y = text_distance * math.sin( half_d )
-
-    # put the text on a curve,
-    # no need for a separate graphic context
-    path_id = 'text' + str(indi)
-    path = 'M' + roundstr(x) +','+ roundstr(y)
-    path += ' A' + roundstr(text_distance) +','+ roundstr(text_distance)
-    path += ' 0 0 0'
-    path += ' ' + roundstr(x) +','+ roundstr(-y)
-
-    # try to center it on the curve
-
-    # trig formuls: length = r * angle
-    # and shorten a bit for margins
-    arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
-
-    offset = arc_length / 2 - string_length / 2
-
-    # change to a percent
-    offset = 100.0 * offset / arc_length
-    offset = roundstr( offset ) + '%'
-
-    print( '<defs>' )
-    print( '  <path id="' + path_id + '" d="' + path + '" />' )
-    print( '</defs>' )
-    print( '<text font-size="' + roundstr(font_size) + '" font-family="Times New Roman,serif">' )
-    print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
-    print( '</text>' )
-
-    ## draw the path to debug - why is it not an arc
-    #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+    return '0.2.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -395,6 +350,52 @@ def output_trailer():
 #    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
+def output_name( d, inner, outer, indi ):
+    distance_factor = 0.85
+    font_size = 16
+
+    name = data[ikey][indi]['name'][0]['html']
+    #print( 'output', name, file=sys.stderr ) #debug
+    string_length = estimate_string_width( font_size, name ) / 2.0
+    # increase that estimate a bit for now
+    string_length *= 1.33
+
+    half_d = math.radians( d/2.0 )
+    text_distance = inner + distance_factor * ( outer - inner )
+    x = text_distance * math.cos( half_d )
+    y = text_distance * math.sin( half_d )
+
+    # put the text on a curve,
+    # no need for a separate graphic context
+    path_id = 'text' + str(indi)
+    path = 'M' + roundstr(x) +','+ roundstr(y)
+    path += ' A' + roundstr(text_distance) +','+ roundstr(text_distance)
+    path += ' 0 0 0'
+    path += ' ' + roundstr(x) +','+ roundstr(-y)
+
+    # try to center it on the curve
+
+    # trig formuls: length = r * angle
+    # and shorten a bit for margins
+    arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
+
+    offset = arc_length / 2 - string_length / 2
+
+    # change to a percent
+    offset = 100.0 * offset / arc_length
+    offset = roundstr( offset ) + '%'
+
+    print( '<defs>' )
+    print( '  <path id="' + path_id + '" d="' + path + '" />' )
+    print( '</defs>' )
+    print( '<text font-size="' + roundstr(font_size) + '" font-family="Times New Roman,serif">' )
+    print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
+    print( '</text>' )
+
+    ## draw the path to debug - why is it not an arc
+    #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+
+
 def output_a_slice( d, inner, outer, colour ):
     # slice of a ring given inner and outer radius
     # with center at 0,0 and centered on the x-axis
@@ -430,7 +431,7 @@ def output_a_slice( d, inner, outer, colour ):
     #print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
 
 
-def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, degrees_per_slice, slice_extra, ring_data, diagram_data ):
+def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
@@ -444,37 +445,42 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_indi, d
     # rotate it up from the x-axis
     rotation = start_rotation
 
-    # do this test even though we know it must be try - might need it later on
-    if 'fams' in data[ikey][start_indi]:
-       for fam in data[ikey][start_indi]['fams']:
-           first_child = True
-           for child in data[fkey][fam]['chil']:
-               n_slices = diagram_data[child]['slices']
-               slice_degrees = degrees_per_slice * n_slices
-               if first_child:
-                  first_child = False
-                  slice_degrees += slice_extra
-               # rotate this much more as if it lined up with the x-axis
-               rotation += slice_degrees / 2.0
+    first_child = True
+    for child in data[fkey][start_fam]['chil']:
+        n_slices = diagram_data[child]['slices']
+        slice_degrees = degrees_per_slice * n_slices
 
-               # each child gets their own graphic context
-               g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
-               print( '<g transform="' + g_trans + g_rotate + '">' )
+        if first_child:
+           first_child = False
+           slice_degrees += slice_extra
 
-               output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
-               output_name( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], child )
+        # rotate this much more as if it lined up with the x-axis
+        rotation += slice_degrees / 2.0
 
-               print( '</g>' )
+        # each child gets their own graphic context
+        g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
+        print( '<g transform="' + g_trans + g_rotate + '">' )
 
-               # next generation
-               child_rotation = rotation - slice_degrees / 2.0
-               output_slices( gen+1, child_rotation, colour_index, colour_skip+2, child, degrees_per_slice, slice_extra, ring_data, diagram_data )
+        output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
+        output_name( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], child )
 
-               # make the next one start where this ended
-               rotation += slice_degrees / 2.0
-               colour_index += colour_skip
-               if colour_index > len( slice_colours ):
-                  colour_index = 1
+        print( '</g>' )
+
+        # next generation
+        if len( diagram_data[child]['fams'] ) > 0:
+           child_rotation = rotation - slice_degrees / 2.0
+           for next_fam_data in diagram_data[child]['fams']:
+               next_fam = next_fam_data['fam']
+			   #print( gen, 'going to fam', next_fam, file=sys.stderr ) #debug
+               output_slices( gen+1, child_rotation, colour_index, colour_skip+2, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
+               next_slices = next_fam_data['slices']
+               child_rotation += next_slices * degrees_per_slice
+
+        # next child starts rotation where this child ended
+        rotation += slice_degrees / 2.0
+        colour_index += colour_skip
+        if colour_index > len( slice_colours ):
+           colour_index = 1
 
 
 # more globals
@@ -590,7 +596,9 @@ if len(id_match) == 1:
       # the first child starts at the top, so rotate it -90 deg from the x-axis
       # need to do something with colours too, first child should match parents
 
-      output_slices( 1, -90.0, 0, 1, start_person, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
+      # testing is using only one start family
+      start_fam = diagram_data[start_person]['fams'][0]['fam']
+      output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
       outline_generations( ring_sizes )
