@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.1'
+    return '0.2.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -435,8 +435,20 @@ def output_a_slice( d, inner, outer, colour ):
 
 
 def find_spouse( fam, indi ):
-    # for now, just return original
-    return indi
+    if indi:
+       known = 'husb'
+       other = 'wife'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+       known = 'wife'
+       other = 'husb'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+    return None
 
 
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
@@ -490,7 +502,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         if n_fams > 0:
            # the inner ring is the bottom of the "child" name
            # as computed above
-           ring_inner = ring_outer + 5
+           ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
            fam_rotation = rotation
            for fam_data in diagram_data[child]['fams']:
@@ -501,8 +513,9 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                print( '<g transform="' + g_trans + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, '+ ', spouse )
                # and a line needs to be drawn to separate the families
+               # if more than 1
                print( '</g>' )
-               fam_rotation += fam_degrees / 2.0
+               fam_rotation += fam_degrees
 
         # next generation
         if n_fams > 0:
