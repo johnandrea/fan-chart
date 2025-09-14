@@ -78,9 +78,9 @@ This code is provided with neither support nor warranty.
 ### Future enhancements
 
 - More colours
+- B/W or greyscale selection which will work well on B/W printers
 - Alternately start with a specific family, in cases where a person more than one
 - Describe ways to convert svg to pdf
 - Handle non-ASCII names in a manner better for SVG output.
-- An ancestor direction too (low priority)
 - Output to SVG or PDF
 
