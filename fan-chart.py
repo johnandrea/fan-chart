@@ -350,11 +350,15 @@ def output_trailer():
 #    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
-def output_name( d, inner, outer, indi ):
+def output_name( d, inner, outer, prefix, indi ):
     distance_factor = 0.85
     font_size = 16
 
-    name = data[ikey][indi]['name'][0]['html']
+    name = '?'
+    if indi:
+       # possibly the family has an unknown spouse
+       name = data[ikey][indi]['name'][0]['html']
+    name = prefix + name
     string_length = estimate_string_width( font_size, name ) / 2.0
     # increase that estimate a bit for now
     string_length *= 1.33
@@ -430,6 +434,11 @@ def output_a_slice( d, inner, outer, colour ):
     #print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
 
 
+def find_spouse( fam, indi ):
+    # for now, just return original
+    return indi
+
+
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
@@ -473,9 +482,27 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         if n_fams > 0:
            ring_outer = ring_inner + ( ring_outer - ring_inner ) / 2.0
 
-        output_name( slice_degrees, ring_inner, ring_outer, child )
+        output_name( slice_degrees, ring_inner, ring_outer, '', child )
 
         print( '</g>' )
+
+        # output each spouse name, each gets their own graphic context
+        if n_fams > 0:
+           # the inner ring is the bottom of the "child" name
+           # as computed above
+           ring_inner = ring_outer + 5
+           ring_outer = ring_data[gen]['outer']
+           fam_rotation = rotation
+           for fam_data in diagram_data[child]['fams']:
+               fam = fam_data['fam']
+               spouse = find_spouse( fam, child )
+               fam_degrees = fam_data['slices'] * degrees_per_slice
+               g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
+               print( '<g transform="' + g_trans + g_rotate + '">' )
+               output_name( fam_degrees, ring_inner, ring_outer, '+ ', spouse )
+               # and a line needs to be drawn to separate the families
+               print( '</g>' )
+               fam_rotation += fam_degrees / 2.0
 
         # next generation
         if n_fams > 0:
