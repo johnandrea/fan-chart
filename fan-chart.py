@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.2'
+    return '0.2.3'
 
 
 def subtract_a_percentage( x, p ):
@@ -352,7 +352,7 @@ def output_trailer():
 
 def output_name( d, inner, outer, prefix, indi ):
     distance_factor = 0.85
-    font_size = 16
+    font_size = 13
 
     name = '?'
     if indi:
@@ -505,10 +505,19 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
            fam_rotation = rotation
+           do_multi_fam_rotation = False
+           if n_fams > 1:
+              # then the first spouse needs to get a bit more
+              do_multi_fam_rotation = True
+
            for fam_data in diagram_data[child]['fams']:
                fam = fam_data['fam']
                spouse = find_spouse( fam, child )
                fam_degrees = fam_data['slices'] * degrees_per_slice
+               if do_multi_fam_rotation:
+                  # just once
+                  do_multi_fam_rotation = False
+                  fam_rotation -= fam_degrees /2.0
                g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_trans + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, '+ ', spouse )
