@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.4'
+    return '0.2.5'
 
 
 def subtract_a_percentage( x, p ):
@@ -350,7 +350,7 @@ def output_trailer():
 #    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 
-def output_name( d, inner, outer, prefix, indi ):
+def output_name( d, inner, outer, draw_separator, prefix, indi ):
     distance_factor = 0.85
     font_size = 13
 
@@ -395,6 +395,15 @@ def output_name( d, inner, outer, prefix, indi ):
     print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
 
+    if draw_separator:
+       x = outer * math.cos(half_d)
+       y = outer * math.sin(half_d)
+       line = 'M' + roundstr(x) +','+ roundstr(y)
+       x = inner * math.cos(half_d)
+       y = inner * math.sin(half_d)
+       line += ' L' + roundstr(x) +','+ roundstr(y)
+       print( '<path d="' + line + '" style="stroke:grey; stroke-width:2;" />' )
+
     ## draw the path to debug - why is it not an arc
     #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
@@ -421,7 +430,7 @@ def output_a_slice( d, inner, outer, colour ):
     p4_y = - p3_y
     p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
 
-    print( '<path style="stroke:grey; fill:' + colour +';"' )
+    print( '<path style="stroke:grey; stroke-width:2; fill:' + colour +';"' )
     print( 'd="M' + p1 )
     r = roundstr(inner) + ',' + roundstr(inner)
     print( 'A' + r + ' 0 0 1 ' + p2 )
@@ -494,7 +503,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         if n_fams > 0:
            ring_outer = ring_inner + ( ring_outer - ring_inner ) / 2.0
 
-        output_name( slice_degrees, ring_inner, ring_outer, '', child )
+        output_name( slice_degrees, ring_inner, ring_outer, False, '', child )
 
         print( '</g>' )
 
@@ -505,8 +514,10 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
            fam_rotation = rotation
+           add_separator = False
            do_multi_fam_rotation = False
            if n_fams > 1:
+              add_separator = True
               # then the first spouse needs to get a bit more
               do_multi_fam_rotation = True
 
@@ -520,11 +531,12 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                   fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
                g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               output_name( fam_degrees, ring_inner, ring_outer, '+ ', spouse )
+               output_name( fam_degrees, ring_inner, ring_outer, add_separator, '+ ', spouse )
                # and a line needs to be drawn to separate the families
                # if more than 1
                print( '</g>' )
                fam_rotation += fam_degrees
+               #add_separator = True
 
         # next generation
         if n_fams > 0:
