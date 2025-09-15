@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.3'
+    return '0.2.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -517,7 +517,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                if do_multi_fam_rotation:
                   # just once
                   do_multi_fam_rotation = False
-                  fam_rotation -= fam_degrees /2.0
+                  fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
                g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_trans + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, '+ ', spouse )
