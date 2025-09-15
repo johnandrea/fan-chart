@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.5'
+    return '0.2.6'
 
 
 def subtract_a_percentage( x, p ):
@@ -514,10 +514,8 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
            fam_rotation = rotation
-           add_separator = False
            do_multi_fam_rotation = False
            if n_fams > 1:
-              add_separator = True
               # then the first spouse needs to get a bit more
               do_multi_fam_rotation = True
 
@@ -531,12 +529,11 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                   fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
                g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_trans + g_rotate + '">' )
-               output_name( fam_degrees, ring_inner, ring_outer, add_separator, '+ ', spouse )
+               output_name( fam_degrees, ring_inner, ring_outer, True, '+ ', spouse )
                # and a line needs to be drawn to separate the families
                # if more than 1
                print( '</g>' )
                fam_rotation += fam_degrees
-               #add_separator = True
 
         # next generation
         if n_fams > 0:
