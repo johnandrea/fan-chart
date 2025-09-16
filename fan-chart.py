@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.2.6'
+    return '3.0.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -99,8 +99,8 @@ def calculate_generation_rings( n_gen ):
 
 def outline_generations( rings ):
     # increase stroke width in order to hide any small drawing errors
-    circle = '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy)
-    circle += '" fill="none" stroke-width="2" stroke="grey" r="'
+    circle = '<circle cx="0" cy="0"'
+    circle += ' fill="none" stroke-width="2" stroke="grey" r="'
     for detail in rings:
         print( circle + str(detail['outer']) + '"/>' )
 
@@ -344,12 +344,6 @@ def output_trailer():
     print( '</svg>' )
 
 
-#def output_text( x, y, size, s ):
-#    # need to escape characters in the text
-#    print( '<text font-size="' + roundstr(size) + '" font-family="Times New Roman,serif"' )
-#    print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
-
-
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
     distance_factor = 0.85
     font_size = 13
@@ -462,7 +456,6 @@ def find_spouse( fam, indi ):
 
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
-    g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
 
     colour_index = start_colour
 
@@ -490,8 +483,8 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         rotation += slice_degrees / 2.0
 
         # each child gets their own graphic context
-        g_rotate = ' rotate(' + roundstr(rotation) + ',0,0)'
-        print( '<g transform="' + g_trans + g_rotate + '">' )
+        g_rotate = 'rotate(' + roundstr(rotation) + ',0,0)'
+        print( '<g transform="' + g_rotate + '">' )
 
         output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
 
@@ -526,9 +519,10 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                if do_multi_fam_rotation:
                   # just once
                   do_multi_fam_rotation = False
-                  fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
-               g_rotate = ' rotate(' + roundstr(fam_rotation) + ',0,0)'
-               print( '<g transform="' + g_trans + g_rotate + '">' )
+                  #fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
+                  fam_rotation -= ( diagram_data[child]['slices'] - 1 ) * fam_degrees / 2.0
+               g_rotate = 'rotate(' + roundstr(fam_rotation) + ',0,0)'
+               print( '<g transform="' + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, True, '+ ', spouse )
                # and a line needs to be drawn to separate the families
                # if more than 1
@@ -664,12 +658,18 @@ if len(id_match) == 1:
       # the first child starts at the top, so rotate it -90 deg from the x-axis
       # need to do something with colours too, first child should match parents
 
+      # translate everything to the center of the page
+      g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
+      print( '<g transform="' + g_trans + '">' )
+
       # testing is using only one start family
       start_fam = diagram_data[start_person]['fams'][0]['fam']
       output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
       outline_generations( ring_sizes )
+
+      print( '</g>' )
 
       output_trailer()
 
