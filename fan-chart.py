@@ -398,8 +398,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        line += ' L' + roundstr(x) +','+ roundstr(y)
        print( '<path d="' + line + '" style="stroke:grey; stroke-width:2;" />' )
 
-    ## draw the path to debug - why is it not an arc
-    #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+    #if draw_separator:
+    #   # draw the path to debug - why is it not an arc
+    #   print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
 def output_a_slice( d, inner, outer, colour ):
@@ -498,7 +499,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 
         output_name( slice_degrees, ring_inner, ring_outer, False, '', child )
 
-        print( '</g>' )
+        #print( '</g>' )
 
         # output each spouse name, each gets their own graphic context
         if n_fams > 0:
@@ -506,7 +507,8 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            # as computed above
            ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
-           fam_rotation = rotation
+           #fam_rotation = rotation
+           fam_rotation = 0
            do_multi_fam_rotation = False
            if n_fams > 1:
               # then the first spouse needs to get a bit more
@@ -519,15 +521,16 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                if do_multi_fam_rotation:
                   # just once
                   do_multi_fam_rotation = False
-                  #fam_rotation -= ( n_fams - 1 ) * fam_degrees / 2.0
-                  #fam_rotation -= ( diagram_data[child]['slices'] - 1 ) * fam_degrees / 2.0
+                  fam_rotation = -1 * ( slice_degrees / 2 - fam_degrees / 2 )
                g_rotate = 'rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, True, '+ ', spouse )
                # and a line needs to be drawn to separate the families
                # if more than 1
                print( '</g>' )
-               fam_rotation -= fam_degrees / 2.0
+               fam_rotation += fam_degrees
+
+        print( '</g>' )
 
         # next generation
         if n_fams > 0:
