@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.3.1'
+    return '0.3.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -370,16 +370,17 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     path += ' 0 0 0'
     path += ' ' + roundstr(x) +','+ roundstr(-y)
 
-    # try to center it on the curve
-
     # trig formuls: length = r * angle
     # and shorten a bit for margins
     arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
 
+    # try to center it on the curve
     offset = arc_length / 2 - string_length / 2
 
     # change to a percent
     offset = 100.0 * offset / arc_length
+    # again compimsate for string lenght estimate
+    offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
 
     print( '<defs>' )
@@ -397,10 +398,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        y = inner * math.sin(half_d)
        line += ' L' + roundstr(x) +','+ roundstr(y)
        print( '<path d="' + line + '" style="stroke:grey; stroke-width:2;" />' )
-
-    #if draw_separator:
-    #   # draw the path to debug - why is it not an arc
-    #   print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
 def output_a_slice( d, inner, outer, colour ):
@@ -487,6 +484,12 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         g_rotate = 'rotate(' + roundstr(rotation) + ',0,0)'
         print( '<g transform="' + g_rotate + '">' )
 
+        #if gen == 2:
+        #   x = 700
+        #   y = 0
+        #   print( '<path d="M0,0 ' + roundstr(x) +','+ roundstr(y) + '" style="stroke:red; fill:none;"/>')
+
+        colour_index = colour_index % len(slice_colours)
         output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
 
         # a person with no families takes up the whole slice
@@ -499,36 +502,24 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 
         output_name( slice_degrees, ring_inner, ring_outer, False, '', child )
 
-        #print( '</g>' )
-
         # output each spouse name, each gets their own graphic context
         if n_fams > 0:
            # the inner ring is the bottom of the "child" name
            # as computed above
            ring_inner = ring_outer + 2
            ring_outer = ring_data[gen]['outer']
-           #fam_rotation = rotation
-           fam_rotation = 0
-           do_multi_fam_rotation = False
-           if n_fams > 1:
-              # then the first spouse needs to get a bit more
-              do_multi_fam_rotation = True
+           fam_sum = 0
 
            for fam_data in diagram_data[child]['fams']:
                fam = fam_data['fam']
                spouse = find_spouse( fam, child )
                fam_degrees = fam_data['slices'] * degrees_per_slice
-               if do_multi_fam_rotation:
-                  # just once
-                  do_multi_fam_rotation = False
-                  fam_rotation = -1 * ( slice_degrees / 2 - fam_degrees / 2 )
+               fam_rotation = 0 - slice_degrees /2 + fam_degrees /2 + fam_sum
                g_rotate = 'rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_rotate + '">' )
                output_name( fam_degrees, ring_inner, ring_outer, True, '+ ', spouse )
-               # and a line needs to be drawn to separate the families
-               # if more than 1
                print( '</g>' )
-               fam_rotation += fam_degrees
+               fam_sum += fam_degrees
 
         print( '</g>' )
 
