@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.3.4'
+    return '0.4.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -346,21 +346,22 @@ def output_trailer():
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
     distance_factor = 0.85
-    font_size = 13
+    #font_size = 13
 
     name = '?'
     if indi:
        # possibly the family has an unknown spouse
        name = data[ikey][indi]['name'][0]['html']
     name = prefix + name
-    string_length = estimate_string_width( font_size, name ) / 2.0
-    # increase that estimate a bit for now
-    string_length *= 1.33
 
     half_d = math.radians( d/2.0 )
     text_distance = inner + distance_factor * ( outer - inner )
     x = text_distance * math.cos( half_d )
     y = text_distance * math.sin( half_d )
+
+    # the height of the area is the maximum font size
+    # though a better heuristic must be used for sideways as well
+    text_area_height = text_distance - 4
 
     # put the text on a curve,
     # no need for a separate graphic context
@@ -374,10 +375,23 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # and shorten a bit for margins
     arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
 
+    font_size = font_to_fit_string( arc_length, name )
+    # wait, what's the relationship between font size and pixel height
+    if font_size > text_area_height:
+       # this is where  heuristic is needed to compare the available
+       # width vs height
+       font_size = text_area_height
+    # for now, reduce this
+    font_size *= 0.75
+
+    string_length = estimate_string_width( font_size, name )
+    ## increase that estimate a bit for now
+    #string_length *= 1.33
+
     # try to center it on the curve
     offset = arc_length / 2 - string_length / 2
 
-    # change to a percent
+    # change to a percent (is that what the startOffset parameter needs?)
     offset = 100.0 * offset / arc_length
     # again compimsate for string lenght estimate
     offset = subtract_a_percentage( offset, 9 )
