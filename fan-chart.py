@@ -15,7 +15,7 @@ slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springg
 
 
 def get_version():
-    return '0.4.0'
+    return '0.4.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -397,10 +397,15 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
 
+    font_options = ' font_size="' + roundstr(font_size) + '"'
+    font_options += ' font-family="Times New Roman,serif"'
+    # this style doesn't look good
+    #font_options += ' style="fill:black; stroke:white;"'
+
     print( '<defs>' )
     print( '  <path id="' + path_id + '" d="' + path + '" />' )
     print( '</defs>' )
-    print( '<text font-size="' + roundstr(font_size) + '" font-family="Times New Roman,serif">' )
+    print( '<text ' + font_options + '>' )
     print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
 
