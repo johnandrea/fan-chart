@@ -1,0 +1,45 @@
+slice counts
+Papa 16
+with Nana 16
+...Alice 1
+...Bob 1
+...with Betty 1
+...Carol 2
+...with Carl 1
+......Chris 1
+...with Charles 1
+......Connor 1
+...David 2
+...with Denice 2
+......Daphine 1
+......with Dexter 1
+.........Dennis 1
+.........with Daisy 1
+............Demi 1
+......Drew 1
+...Ed 6
+...with Edna 6
+......Elias 6
+......with Eva 1
+......with Eliza 1
+.........Ezra 1
+......with Elanor 3
+.........Emma 1
+.........Erin 1
+.........Eric 1
+......with Eden 1
+...Faith 1
+...with Felix 1
+......Fred 1
+......with Fiona 1
+.........Forrest 1
+...Henry 3
+...with Holly 3
+......Hope 3
+......with Hunter 3
+.........Hannah 1
+.........with Harvey 1
+.........Hazel 1
+.........with Hank 1
+.........Helen 1
+.........with Hudson 1
