@@ -12,6 +12,7 @@ Output an SVG file to std-out
 
 The intention is that the output will be printed on a large sheet
 at a print service such as Staples.
+If necessary to convert the output to SVG: use Inkscape.
 
 This code is released under the MIT License: https://opensource.org/licenses/MIT
 Copyright (c) 2025 John A. Andrea
@@ -33,7 +34,7 @@ max_font_size = 20
 
 
 def get_version():
-    return '0.4.2'
+    return '0.4.3'
 
 
 def subtract_a_percentage( x, p ):
