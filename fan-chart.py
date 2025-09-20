@@ -34,7 +34,7 @@ max_font_size = 20
 
 
 def get_version():
-    return '0.4.3'
+    return '0.4.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -385,10 +385,19 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # put the text on a curve,
     # no need for a separate graphic context
     path_id = 'text' + str(indi)
+
     path = 'M' + roundstr(x) +','+ roundstr(y)
     path += ' A' + roundstr(text_distance) +','+ roundstr(text_distance)
     path += ' 0 0 0'
     path += ' ' + roundstr(x) +','+ roundstr(-y)
+
+    ## possibly Inkscape is confused about relative vs absolute positiong
+    ## when inside a translated graphic context
+    #path = 'm' + roundstr(x) +','+ roundstr(y)
+    #path += ' a' + roundstr(text_distance) +','+ roundstr(text_distance)
+    #path += ' 0 0 0'
+    #path += ' ' + roundstr(x) +','+ roundstr(-y)
+    # or maybe the problem is using a "def" for the path
 
     # trig formuls: length = r * angle
     # and shorten a bit for margins
@@ -424,9 +433,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # this style doesn't look good
     #font_options += ' style="fill:black; stroke:white;"'
 
-    print( '<defs>' )
-    print( '  <path id="' + path_id + '" d="' + path + '" />' )
-    print( '</defs>' )
+    #print( '<defs>' )
+    print( '  <path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
+    #print( '</defs>' )
     print( '<text ' + font_options + '>' )
     print( '  <textPath href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
