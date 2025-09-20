@@ -34,7 +34,7 @@ max_font_size = 20
 
 
 def get_version():
-    return '0.5.0'
+    return '0.5.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -364,8 +364,10 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
+
+    # this is the distance where the text will be placed relative
+    # to the height of the available area
     distance_factor = 0.85
-    #font_size = 13
 
     name = '?'
     if indi:
@@ -374,32 +376,44 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     name = prefix + name
 
     half_d = math.radians( d/2.0 )
-    text_distance = inner + distance_factor * ( outer - inner )
-    x = text_distance * math.cos( half_d )
-    y = text_distance * math.sin( half_d )
+    text_baseline = inner + distance_factor * ( outer - inner )
+    x = text_baseline * math.cos( half_d )
+    y = text_baseline * math.sin( half_d )
 
     # the height of the area is the maximum font size
     # though a better heuristic must be used for sideways as well
-    text_area_height = text_distance - 4
+    text_area_height = text_baseline - 4
+
+    # trig formula: length = r * angle
+    # this is the length of the arc along the width of the slice
+    # where the text can be placed
+    # and shorten a bit to allow for margins
+    text_area_width = subtract_a_percentage( text_baseline * math.radians( d ), 5 )
 
     # put the text on a curve,
     # no need for a separate graphic context
     path_id = 'text' + str(indi)
+
+    # start by assuming lengthwise text
     path = 'M' + roundstr(x) +','+ roundstr(y)
-    path += ' A' + roundstr(text_distance) +','+ roundstr(text_distance)
+    path += ' A' + roundstr(text_baseline) +','+ roundstr(text_baseline)
     path += ' 0 0 0'
     path += ' ' + roundstr(x) +','+ roundstr(-y)
 
-    # trig formuls: length = r * angle
-    # and shorten a bit for margins
-    arc_length = subtract_a_percentage( text_distance * math.radians( d ), 5 )
+    text_area_size = text_area_width
 
-    font_size = font_to_fit_string( arc_length, name )
+    # try to determine how to fit the text
+    if text_area_height > text_area_width:
+       # then try flipping it
+       text_area_size = text_area_width
+       # make a new path running vertically
+
+    font_size = font_to_fit_string( text_area_size, name )
     # wait, what's the relationship between font size and pixel height
     if font_size > text_area_height:
        # this is where  heuristic is needed to compare the available
        # width vs height
-       font_size = text_area_height
+       font_size = text_area_size
     # for now, reduce this
     font_size *= 0.75
 
@@ -411,10 +425,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     #string_length *= 1.33
 
     # try to center it on the curve
-    offset = arc_length / 2 - string_length / 2
+    offset = text_area_size / 2 - string_length / 2
 
     # change to a percent (is that what the startOffset parameter needs?)
-    offset = 100.0 * offset / arc_length
+    offset = 100.0 * offset / text_area_size
     # again compimsate for string lenght estimate
     offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
@@ -430,6 +444,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     print( '</text>' )
 
     if draw_separator:
+       # put a line in front of the name
+       # used for separating multiple marriages
        x = outer * math.cos(half_d)
        y = outer * math.sin(half_d)
        line = 'M' + roundstr(x) +','+ roundstr(y)
