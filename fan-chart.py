@@ -5,17 +5,35 @@ import importlib.util
 import os
 import math
 
+"""
+Produce a genealogy fan chart (full circle).
+Input is a GEDCOM file
+Output an SVG file to std-out
+
+The intention is that the output will be printed on a large sheet
+at a print service such as Staples.
+
+This code is released under the MIT License: https://opensource.org/licenses/MIT
+Copyright (c) 2025 John A. Andrea
+
+No support provided.
+"""
+
 # define an svg page size
 # arbitrary and square, but scalable
 page_size = 600
 
+# default colour scheme
 slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
 slice_colours.extend( ['coral', 'khaki', 'lemonchiffon', 'lavenderblush'] )
 slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
 
+# even on a large sheet, no need for huge fonts
+max_font_size = 20
+
 
 def get_version():
-    return '0.4.1'
+    return '0.4.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -383,6 +401,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        font_size = text_area_height
     # for now, reduce this
     font_size *= 0.75
+
+    if font_size > max_font_size:
+       font_size = max_font_size
 
     string_length = estimate_string_width( font_size, name )
     ## increase that estimate a bit for now
