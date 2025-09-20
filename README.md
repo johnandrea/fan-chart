@@ -1,6 +1,7 @@
 # fan-chart.py
 
-A program which will produce a full circle genealogy descendant fan chart from a GEDCOM input.
+A program which will produce a full circle genealogy descendant fan chart from a GEDCOM input. The 
+output is intended to be used for large sheet printing at print services such as Staples (see below).
 
 Reasons for making my own program:
 
@@ -21,6 +22,14 @@ Reasons for making my own program:
 ## Installation
 
 No installation process. Copy the program and the library.
+
+## Printing
+
+Some printers, even at print services such as Staples, cannot print directly from SVG. In these cases an option is to convert the output to PDF. There exist online converters, however for scripted work a solution is to use Inkscape in its command line mode to perform the conversion.
+
+'''
+/path/inkscape ----export-filename=NAME.pdf NAME.svg
+'''
 
 ## Input
 
@@ -80,7 +89,6 @@ This code is provided with neither support nor warranty.
 - More colours
 - B/W or greyscale selection which will work well on B/W printers
 - Alternately start with a specific family, in cases where a person more than one
-- Describe ways to convert svg to pdf
 - Handle non-ASCII names in a manner better for SVG output.
 - Output to SVG or PDF
 
