@@ -10,6 +10,10 @@ Produce a genealogy fan chart (full circle).
 Input is a GEDCOM file
 Output an SVG file to std-out
 
+Goals:
+1: scriptable
+2: text consistently  faces outward or vertically clockwise
+
 The intention is that the output will be printed on a large sheet
 at a print service such as Staples.
 If necessary to convert the output to SVG: use Inkscape.
@@ -29,12 +33,17 @@ slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','ligh
 slice_colours.extend( ['coral', 'khaki', 'lemonchiffon', 'lavenderblush'] )
 slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
 
+n_colours = len( slice_colours )
+
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
+# all the text sizes are based on this typeface
+font_selection = 'font-family="Times New Roman,serif"'
+
 
 def get_version():
-    return '0.5.1'
+    return '0.5.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -44,6 +53,11 @@ def subtract_a_percentage( x, p ):
 def roundstr( x ):
     # output of 2 digits ought to be enough
     return str( round( x, 2 ) )
+
+
+def compute_arc_length( radius, arc_degrees ):
+    # standard trig function
+    return radius * math.radians( arc_degrees )
 
 
 def estimate_string_width( font_size, s ):
@@ -364,10 +378,13 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
-
     # this is the distance where the text will be placed relative
     # to the height of the available area
-    distance_factor = 0.85
+    distance_factor = 0.9
+
+    # should this be global ?
+    # don't bother flipping to vertical if the font is this or above
+    min_reasonable_font_size = 9
 
     name = '?'
     if indi:
@@ -386,9 +403,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     # trig formula: length = r * angle
     # this is the length of the arc along the width of the slice
-    # where the text can be placed
+    # where the text can be placed (assuming horizontal placement)
     # and shorten a bit to allow for margins
-    text_area_width = subtract_a_percentage( text_baseline * math.radians( d ), 5 )
+    text_area_width = subtract_a_percentage( compute_arc_length( text_baseline, d ), 5 )
 
     # put the text on a curve,
     # no need for a separate graphic context
@@ -402,13 +419,22 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     text_area_size = text_area_width
 
+    font_size = font_to_fit_string( text_area_size, name )
+
     # try to determine how to fit the text
     if text_area_height > text_area_width:
        # then try flipping it
-       text_area_size = text_area_width
-       # make a new path running vertically
+       # unless the text still fits nicely in the shorter length
+       if font_size < min_reasonable_font_size:
+          # recompute all the sizes
+          text_area_size = text_area_width
+          # make a new path running vertically
+          text_baseline = inner + distance_factor * ( outer - inner )
+          x = text_baseline * math.cos( half_d )
+          y = text_baseline * math.sin( half_d )
+          # path = 'M' +
 
-    font_size = font_to_fit_string( text_area_size, name )
+
     # wait, what's the relationship between font size and pixel height
     if font_size > text_area_height:
        # this is where  heuristic is needed to compare the available
@@ -434,7 +460,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     offset = roundstr( offset ) + '%'
 
     font_options = ' font_size="' + roundstr(font_size) + '"'
-    font_options += ' font-family="Times New Roman,serif"'
+    font_options += ' ' + font_selection
     # this style doesn't look good
     #font_options += ' style="fill:black; stroke:white;"'
 
@@ -539,12 +565,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         g_rotate = 'rotate(' + roundstr(rotation) + ',0,0)'
         print( '<g transform="' + g_rotate + '">' )
 
-        #if gen == 2:
-        #   x = 700
-        #   y = 0
-        #   print( '<path d="M0,0 ' + roundstr(x) +','+ roundstr(y) + '" style="stroke:red; fill:none;"/>')
-
-        colour_index = colour_index % len(slice_colours)
+        colour_index = colour_index % n_colours
         output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
 
         # a person with no families takes up the whole slice
@@ -590,7 +611,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         # next child starts rotation where this child ended
         rotation += slice_degrees / 2.0
         colour_index += colour_skip
-        if colour_index > len( slice_colours ):
+        if colour_index > n_colours:
            colour_index = 1
 
 
