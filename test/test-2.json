@@ -1,0 +1,87 @@
+var loadData=
+{"name":"Papa\n+Nana",
+ "detail":"Papa",
+ "children": [
+ {"name":"Alice",
+  "detail":"Alice\nParents:\nPapa\n+ Nana",
+  "size": 1 },
+ {"name":"Bob\n+Betty",
+  "detail":"Bob\nParents:\nPapa\n+ Nana",
+  "size": 1 },
+ {"name":"Carol\n+Carl",
+  "detail":"Carol\nParents:\nPapa\n+ Nana",
+  "children": [
+  {"name":"Chris",
+   "detail":"Chris\nParents:\nCarl\n+ Carol",
+   "size": 1 }
+   ]},
+ {"name":"David\n+Denise",
+  "detail":"David\nParents:\nPapa\n+ Nana",
+  "children": [
+  {"name":"Daphnie\n+Dexter",
+   "detail":"Daphnie\nParents:\nDavid\n+ Denise",
+   "children": [
+   {"name":"Dennis\n+Daisy",
+    "detail":"Dennis\nParents:\nDexter\n+ Daphnie",
+    "children": [
+    {"name":"Demi",
+     "detail":"Demi\nParents:\nDennis\n+ Daisy",
+     "size": 1 }
+     ]}
+    ]},
+  {"name":"Drew",
+   "detail":"Drew\nParents:\nDavid\n+ Denise",
+   "size": 1 }
+   ]},
+ {"name":"Ed\n+Edna",
+  "detail":"Ed\nParents:\nPapa\n+ Nana",
+  "children": [
+  {"name":"Elias\n+Eva",
+   "detail":"Elias\nParents:\nEd\n+ Edna",
+   "size": 1
+  },
+  {"name":"Elias\n+Eliza",
+   "detail":"Elias\nParents:\nEd\n+ Edna",
+   "children": [
+   {"name":"Ezra",
+    "detail":"Ezra\nParents:\nElias\n+ Eliza",
+    "size": 1 }
+    ]},
+  {"name":"Elias\n+Elanor",
+   "detail":"Elias\nParents:\nEd\n+ Edna",
+   "size": 1
+  },
+  {"name":"Elias\n+Eden",
+   "detail":"Elias\nParents:\nEd\n+ Edna",
+   "size": 1
+  }
+   ]},
+ {"name":"Faith\n+Felix",
+  "detail":"Faith\nParents:\nPapa\n+ Nana",
+  "children": [
+  {"name":"Fred\n+Flora",
+   "detail":"Fred\nParents:\nFelix\n+ Faith",
+   "children": [
+   {"name":"Forrest",
+    "detail":"Forrest\nParents:\nFred\n+ Flora",
+    "size": 1 }
+    ]}
+   ]},
+ {"name":"Henry\n+Holly",
+  "detail":"Henry\nParents:\nPapa\n+ Nana",
+  "children": [
+  {"name":"Hope\n+Hunter",
+   "detail":"Hope\nParents:\nHenry\n+ Holly",
+   "children": [
+   {"name":"Hannah\n+Harvey",
+    "detail":"Hannah\nParents:\nHunter\n+ Hope",
+    "size": 1 },
+   {"name":"Hazel\n+Hank",
+    "detail":"Hazel\nParents:\nHunter\n+ Hope",
+    "size": 1 },
+   {"name":"Helen\n+Hudson",
+    "detail":"Helen\nParents:\nHunter\n+ Hope",
+    "size": 1 }
+    ]}
+   ]}
+  ]};

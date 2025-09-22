@@ -25,6 +25,7 @@
 0 @I4@ INDI
 1 NAME Bob //
 2 GIVN Bob
+1 SEX M
 1 FAMS @F2@
 1 FAMC @F1@
 0 @I5@ INDI
@@ -122,6 +123,7 @@
 0 @I22@ INDI
 1 NAME Ezra //
 2 GIVN Ezra
+1 SEX M
 1 FAMC @F9@
 0 @I23@ INDI
 1 NAME Faith //
