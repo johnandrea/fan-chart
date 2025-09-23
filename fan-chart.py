@@ -16,7 +16,9 @@ Goals:
 
 The intention is that the output will be printed on a large sheet
 at a print service such as Staples.
-If necessary to convert the output to SVG: use Inkscape.
+If necessary to convert the output to PDF: use Inkscape:
+"inkscape --export-filename=NAME.pdf NAME.svg"
+https://wiki.inkscape.org/wiki/Using_the_Command_Line
 
 This code is released under the MIT License: https://opensource.org/licenses/MIT
 Copyright (c) 2025 John A. Andrea
@@ -43,7 +45,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.5.4'
+    return '0.5.5'
 
 
 def subtract_a_percentage( x, p ):
