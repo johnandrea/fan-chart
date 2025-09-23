@@ -43,7 +43,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.5.2'
+    return '0.5.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -58,6 +58,23 @@ def roundstr( x ):
 def compute_arc_length( radius, arc_degrees ):
     # standard trig function
     return radius * math.radians( arc_degrees )
+
+
+#def compute_slice_corner( r, d ):
+#    # return array of  [ x, y, comma-sep-point ]
+#    x = r * math.cos(math.radians(d))
+#    y = r * math.sin(math.radians(d))
+#    return [ x, y, roundstr(x) + ',' + roundstr(y) ]
+
+
+def estimate_font_height( font_size ):
+    # result in pixels
+    return font_size * 2.0 / 3.0
+
+
+def reverse_font_height( pixels ):
+    # from pixels to estimated font size
+    return pixels * 3.0 / 2.0
 
 
 def estimate_string_width( font_size, s ):
@@ -435,11 +452,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
           # path = 'M' +
 
 
-    # wait, what's the relationship between font size and pixel height
-    if font_size > text_area_height:
-       # this is where  heuristic is needed to compare the available
+    if estimate_font_height(font_size) > text_area_height:
+       # this is where a heuristic is needed to compare the available
        # width vs height
-       font_size = text_area_size
+       font_size = reverse_font_height( text_area_size )
     # for now, reduce this
     font_size *= 0.75
 
@@ -485,7 +501,7 @@ def output_a_slice( d, inner, outer, colour ):
     # slice of a ring given inner and outer radius
     # with center at 0,0 and centered on the x-axis
 
-    half_d = math.radians( d/2.0 )
+    half_d = math.radians( d / 2.0 )
 
     p1_x = inner * math.cos(half_d)
     p1_y = - inner * math.sin(half_d)
