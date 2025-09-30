@@ -64,7 +64,7 @@ inner = 80
 outer = 150
 
 # angle of segment
-d = 20
+d = 15
 half_d = math.radians( d/2.0 )
 
 # placement of first example
@@ -208,23 +208,30 @@ print( 'A' + r + ' 0 0 0 ' + p4 )
 print( 'z" />' )
 
 margin_d_factor = 0.8
-margin_d = margin_d_factor * half_d
+margin_w_factor = 0.95
 
-p7_x = inner * math.cos( margin_d )
-p7_y = inner * math.sin( margin_d )
+margined_d = margin_d_factor * half_d
+
+slice_width = inner + ( outer - inner )/2
+slice_margin = ( 1.0 - margin_w_factor ) * slice_width
+margined_inner = inner + slice_margin
+margined_outer = outer - slice_margin
+margined_slice_width = margined_inner + ( margined_outer - margined_inner )/2
+
+p7_x = margined_inner * math.cos( margined_d )
+p7_y = margined_inner * math.sin( margined_d )
 blue_dot( p7_x, p7_y )
 output_text( p7_x + 4, p7_y - 2, 10, 'P7' )
 p7 = roundstr(p7_x) + ',' + roundstr(p7_y)
 
-p8_x = outer * math.cos( margin_d )
-p8_y = outer * math.sin( margin_d )
+p8_x = margined_outer * math.cos( margined_d )
+p8_y = margined_outer * math.sin( margined_d )
 blue_dot( p8_x, p8_y )
 output_text( p8_x + 4, p8_y - 2, 10, 'P8' )
 p8 = roundstr(p8_x) + ',' + roundstr(p8_y)
 
-half_slice = inner + (outer - inner)/2
-n_x = half_slice * math.cos( margin_d )
-n_y = half_slice * math.sin( margin_d )
+n_x = margined_slice_width * math.cos( margined_d )
+n_y = margined_slice_width * math.sin( margined_d )
 blue_dot( n_x, n_y )
 output_text( n_x, n_y - 4, 8, 'N' )
 
