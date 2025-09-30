@@ -32,19 +32,19 @@
 <text font-size="10" font-family="Times New Roman,serif"
  x="290" y="51">y &#8595;</text>
 <g transform="translate(300,40)">
-<circle cx="79.32" cy="-10.44"
+<circle cx="78.78" cy="-13.89"
  fill="blue" stroke="blue" r="2" />
-<circle cx="79.32" cy="10.44"
+<circle cx="78.78" cy="13.89"
  fill="blue" stroke="blue" r="2" />
-<circle cx="148.72" cy="19.58"
+<circle cx="147.72" cy="26.05"
  fill="blue" stroke="blue" r="2" />
-<circle cx="148.72" cy="-19.58"
+<circle cx="147.72" cy="-26.05"
  fill="blue" stroke="blue" r="2" />
 <path style="stroke:grey; fill:lightgreen;"
-d="M79.32,-10.44
-A80,80 0 0 1 79.32,10.44
-L148.72,19.58
-A150,150 0 0 0 148.72,-19.58
+d="M78.78,-13.89
+A80,80 0 0 1 78.78,13.89
+L147.72,26.05
+A150,150 0 0 0 147.72,-26.05
 z" />
 <circle cx="80" cy="0"
  fill="blue" stroke="blue" r="2" />
@@ -72,32 +72,32 @@ z" />
 <text font-size="10" font-family="Times New Roman,serif"
  x="290" y="391">y &#8595;</text>
 <g transform="translate(300,380)">
-<circle cx="79.32" cy="-10.44"
+<circle cx="78.78" cy="-13.89"
  fill="blue" stroke="blue" r="2" />
-<circle cx="79.32" cy="10.44"
+<circle cx="78.78" cy="13.89"
  fill="blue" stroke="blue" r="2" />
-<circle cx="148.72" cy="19.58"
+<circle cx="147.72" cy="26.05"
  fill="blue" stroke="blue" r="2" />
-<circle cx="148.72" cy="-19.58"
+<circle cx="147.72" cy="-26.05"
  fill="blue" stroke="blue" r="2" />
 <path style="stroke:grey; fill:lightgreen;"
-d="M79.32,-10.44
-A80,80 0 0 1 79.32,10.44
-L148.72,19.58
-A150,150 0 0 0 148.72,-19.58
+d="M78.78,-13.89
+A80,80 0 0 1 78.78,13.89
+L147.72,26.05
+A150,150 0 0 0 147.72,-26.05
 z" />
-<circle cx="80" cy="0"
+<circle cx="79.22" cy="11.13"
  fill="blue" stroke="blue" r="2" />
 <text font-size="10" font-family="Times New Roman,serif"
- x="84" y="-2">P7</text>
-<circle cx="150" cy="0"
+ x="83.22" y="9.13">P7</text>
+<circle cx="148.54" cy="20.88"
  fill="blue" stroke="blue" r="2" />
 <text font-size="10" font-family="Times New Roman,serif"
- x="154" y="-2">P8</text>
-<circle cx="115.0" cy="0"
+ x="152.54" y="18.88">P8</text>
+<circle cx="113.88" cy="16.0"
  fill="blue" stroke="blue" r="2" />
 <text font-size="8" font-family="Times New Roman,serif"
- x="115.0" y="-4">N</text>
-<path d="M80,0 150,0" style="stroke:red;" />
+ x="113.88" y="12.0">N</text>
+<path d="M79.22,11.13 148.54,20.88" style="stroke:red;" />
 </g>
 </svg>

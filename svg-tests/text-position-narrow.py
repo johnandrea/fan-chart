@@ -64,7 +64,7 @@ inner = 80
 outer = 150
 
 # angle of segment
-d = 15
+d = 20
 half_d = math.radians( d/2.0 )
 
 # placement of first example
@@ -207,20 +207,24 @@ r = roundstr(outer) + ',' + roundstr(outer)
 print( 'A' + r + ' 0 0 0 ' + p4 )
 print( 'z" />' )
 
-p7_x = inner
-p7_y = 0
+margin_d_factor = 0.8
+margin_d = margin_d_factor * half_d
+
+p7_x = inner * math.cos( margin_d )
+p7_y = inner * math.sin( margin_d )
 blue_dot( p7_x, p7_y )
 output_text( p7_x + 4, p7_y - 2, 10, 'P7' )
 p7 = roundstr(p7_x) + ',' + roundstr(p7_y)
 
-p8_x = outer
-p8_y = - 0
+p8_x = outer * math.cos( margin_d )
+p8_y = outer * math.sin( margin_d )
 blue_dot( p8_x, p8_y )
 output_text( p8_x + 4, p8_y - 2, 10, 'P8' )
 p8 = roundstr(p8_x) + ',' + roundstr(p8_y)
 
-n_x = inner + (outer - inner)/2
-n_y = - 0
+half_slice = inner + (outer - inner)/2
+n_x = half_slice * math.cos( margin_d )
+n_y = half_slice * math.sin( margin_d )
 blue_dot( n_x, n_y )
 output_text( n_x, n_y - 4, 8, 'N' )
 
