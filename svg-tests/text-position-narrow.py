@@ -131,6 +131,8 @@ y += f + 2
 output_text( x, y, f, 'path from p7 to p8' )
 y += f + 2
 output_text( x, y, f, 'place text along that path' )
+y += f + 2
+output_text( x, y, f, 'Also need to center text width about path middle.' )
 
 text_y += cy_inc
 y = text_y

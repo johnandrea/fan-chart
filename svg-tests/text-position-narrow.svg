@@ -41,6 +41,8 @@
 <text font-size="13" font-family="Times New Roman,serif"
  x="8" y="555">place text along that path</text>
 <text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="570">Also need to center text width about path middle.</text>
+<text font-size="13" font-family="Times New Roman,serif"
  x="8" y="780">Show the section rotated:</text>
 <path d="M340,40 590.0,40" style="stroke:blue;" />
 <circle cx="340" cy="40"
