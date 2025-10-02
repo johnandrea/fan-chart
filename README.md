@@ -88,7 +88,7 @@ This code is provided with neither support nor warranty.
 
 - More colours
 - B/W or greyscale selection which will work well on B/W printers
-- Alternately start with a specific family, in cases where a person more than one
+- Alternately start with a specific family, in cases where a person has more than one family
 - Handle non-ASCII names in a manner better for SVG output.
 - Output to SVG or PDF
 
