@@ -24,6 +24,9 @@ This code is released under the MIT License: https://opensource.org/licenses/MIT
 Copyright (c) 2025 John A. Andrea
 
 No support provided.
+
+I may use the term "pixels" to represent distances.
+
 """
 
 # define an svg page size
@@ -45,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.5.5'
+    return '0.5.7'
 
 
 def subtract_a_percentage( x, p ):
