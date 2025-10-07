@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.0'
+    return '0.6.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -168,6 +168,9 @@ def setup_char_widths():
 def estimate_string_width( font_size, s ):
     # For a given font size, return the approximate pixel
     # width of the string.
+    #
+    # What about kerning spacing. Presuming its included in the
+    # individual string widths, but add small extra width anyway.
 
     result = 0
     for c in s:
@@ -176,7 +179,7 @@ def estimate_string_width( font_size, s ):
            k = c
         result += font_size * char_width_factors[k]
 
-    return result
+    return result + 2
 
 
 def font_to_fit_string( width, s ):
