@@ -1,0 +1,50 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="400pt" height="400pt"
+ viewBox="0.00 0.00 400.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<g transform="translate(10,390)" >
+<path d="M0,-0.24 400.0,-399.69" style="stroke:green; fill:none;" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="12" y="-350">slope 0.67</text>
+<path d="M-10,0 L400,0" style="stroke:black; fill:none;" />
+<path d="M0,10 L0,-400" style="stroke:black; fill:none;" />
+<circle cx="0.0" cy="-0.0"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="3.0" y="-3.0">0.0,0.0</text>
+<circle cx="90.0" cy="-88.89"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="93.0" y="-91.89">9.0,6.0</text>
+<circle cx="120.0" cy="-103.7"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="123.0" y="-106.7">12.0,7.0</text>
+<circle cx="160.0" cy="-162.96"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="163.0" y="-165.96">16.0,11.0</text>
+<circle cx="200.0" cy="-192.59"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="203.0" y="-195.59">20.0,13.0</text>
+<circle cx="250.0" cy="-251.85"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="253.0" y="-254.85">25.0,17.0</text>
+<circle cx="300.0" cy="-296.3"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="303.0" y="-299.3">30.0,20.0</text>
+<circle cx="350.0" cy="-340.74"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="353.0" y="-343.74">35.0,23.0</text>
+<circle cx="400.0" cy="-400.0"
+ fill="red" stroke="red" r="2" />
+<text font-size="9" font-family="Times New Roman,serif"
+ x="403.0" y="-403.0">40.0,27.0</text>
+</g>
+</svg>
