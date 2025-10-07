@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.1'
+    return '0.6.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -179,7 +179,7 @@ def estimate_string_width( font_size, s ):
            k = c
         result += font_size * char_width_factors[k]
 
-    return result + 2
+    return result + 3
 
 
 def font_to_fit_string( width, s ):
@@ -187,7 +187,10 @@ def font_to_fit_string( width, s ):
     trial_font = 25
     pixels = estimate_string_width( trial_font, s )
     # assume a linear relationship between fonts and widths
-    return trial_font * width / pixels
+    result = trial_font * width / pixels
+    # maybe needs fixing
+    result *= 0.75
+    return result
 
 
 def calculate_generation_rings( n_gen ):
@@ -470,7 +473,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     # should this be global ?
     # don't bother flipping to vertical if the font is this or above
-    min_reasonable_font_size = 9
+    min_reasonable_font_size = 3
 
     name = '?'
     if indi:
@@ -487,11 +490,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # though a better heuristic must be used for sideways as well
     text_area_height = text_baseline - 4
 
-    # trig formula: length = r * angle
-    # this is the length of the arc along the width of the slice
-    # where the text can be placed (assuming horizontal placement)
-    # and shorten a bit to allow for margins
-    text_area_width = subtract_a_percentage( compute_arc_length( text_baseline, d ), 5 )
+    # estimate the width as the middle of the section
+    #text_area_width = compute_arc_length( inner+(outer-inner)/2, d )
+    # what if the inner arc is used
+    text_area_width = compute_arc_length( inner, d )
 
     # put the text on a curve,
     # no need for a separate graphic context
@@ -503,6 +505,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     path += ' 0 0 0'
     path += ' ' + roundstr(x) +','+ roundstr(-y)
 
+    # save the originally calculated width
     text_area_size = text_area_width
 
     font_size = font_to_fit_string( text_area_size, name )
@@ -518,21 +521,17 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
           text_baseline = inner + distance_factor * ( outer - inner )
           x = text_baseline * math.cos( half_d )
           y = text_baseline * math.sin( half_d )
-          # path = 'M' +
-
 
     if estimate_font_height(font_size) > text_area_height:
        # this is where a heuristic is needed to compare the available
        # width vs height
-       font_size = reverse_font_height( text_area_size )
-    # for now, reduce this
-    font_size *= 0.75
+       font_size = 0.75 * reverse_font_height( text_area_size )
 
     if font_size > max_font_size:
        font_size = max_font_size
 
     string_length = estimate_string_width( font_size, name )
-    ## increase that estimate a bit for now
+    ## increase that estimate to approximate a margin
     #string_length *= 1.33
 
     # try to center it on the curve
@@ -540,7 +539,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     # change to a percent (is that what the startOffset parameter needs?)
     offset = 100.0 * offset / text_area_size
-    # again compimsate for string lenght estimate
+    # again compinsate for string length estimate
     offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
 
