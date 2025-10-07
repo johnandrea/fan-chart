@@ -1,9 +1,4 @@
 #!/usr/local/bin/python3
-import sys
-import argparse
-import importlib.util
-import os
-import math
 
 """
 Produce a genealogy fan chart (full circle).
@@ -26,8 +21,13 @@ Copyright (c) 2025 John A. Andrea
 No support provided.
 
 I may use the term "pixels" to represent distances.
-
 """
+
+import sys
+import argparse
+import importlib.util
+import os
+import math
 
 # define an svg page size
 # arbitrary and square, but scalable
@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.5.7'
+    return '0.6.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -82,40 +82,101 @@ def reverse_font_height( pixels ):
     return pixels * 3.0 / 2.0
 
 
+def setup_char_widths():
+    # Return the estimated character width: slope of line per font size.
+    # y-intercept is ignored (assumed zero): zero font size equals zero width
+    # The small y-intercepts calculated were probably nothing more than
+    # my mistakes in estimating the exact character spacing.
+
+    results = dict()
+
+    # These two were defined previously, to be used for characters
+    # not matching the below definitions
+    results["generic lower"] = 0.4615
+    results["generic upper"] = 0.657
+
+    results[" "] = 0.246
+    results["a"] = 0.446
+    results["A"] = 0.721
+    results["b"] = 0.499
+    results["B"] = 0.666
+    results["c"] = 0.440
+    results["C"] = 0.668
+    results["d"] = 0.499
+    results["D"] = 0.719
+    results["e"] = 0.435
+    results["E"] = 0.608
+    results["f"] = 0.324
+    results["F"] = 0.550
+    results["g"] = 0.497
+    results["G"] = 0.722
+    results["h"] = 0.496
+    results["H"] = 0.725
+    results["i"] = 0.273
+    results["I"] = 0.329
+    results["j"] = 0.265
+    results["J"] = 0.392
+    results["k"] = 0.501
+    results["K"] = 0.720
+    results["l"] = 0.273
+    results["L"] = 0.610
+    results["m"] = 0.790
+    results["M"] = 0.862
+    results["n"] = 0.500
+    results["N"] = 0.716
+    results["o"] = 0.497
+    results["O"] = 0.716
+    results["p"] = 0.487
+    results["P"] = 0.556
+    results["q"] = 0.502
+    results["Q"] = 0.734
+    results["r"] = 0.322
+    results["R"] = 0.668
+    results["s"] = 0.380
+    results["S"] = 0.553
+    results["t"] = 0.269
+    results["T"] = 0.616
+    results["u"] = 0.500
+    results["U"] = 0.721
+    results["v"] = 0.498
+    results["V"] = 0.717
+    results["w"] = 0.722
+    results["W"] = 0.960
+    results["x"] = 0.498
+    results["X"] = 0.722
+    results["y"] = 0.495
+    results["Y"] = 0.721
+    results["z"] = 0.451
+    results["Z"] = 0.625
+    results["+"] = 0.574
+    results["-"] = 0.334
+    results["0"] = 0.496
+    results["1"] = 0.457
+    results["2"] = 0.494
+    results["3"] = 0.491
+    results["4"] = 0.494
+    results["5"] = 0.492
+    results["6"] = 0.496
+    results["7"] = 0.493
+    results["8"] = 0.494
+    results["9"] = 0.497
+    results["("] = 0.324
+    results[")"] = 0.322
+    return results
+
+
 def estimate_string_width( font_size, s ):
-    # this is where i miss Postscript
-    #
     # For a given font size, return the approximate pixel
     # width of the string.
-    #
-    # The SVG function stringlength is of no value because it changes kerning.
-    #
-    # Numbers come from a display of characters on a grid
-    # them fitting the results to a line (which was suprisingly straight).
-    # Probably should do it with a specific font rather than the default
-    # and do it for each letter.
-    #
-    # y = mx + b
-    # pixels_per_char = slope * font_size + intercept
-    #
-    # lowercase: slope=0.4615, intercept=0
-    # uppercase: slope=0.657, intercept=-0.375
 
-    # start with everything as upper case
-    # which also takes care of digits, non-alpha, etc
+    result = 0
+    for c in s:
+        k = 'generic upper'
+        if c in char_width_factors:
+           k = c
+        result += font_size * char_width_factors[k]
 
-    n_upper = len( s )
-
-    # reduce by the number of lowercase
-    # (is this pythonic)
-    n_lower = 0
-    for c in list( 'abcdefghijklmnopqrstuvwxyz' ):
-        n_lower += s.count( c )
-
-    pixels = ( n_upper - n_lower ) * ( 0.657 * font_size - 0.375 )
-    pixels += n_lower * ( 0.4615 * font_size )
-
-    return pixels
+    return result
 
 
 def font_to_fit_string( width, s ):
@@ -640,6 +701,8 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 # page is square, get the center
 cx = page_size / 2.0
 cy = cx
+
+char_width_factors = setup_char_widths()
 
 
 options = get_program_options()
