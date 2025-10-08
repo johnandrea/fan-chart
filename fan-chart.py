@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.5'
+    return '0.6.6'
 
 
 def subtract_a_percentage( x, p ):
@@ -538,9 +538,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     # change to a percent (is that what the startOffset parameter needs?)
     offset = 100.0 * offset / text_area_size
-    # again compinsate for string length estimate
-    offset = subtract_a_percentage( offset, 9 )
-    offset = roundstr( offset ) + '%'
+    # bit of a margin, 1.5%
+    offset = roundstr( offset + 1.5 ) + '%'
 
     font_options = ' font-size="' + roundstr(font_size) + '"'
     font_options += ' ' + font_selection
