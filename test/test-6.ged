@@ -1,0 +1,373 @@
+﻿0 HEAD
+1 SOUR manual
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+1 SUBM @SUB1@
+0 @SUB1@ SUBM
+1 NAME John
+0 @I1@ INDI
+1 NAME Papa /Bennis/
+2 GIVN Papa
+2 SURN Bennis
+1 SEX M
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Nana /Potter/
+2 GIVN Nana
+2 SURN Potter
+1 SEX F
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Alice /Bennis/
+2 GIVN Alice
+2 SURN Bennis
+1 SEX F
+1 FAMC @F1@
+0 @I4@ INDI
+1 NAME Bob /Bennis/
+2 GIVN Bob
+2 SURN Bennis
+1 SEX M
+1 FAMS @F2@
+1 FAMC @F1@
+0 @I5@ INDI
+1 NAME Carol /Bennis/
+2 GIVN Carol
+2 SURN Bennis
+1 SEX F
+1 FAMS @F3@
+1 FAMS @F19@
+1 FAMC @F1@
+0 @I6@ INDI
+1 NAME Betty /MacLean/
+2 GIVN Betty
+2 SURN MacLean
+1 SEX F
+1 FAMS @F2@
+0 @I7@ INDI
+1 NAME Carl /Rosta/
+2 GIVN Carl
+2 SURN Rosta
+1 SEX M
+1 FAMS @F3@
+0 @I8@ INDI
+1 NAME Chris /Rosta/
+2 GIVN Chris
+2 SURN Rosta
+1 SEX M
+1 FAMC @F3@
+0 @I9@ INDI
+1 NAME David /Bennis/
+2 GIVN David
+2 SURN Bennis
+1 SEX M
+1 FAMS @F4@
+1 FAMC @F1@
+0 @I10@ INDI
+1 NAME Denise /MacDonald/
+2 GIVN Denise
+2 SURN MacDonald
+1 SEX F
+1 FAMS @F4@
+0 @I11@ INDI
+1 NAME Daphnie /Bennis/
+2 GIVN Daphnie
+2 SURN Bennis
+1 SEX F
+1 FAMS @F5@
+1 FAMC @F4@
+0 @I12@ INDI
+1 NAME Drew /Bennis/
+2 GIVN Drew
+2 SURN Bennis
+1 SEX M
+1 FAMC @F4@
+0 @I13@ INDI
+1 NAME Dexter /MacInnis/
+2 GIVN Dexter
+2 SURN MacInnis
+1 SEX M
+1 FAMS @F5@
+0 @I14@ INDI
+1 NAME Dennis /MacInnis/
+2 GIVN Dennis
+2 SURN MacInnis
+1 SEX M
+1 FAMS @F6@
+1 FAMC @F5@
+0 @I15@ INDI
+1 NAME Daisy /Stone/
+2 GIVN Daisy
+2 SURN Stone
+1 SEX F
+1 FAMS @F6@
+0 @I16@ INDI
+1 NAME Demi /MacInnis/
+2 GIVN Demi
+2 SURN MacInnis
+1 SEX F
+1 FAMC @F6@
+0 @I17@ INDI
+1 NAME Ed /Bennis/
+2 GIVN Ed
+2 SURN Bennis
+1 SEX M
+1 FAMS @F7@
+1 FAMC @F1@
+0 @I18@ INDI
+1 NAME Edna /McPherson/
+2 GIVN Edna
+2 SURN McPherson
+1 SEX F
+1 FAMS @F7@
+0 @I19@ INDI
+1 NAME Elias /Bennis/
+2 GIVN Elias
+2 SURN Bennis
+1 SEX M
+1 FAMS @F8@
+1 FAMS @F9@
+1 FAMS @F17@
+1 FAMS @F18@
+1 FAMC @F7@
+0 @I20@ INDI
+1 NAME Eva /Anderson/
+2 GIVN Eva
+2 SURN Anderson
+1 SEX F
+1 FAMS @F8@
+0 @I21@ INDI
+1 NAME Eliza /Anders/
+2 GIVN Eliza
+2 SURN Anders
+1 SEX F
+1 FAMS @F9@
+0 @I22@ INDI
+1 NAME Ezra /Bennis/
+2 GIVN Ezra
+2 SURN Bennis
+1 SEX M
+1 FAMC @F9@
+0 @I23@ INDI
+1 NAME Faith /Bennis/
+2 GIVN Faith
+2 SURN Bennis
+1 SEX F
+1 FAMS @F10@
+1 FAMC @F1@
+0 @I24@ INDI
+1 NAME Felix /Macron/
+2 GIVN Felix
+2 SURN Macron
+1 SEX M
+1 FAMS @F10@
+0 @I25@ INDI
+1 NAME Fred /Macron/
+2 GIVN Fred
+2 SURN Macron
+1 SEX M
+1 FAMS @F11@
+1 FAMC @F10@
+0 @I26@ INDI
+1 NAME Flora /Jason/
+2 GIVN Flora
+2 SURN Jason
+1 SEX F
+1 FAMS @F11@
+0 @I27@ INDI
+1 NAME Forrest /Macron/
+2 GIVN Forrest
+2 SURN Macron
+1 SEX M
+1 FAMC @F11@
+0 @I28@ INDI
+1 NAME Henry /Bennis/
+2 GIVN Henry
+2 SURN Bennis
+1 SEX M
+1 FAMS @F12@
+1 FAMC @F1@
+0 @I29@ INDI
+1 NAME Holly /Miller/
+2 GIVN Holly
+2 SURN Miller
+1 SEX F
+1 FAMS @F12@
+0 @I30@ INDI
+1 NAME Hope /Bennis/
+2 GIVN Hope
+2 SURN Bennis
+1 SEX F
+1 FAMS @F13@
+1 FAMC @F12@
+0 @I31@ INDI
+1 NAME Hunter /Stockley/
+2 GIVN Hunter
+2 SURN Stockley
+1 SEX M
+1 FAMS @F13@
+0 @I32@ INDI
+1 NAME Hannah /Stockley/
+2 GIVN Hannah
+2 SURN Stockley
+1 SEX F
+1 FAMS @F14@
+1 FAMC @F13@
+0 @I33@ INDI
+1 NAME Harvey /Hunt/
+2 GIVN Harvey
+2 SURN Hunt
+1 SEX M
+1 FAMS @F14@
+0 @I34@ INDI
+1 NAME Hazel /Stockley/
+2 GIVN Hazel
+2 SURN Stockley
+1 SEX F
+1 FAMS @F15@
+1 FAMC @F13@
+0 @I35@ INDI
+1 NAME Hank /Oster/
+2 GIVN Hank
+2 SURN Oster
+1 SEX M
+1 FAMS @F15@
+0 @I36@ INDI
+1 NAME Helen /Stockley/
+2 GIVN Helen
+2 SURN Stockley
+1 SEX F
+1 FAMS @F16@
+1 FAMC @F13@
+0 @I37@ INDI
+1 NAME Hudson /Xavier/
+2 GIVN Hudson
+2 SURN Xavier
+1 SEX M
+1 FAMS @F16@
+0 @I38@ INDI
+1 NAME Elanor /Amber/
+2 GIVN Elanor
+2 SURN Amber
+1 SEX F
+1 FAMS @F17@
+0 @I39@ INDI
+1 NAME Eden /Aport/
+2 GIVN Eden
+2 SURN Aport
+1 SEX F
+1 FAMS @F18@
+0 @I40@ INDI
+1 NAME Chas /Tower/
+2 GIVN Chas
+2 SURN Tower
+1 SEX M
+1 FAMS @F19@
+0 @I41@ INDI
+1 NAME Connor /Tower/
+2 GIVN Connor
+2 SURN Tower
+1 SEX M
+1 FAMC @F19@
+0 @I42@ INDI
+1 NAME Emma /Bennis/
+2 GIVN Emma
+2 SURN Bennis
+1 SEX F
+1 FAMC @F17@
+0 @I43@ INDI
+1 NAME Erin /Bennis/
+2 GIVN Erin
+2 SURN Bennis
+1 SEX F
+1 FAMC @F17@
+0 @I44@ INDI
+1 NAME Erik /Bennis/
+2 GIVN Erik
+2 SURN Bennis
+1 SEX M
+1 FAMC @F17@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHIL @I5@
+1 CHIL @I9@
+1 CHIL @I17@
+1 CHIL @I23@
+1 CHIL @I28@
+0 @F2@ FAM
+1 HUSB @I4@
+1 WIFE @I6@
+0 @F3@ FAM
+1 HUSB @I7@
+1 WIFE @I5@
+1 CHIL @I8@
+0 @F4@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 CHIL @I11@
+1 CHIL @I12@
+0 @F5@ FAM
+1 HUSB @I13@
+1 WIFE @I11@
+1 CHIL @I14@
+0 @F6@ FAM
+1 HUSB @I14@
+1 WIFE @I15@
+1 CHIL @I16@
+0 @F7@ FAM
+1 HUSB @I17@
+1 WIFE @I18@
+1 CHIL @I19@
+0 @F8@ FAM
+1 HUSB @I19@
+1 WIFE @I20@
+0 @F9@ FAM
+1 HUSB @I19@
+1 WIFE @I21@
+1 CHIL @I22@
+0 @F10@ FAM
+1 HUSB @I24@
+1 WIFE @I23@
+1 CHIL @I25@
+0 @F11@ FAM
+1 HUSB @I25@
+1 WIFE @I26@
+1 CHIL @I27@
+0 @F12@ FAM
+1 HUSB @I28@
+1 WIFE @I29@
+1 CHIL @I30@
+0 @F13@ FAM
+1 HUSB @I31@
+1 WIFE @I30@
+1 CHIL @I32@
+1 CHIL @I34@
+1 CHIL @I36@
+0 @F14@ FAM
+1 HUSB @I33@
+1 WIFE @I32@
+0 @F15@ FAM
+1 HUSB @I35@
+1 WIFE @I34@
+0 @F16@ FAM
+1 HUSB @I37@
+1 WIFE @I36@
+0 @F17@ FAM
+1 HUSB @I19@
+1 WIFE @I38@
+1 CHIL @I42@
+1 CHIL @I43@
+1 CHIL @I44@
+0 @F18@ FAM
+1 HUSB @I19@
+1 WIFE @I39@
+0 @F19@ FAM
+1 HUSB @I40@
+1 WIFE @I5@
+1 CHIL @I41@
+0 TRLR
