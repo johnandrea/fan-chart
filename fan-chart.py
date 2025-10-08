@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.6'
+    return '0.7.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -63,13 +63,6 @@ def roundstr( x ):
 def compute_arc_length( radius, arc_degrees ):
     # standard trig function
     return radius * math.radians( arc_degrees )
-
-
-#def compute_slice_corner( r, d ):
-#    # return array of  [ x, y, comma-sep-point ]
-#    x = r * math.cos(math.radians(d))
-#    y = r * math.sin(math.radians(d))
-#    return [ x, y, roundstr(x) + ',' + roundstr(y) ]
 
 
 def estimate_font_height( font_size ):
@@ -551,6 +544,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
 
+    # debug
+    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+
     if draw_separator:
        # put a line in front of the name
        # used for separating multiple marriages
@@ -697,6 +693,26 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            colour_index = 1
 
 
+def show_start_fam( fam, ring_outer ):
+    # in testing mode there is only one family at the top,
+    # wrap around almost half circle
+    d = 170
+
+    inner = 1
+    outer = ring_outer / 2
+
+    prefix = ''
+    for partner in ['husb','wife']:
+        indi = None
+        if partner in data[fkey][fam]:
+           indi = data[fkey][fam][partner][0]
+        output_name( d, inner, outer, False, prefix, indi )
+        prefix = '+'
+        inner = outer
+        outer = ring_outer
+
+
+
 # more globals
 # page is square, get the center
 cx = page_size / 2.0
@@ -768,47 +784,9 @@ if len(id_match) == 1:
 
       count_slices( start_person, max_generations, 1 )
 
-      #for indi in diagram_data:
-      #    print( '', file=sys.stderr)
-      #    print( indi, data[ikey][indi]['name'][0]['html'], file=sys.stderr )
-      #    print( 'slices', diagram_data[indi]['slices'], file=sys.stderr )
-      #    if diagram_data[indi]['fams']:
-      #       print( 'fams:', file=sys.stderr )
-      #       for fam_data in diagram_data[indi]['fams']:
-      #           fam = fam_data['fam']
-      #           husb = data[fkey][fam]['husb'][0]
-      #           wife = data[fkey][fam]['wife'][0]
-      #           other = husb
-      #           if indi == husb:
-      #              other = wife
-      #           print( 'with', data[ikey][other]['name'][0]['html'], file=sys.stderr )
-      #           print( 'fam', fam_data['fam'], 'slices', fam_data['slices'], file=sys.stderr )
-
       output_header()
 
       ring_sizes = calculate_generation_rings( max_generations )
-
-      ## try showing some text
-      ## try putting it inside the inner circle
-      #test_string = 'test fitting text in circle'
-      ## size of that circle is twice its radius
-      #font_size = font_to_fit_string( 2*ring_sizes[0]['outer'], test_string )
-      ## ok, what's the width going to be
-      #string_width = estimate_string_width( font_size, test_string )
-      ## x is center offset by half the string
-      #x = cx - string_width / 2
-      ## y is center offset by half the font size
-      #y = cy + font_size / 2
-      #output_text( x, y, font_size, test_string )
-      ## what are those numbers
-      #print( '<text font-size="10" x="10" y="20">d:' + roundstr(2*ring_sizes[0]['outer']) + '</text>' )
-      #print( '<text font-size="10" x="10" y="40">font:' + roundstr(font_size) + '</text>' )
-      #print( '<text font-size="10" x="10" y="60">width:' + roundstr(string_width) + '</text>' )
-      ## show those places with dots
-      #print( '<circle cx="' + roundstr(cx) + '" cy="' + roundstr(cy) + '"' )
-      #print( ' fill="red" stroke="red" r="2" />' )
-      #print( '<circle cx="' + roundstr(x) + '" cy="' + roundstr(y) + '"' )
-      #print( ' fill="blue" stroke="blue" r="2" />' )
 
       # generation 0 is special - it is in the inner circle
       # there must be another generation or else the program would have exited
@@ -823,6 +801,9 @@ if len(id_match) == 1:
 
       # testing is using only one start family
       start_fam = diagram_data[start_person]['fams'][0]['fam']
+
+      show_start_fam( start_fam, ring_sizes[0]['outer'] )
+
       output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
