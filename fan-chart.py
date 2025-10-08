@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.4'
+    return '0.6.5'
 
 
 def subtract_a_percentage( x, p ):
@@ -191,7 +191,6 @@ def font_to_fit_string( width, s ):
     wide_char_w = trial_font * char_width_factors[widest_char]
     # so the font size to fit the string is the ratio
     result = width * wide_char_w / s_w
-    print( s, 'at size', trial_font, '=', roundstr(s_w), 'pt, in width', roundstr(width), '= font', roundstr(result), file=sys.stderr ) #debug
     return result
 
 
@@ -542,8 +541,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # again compinsate for string length estimate
     offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
-
-    print( 'output font', roundstr(font_size), file=sys.stderr ) #debug
 
     font_options = ' font-size="' + roundstr(font_size) + '"'
     font_options += ' ' + font_selection
