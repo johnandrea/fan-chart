@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.7.1'
+    return '0.7.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -545,8 +545,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
     print( '</text>' )
 
-    # debug
-    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+    ## show the curve
+    # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
     if draw_separator:
        # put a line in front of the name
@@ -694,27 +694,25 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            colour_index = 1
 
 
-def show_start_fam( fam, ring_outer ):
+def output_start_names( fam, ring_outer ):
     # in testing mode there is only one family at the top,
     # wrap around almost half circle
     d = 170
 
-    inner = 1
-    outer = ring_outer / 2
+    inner = ring_outer / 2
+    outer = ring_outer
 
-    print( '<g transform="rotate(90,0,0)">' )
-
+    rotate = 0
     prefix = ''
     for partner in ['husb','wife']:
         indi = None
         if partner in data[fkey][fam]:
            indi = data[fkey][fam][partner][0]
+        print( '<g transform="rotate(' + str(rotate) + ',0,0)">' )
         output_name( d, inner, outer, False, prefix, indi )
+        print( '</g>' )
         prefix = '+ '
-        inner = outer
-        outer = ring_outer
-
-    print( '</g>' )
+        rotate = 180
 
 
 # more globals
@@ -806,7 +804,7 @@ if len(id_match) == 1:
       # testing is using only one start family
       start_fam = diagram_data[start_person]['fams'][0]['fam']
 
-      show_start_fam( start_fam, ring_sizes[0]['outer'] )
+      output_start_names( start_fam, ring_sizes[0]['outer'] )
 
       output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
