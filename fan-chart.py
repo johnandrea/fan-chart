@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.6.2'
+    return '0.6.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -179,17 +179,19 @@ def estimate_string_width( font_size, s ):
            k = c
         result += font_size * char_width_factors[k]
 
-    return result + 3
+    return result + char_width_factors[' '] * font_size
 
 
 def font_to_fit_string( width, s ):
     # return the font size that will fit the given string to the width
     trial_font = 25
-    pixels = estimate_string_width( trial_font, s )
-    # assume a linear relationship between fonts and widths
-    result = trial_font * width / pixels
-    # maybe needs fixing
-    result *= 0.75
+    s_w = estimate_string_width( trial_font, s )
+    # from the width estimation: width = slope * fontsize
+    # reverse it using a big character
+    wide_char_w = trial_font * char_width_factors[widest_char]
+    # so the font size to fit the string is the ratio
+    result = width * wide_char_w / s_w
+    print( s, 'at size', trial_font, '=', roundstr(s_w), 'pt, in width', roundstr(width), '= font', roundstr(result), file=sys.stderr ) #debug
     return result
 
 
@@ -491,9 +493,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     text_area_height = text_baseline - 4
 
     # estimate the width as the middle of the section
-    #text_area_width = compute_arc_length( inner+(outer-inner)/2, d )
-    # what if the inner arc is used
-    text_area_width = compute_arc_length( inner, d )
+    text_area_width = compute_arc_length( inner+(outer-inner)/2, d )
+    ## what if the inner arc is used
+    #text_area_width = compute_arc_length( inner, d )
 
     # put the text on a curve,
     # no need for a separate graphic context
@@ -531,8 +533,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        font_size = max_font_size
 
     string_length = estimate_string_width( font_size, name )
-    ## increase that estimate to approximate a margin
-    #string_length *= 1.33
 
     # try to center it on the curve
     offset = text_area_size / 2 - string_length / 2
@@ -543,7 +543,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     offset = subtract_a_percentage( offset, 9 )
     offset = roundstr( offset ) + '%'
 
-    font_options = ' font_size="' + roundstr(font_size) + '"'
+    print( 'output font', roundstr(font_size), file=sys.stderr ) #debug
+
+    font_options = ' font-size="' + roundstr(font_size) + '"'
     font_options += ' ' + font_selection
     # this style doesn't look good
     #font_options += ' style="fill:black; stroke:white;"'
@@ -705,6 +707,11 @@ cx = page_size / 2.0
 cy = cx
 
 char_width_factors = setup_char_widths()
+# this is used to find font for widths
+widest_char = ' '
+for c in char_width_factors:
+    if char_width_factors[c] > char_width_factors[widest_char]:
+       widest_char = c
 
 
 options = get_program_options()
