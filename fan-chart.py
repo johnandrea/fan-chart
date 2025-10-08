@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.7.0'
+    return '0.7.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -161,9 +161,6 @@ def setup_char_widths():
 def estimate_string_width( font_size, s ):
     # For a given font size, return the approximate pixel
     # width of the string.
-    #
-    # What about kerning spacing. Presuming its included in the
-    # individual string widths, but add small extra width anyway.
 
     result = 0
     for c in s:
@@ -172,7 +169,11 @@ def estimate_string_width( font_size, s ):
            k = c
         result += font_size * char_width_factors[k]
 
-    return result + char_width_factors[' '] * font_size
+    ## What about kerning spacing. Presuming its included in the
+    ## individual string widths, but add small extra width anyway.
+    #result += char_width_factors[' '] * font_size
+
+    return result
 
 
 def font_to_fit_string( width, s ):
@@ -701,16 +702,19 @@ def show_start_fam( fam, ring_outer ):
     inner = 1
     outer = ring_outer / 2
 
+    print( '<g transform="rotate(90,0,0)">' )
+
     prefix = ''
     for partner in ['husb','wife']:
         indi = None
         if partner in data[fkey][fam]:
            indi = data[fkey][fam][partner][0]
         output_name( d, inner, outer, False, prefix, indi )
-        prefix = '+'
+        prefix = '+ '
         inner = outer
         outer = ring_outer
 
+    print( '</g>' )
 
 
 # more globals
