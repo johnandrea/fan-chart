@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.7.2'
+    return '0.8.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -253,15 +253,14 @@ def load_my_module( module_name, relative_path ):
 def get_program_options():
     results = {}
 
-    date_types = ['none', 'year', 'full']
-    colour_types = ['bw']
+    colour_types = ['standard','bw']
 
     results['infile'] = None
     results['personid'] = None
     results['generations'] = 5
     results['id-item'] = 'xref'
-    results['dates'] = 'none'
-    results['colour'] = 'bw'
+    results['dates'] = False
+    results['colour'] = 'standard'
     results['libpath'] = '.'
 
     arg_help = 'Draw fan chart.'
@@ -274,8 +273,8 @@ def get_program_options():
     arg_help += ' Othewise choose "type.exid", "type.refnum", etc.'
     parser.add_argument( '--id-item', default=results['id-item'], type=str, help=arg_help )
 
-    arg_help = 'Date style. One of none, year, none. Default:' + results['dates']
-    parser.add_argument( '--dates', default=results['dates'], type=str, help=arg_help )
+    arg_help = 'Year will displayed.'
+    parser.add_argument( '--dates', default=results['dates'], action='store_true', help=arg_help )
 
     arg_help = 'Colour scheme. Default:' + results['colour']
     parser.add_argument( '--colour', default=results['colour'], type=str, help=arg_help )
@@ -296,10 +295,7 @@ def get_program_options():
     results['personid'] = args.personid
     results['id-item'] = args.id_item
     results['generations'] = args.generations
-
-    check_value = args.dates
-    if check_value.lower() in date_types:
-       results['dates'] = check_value.lower()
+    results['dates'] = args.dates
 
     check_value = args.colour
     if check_value.lower() in colour_types:
