@@ -33,7 +33,7 @@ import math
 # arbitrary and square, but scalable
 page_size = 600
 
-# default colour scheme
+# "standard" colour scheme
 slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
 slice_colours.extend( ['coral', 'khaki', 'lemonchiffon', 'lavenderblush'] )
 slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.0'
+    return '0.8.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -306,6 +306,35 @@ def get_program_options():
     return results
 
 
+def get_indi_years( indi ):
+    # return birth - death or birth- or -death
+    # but None if both dates are empty
+    # This version does not include parenthesis
+
+    def get_indi_year( indi_data, tag ):
+        # "best" year for birth, death, ...
+        # or an empty string
+        result = ''
+
+        best = 0
+        if readgedcom.BEST_EVENT_KEY in indi_data:
+           if tag in indi_data[readgedcom.BEST_EVENT_KEY]:
+              best = indi_data[readgedcom.BEST_EVENT_KEY][tag]
+        if tag in indi_data:
+           if indi_data[tag][best]['date']['is_known']:
+              result = str( indi_data[tag][best]['date']['min']['year'] )
+        return result
+
+    result = None
+
+    birth = get_indi_year( data[ikey][indi], 'birt' ).strip()
+    death = get_indi_year( data[ikey][indi], 'deat' ).strip()
+    if birth or death:
+       result = birth +'-'+ death
+
+    return result
+
+
 def find_max_generations( indi, max_gen, n_gen ):
     gen_count = n_gen
 
@@ -467,10 +496,16 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     min_reasonable_font_size = 3
 
     name = '?'
+    dates = ''
     if indi:
        # possibly the family has an unknown spouse
        name = data[ikey][indi]['name'][0]['html']
-    name = prefix + name
+       if options['dates']:
+          # in this test, the dates are simply appended to the name
+          got_dates = get_indi_years( indi )
+          if got_dates:
+             dates = ' ' + got_dates
+    name = prefix + name + dates
 
     half_d = math.radians( d/2.0 )
     text_baseline = inner + distance_factor * ( outer - inner )
