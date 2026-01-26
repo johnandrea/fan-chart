@@ -83,6 +83,7 @@ program in-file id-top-person > out.svg
 ## References
 
 - https://datavizcatalogue.com/blog/chart-snapshot-genealogy-fan-chart/
+- http://nicolas.kruchten.com/content/2015/08/family-trees/
 
 ## Bug reports
 
