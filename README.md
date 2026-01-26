@@ -80,6 +80,10 @@ Display the version number then exit
 program in-file id-top-person > out.svg
 ```
 
+## References
+
+- https://datavizcatalogue.com/blog/chart-snapshot-genealogy-fan-chart/
+
 ## Bug reports
 
 This code is provided with neither support nor warranty.
