@@ -84,6 +84,7 @@ program in-file id-top-person > out.svg
 
 - https://datavizcatalogue.com/blog/chart-snapshot-genealogy-fan-chart/
 - http://nicolas.kruchten.com/content/2015/08/family-trees/
+- https://colorbrewer2.org/?type=qualitative&scheme=Pastel1&n=9
 
 ## Bug reports
 
