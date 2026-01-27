@@ -34,9 +34,9 @@ import math
 page_size = 600
 
 # "standard" colour scheme
-slice_colours = ['mediumturquoise','thistle', 'mistyrose', 'lightseagreen','lightblue']
-slice_colours.extend( ['coral', 'khaki', 'lemonchiffon', 'lavenderblush'] )
-slice_colours.extend( ['yellowgreen', 'tan', 'lightsteelblue', 'salmon','springgreen'] )
+# based on https://colorbrewer2.org/?type=qualitative&scheme=Pastel1&n=9
+slice_colours = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
+slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 
 n_colours = len( slice_colours )
 
@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.1'
+    return '0.8.3'
 
 
 def subtract_a_percentage( x, p ):
