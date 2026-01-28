@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.8'
+    return '0.8.10'
 
 
 def subtract_a_percentage( x, p ):
@@ -444,11 +444,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            font_size = 0.75 * reverse_font_height( width )
         return min( font_size, max_font_size )
 
-    #def try3( check_size, x, y, baseline, name, dates ):
+    def try3( check_size, x, y, baseline, name, dates ):
         # vertical
-        # try to determine how to fit the text
+        print( 'try rotating', file=sys.stderr ) #debug
         #if text_area_height > text_area_width:
-        #   # then try flipping it
         #   # unless the text still fits nicely in the shorter length
         #   if font_size < min_reasonable_font_size:
         #      # recompute all the sizes
@@ -457,18 +456,34 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         #      text_baseline = inner + distance_factor * ( outer - inner )
         #      x = text_baseline * math.cos( half_d )
         #      y = text_baseline * math.sin( half_d )
-        #return False
+        text = name
+        if dates:
+           text += ' ' + dates
+        # gotta do the height check flipping height and width
+        font_size = width_font_size( text_area_width, text_area_height, text )
+        if check_size and ( font_size < min_reasonable_font_size ):
+           return False
+        # oops, gotta to the actual calculations
+        single_line_height( x, y, baseline, font_size, text )
+        return False
 
     def try2( check_size, x, y, baseline, name, dates ):
         # break out the dates and use the longest of the two
+        if not dates:
+           # if no dates, this is the same as try1
+           return False
         longest = name
-        if dates:
-           if len( dates ) > len( name ):
-              longest = dates
+        if len( dates ) > len( name ):
+           # assuming character widths equivalent to font widths
+           longest = dates
         font_size = width_font_size( text_area_width, text_area_height, longest )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
-        single_line( x, y, baseline, font_size, longest )
+        # move the baseline up
+        # but now have to check that 2 lines will fit the height
+        # and set the font size based on the heights
+        single_line_width( x, y, baseline, font_size, longest )
+        # make a new line for the dates
         return True
 
     def try1( check_size, x, y, baseline, name, dates ):
@@ -479,10 +494,14 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         font_size = width_font_size( text_area_width, text_area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
-        single_line( x, y, baseline, font_size, text )
+        single_line_width( x, y, baseline, font_size, text )
         return True
 
-    def single_line( x, y, baseline, font_size, text ):
+    def single_line_height( x, y, baseline, font_size, text ):
+        # pretend for now - need to actually make a vertical path
+        single_line_width( x, y, baseline, font_size, text )
+
+    def single_line_width( x, y, baseline, font_size, text ):
         path_id = 'text' + str(indi)
 
         path = 'M' + roundstr(x) +','+ roundstr(y)
@@ -557,9 +576,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     if not worked:
        print( 'try=2', file=sys.stderr ) #debug
        worked = try2( True, x, y, text_baseline, name, dates )
-    #if not worked:
-    #   print( 'try=3', file=sys.stderr ) #debug
-    #   worked = try3( True, x, y, text_baseline, name, dates )
+    if not worked:
+       print( 'try=3', file=sys.stderr ) #debug
+       worked = try3( True, x, y, text_baseline, name, dates )
     if not worked:
        print( 'try=again', file=sys.stderr ) #debug
        worked = try1( False, x, y, text_baseline, name, dates )
