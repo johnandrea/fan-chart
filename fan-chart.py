@@ -33,7 +33,7 @@ import math
 # arbitrary and square, but scalable
 page_size = 600
 
-# "standard" colour scheme
+# "standard" colour scheme - maybe later allow option for others
 # based on https://colorbrewer2.org/?type=qualitative&scheme=Pastel1&n=9
 slice_colours = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
 slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.13'
+    return '0.8.14'
 
 
 def subtract_a_percentage( x, p ):
@@ -82,12 +82,6 @@ def setup_char_widths():
     # my mistakes in estimating the exact character spacing.
 
     results = dict()
-
-    # These two were defined previously, to be used for characters
-    # not matching the below definitions
-    results["generic lower"] = 0.4615
-    results["generic upper"] = 0.657
-
     results.update({"a":0.446, "A":0.721, "b":0.499, "B":0.666})
     results.update({"c":0.440, "C":0.668, "d":0.499, "D":0.719})
     results.update({"e":0.435, "E":0.608, "f":0.324, "F":0.550})
@@ -101,10 +95,16 @@ def setup_char_widths():
     results.update({"u":0.500, "U":0.721, "v":0.498, "V":0.717})
     results.update({"w":0.722, "W":0.960, "x":0.498, "X":0.722})
     results.update({"y":0.495, "Y":0.721, "z":0.451, "Z":0.625})
-    results.update({"+":0.574, "-":0.334, "0":0.496, "1":0.457})
-    results.update({"2":0.494, "3":0.491, "4":0.494, "5":0.492})
-    results.update({"6":0.496, "7":0.493, "8":0.494, "9":0.497})
-    results.update({"(":0.324, ")":0.322, " ":0.246})
+
+    results.update({"+":0.574, "-":0.334,"(":0.324, ")":0.322, " ":0.246})
+
+    results.update({"0":0.496, "1":0.457, "2":0.494, "3":0.491, "4":0.494})
+    results.update({"5":0.492, "6":0.496, "7":0.493, "8":0.494, "9":0.497})
+
+    # These two were defined previously, to be used for characters
+    # not matching the below definitions
+    results["generic lower"] = 0.4615
+    results["generic upper"] = 0.657
 
     return results
 
@@ -547,7 +547,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = area_width / 2 - string_length / 2
+        offset = ( area_width - string_length ) / 2.0
 
         # change to a percent (is that what the startOffset parameter needs?)
         offset = 100.0 * offset / area_width
