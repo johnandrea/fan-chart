@@ -1,5 +1,7 @@
 # fan-chart.py
 
+# Under development for name size and placement.
+
 A program which will produce a full circle genealogy descendant fan chart from a GEDCOM input. The 
 output is intended to be used for large sheet printing at print services such as Staples (see below).
 
