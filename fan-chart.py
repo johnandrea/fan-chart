@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.14'
+    return '0.8.15'
 
 
 def subtract_a_percentage( x, p ):
@@ -548,6 +548,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         # try to center it on the curve
         offset = ( area_width - string_length ) / 2.0
+        print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr ) #debug
 
         # change to a percent (is that what the startOffset parameter needs?)
         offset = 100.0 * offset / area_width
