@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.6'
+    return '0.8.8'
 
 
 def subtract_a_percentage( x, p ):
@@ -88,74 +88,24 @@ def setup_char_widths():
     results["generic lower"] = 0.4615
     results["generic upper"] = 0.657
 
-    # need to shrink this to fewer lines
-    results[" "] = 0.246
-    results["a"] = 0.446
-    results["A"] = 0.721
-    results["b"] = 0.499
-    results["B"] = 0.666
-    results["c"] = 0.440
-    results["C"] = 0.668
-    results["d"] = 0.499
-    results["D"] = 0.719
-    results["e"] = 0.435
-    results["E"] = 0.608
-    results["f"] = 0.324
-    results["F"] = 0.550
-    results["g"] = 0.497
-    results["G"] = 0.722
-    results["h"] = 0.496
-    results["H"] = 0.725
-    results["i"] = 0.273
-    results["I"] = 0.329
-    results["j"] = 0.265
-    results["J"] = 0.392
-    results["k"] = 0.501
-    results["K"] = 0.720
-    results["l"] = 0.273
-    results["L"] = 0.610
-    results["m"] = 0.790
-    results["M"] = 0.862
-    results["n"] = 0.500
-    results["N"] = 0.716
-    results["o"] = 0.497
-    results["O"] = 0.716
-    results["p"] = 0.487
-    results["P"] = 0.556
-    results["q"] = 0.502
-    results["Q"] = 0.734
-    results["r"] = 0.322
-    results["R"] = 0.668
-    results["s"] = 0.380
-    results["S"] = 0.553
-    results["t"] = 0.269
-    results["T"] = 0.616
-    results["u"] = 0.500
-    results["U"] = 0.721
-    results["v"] = 0.498
-    results["V"] = 0.717
-    results["w"] = 0.722
-    results["W"] = 0.960
-    results["x"] = 0.498
-    results["X"] = 0.722
-    results["y"] = 0.495
-    results["Y"] = 0.721
-    results["z"] = 0.451
-    results["Z"] = 0.625
-    results["+"] = 0.574
-    results["-"] = 0.334
-    results["0"] = 0.496
-    results["1"] = 0.457
-    results["2"] = 0.494
-    results["3"] = 0.491
-    results["4"] = 0.494
-    results["5"] = 0.492
-    results["6"] = 0.496
-    results["7"] = 0.493
-    results["8"] = 0.494
-    results["9"] = 0.497
-    results["("] = 0.324
-    results[")"] = 0.322
+    results.update({"a":0.446, "A":0.721, "b":0.499, "B":0.666})
+    results.update({"c":0.440, "C":0.668, "d":0.499, "D":0.719})
+    results.update({"e":0.435, "E":0.608, "f":0.324, "F":0.550})
+    results.update({"g":0.497, "G":0.722, "h":0.496, "H":0.725})
+    results.update({"i":0.273, "I":0.329, "j":0.265, "J":0.392})
+    results.update({"k":0.501, "K":0.720, "l":0.273, "L":0.610})
+    results.update({"m":0.790, "M":0.862, "n":0.500, "N":0.716})
+    results.update({"o":0.497, "O":0.716, "p":0.487, "P":0.556})
+    results.update({"q":0.502, "Q":0.734, "r":0.322, "R":0.668})
+    results.update({"s":0.380, "S":0.553, "t":0.269, "T":0.616})
+    results.update({"u":0.500, "U":0.721, "v":0.498, "V":0.717})
+    results.update({"w":0.722, "W":0.960, "x":0.498, "X":0.722})
+    results.update({"y":0.495, "Y":0.721, "z":0.451, "Z":0.625})
+    results.update({"+":0.574, "-":0.334, "0":0.496, "1":0.457})
+    results.update({"2":0.494, "3":0.491, "4":0.494, "5":0.492})
+    results.update({"6":0.496, "7":0.493, "8":0.494, "9":0.497})
+    results.update({"(":0.324, ")":0.322, " ":0.246})
+
     return results
 
 
