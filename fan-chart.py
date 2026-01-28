@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.12'
+    return '0.8.13'
 
 
 def subtract_a_percentage( x, p ):
@@ -476,8 +476,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         # gotta do the height check flipping height and width !!!
         area_items = get_width_areas()
         text_baseline = area_items[0]
-        area_width = area_items[1]
-        area_height = area_items[2]
+        area_height = area_items[1]
+        area_width = area_items[2]
+
         font_size = width_font_size( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
@@ -496,8 +497,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            longest = dates
         area_items = get_width_areas()
         text_baseline = area_items[0]
-        area_width = area_items[1]
-        area_height = area_items[2]
+        area_height = area_items[1]
+        area_width = area_items[2]
+
         font_size = width_font_size( area_width, area_height, longest )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
@@ -518,8 +520,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            text += ' ' + dates
         area_items = get_width_areas()
         text_baseline = area_items[0]
-        area_width = area_items[1]
-        area_height = area_items[2]
+        area_height = area_items[1]
+        area_width = area_items[2]
+
         font_size = width_font_size( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
