@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.10'
+    return '0.8.11'
 
 
 def subtract_a_percentage( x, p ):
@@ -488,6 +488,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     def try1( check_size, x, y, baseline, name, dates ):
         # one line, widthwise
+        # should be good for a short name or a name with no date
+        # that fits well within the width of a slice along the
+        # baseline
         text = name
         if dates:
            text += ' ' + dates
@@ -580,8 +583,13 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        print( 'try=3', file=sys.stderr ) #debug
        worked = try3( True, x, y, text_baseline, name, dates )
     if not worked:
-       print( 'try=again', file=sys.stderr ) #debug
-       worked = try1( False, x, y, text_baseline, name, dates )
+       # final attempt
+       if dates:
+          print( 'try=final2', file=sys.stderr ) #debug
+          worked = try2( False, x, y, text_baseline, name, dates )
+       else:
+          print( 'try=final1', file=sys.stderr ) #debug
+          worked = try1( False, x, y, text_baseline, name, dates )
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
