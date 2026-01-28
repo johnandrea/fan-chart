@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.11'
+    return '0.8.12'
 
 
 def subtract_a_percentage( x, p ):
@@ -444,7 +444,21 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            font_size = 0.75 * reverse_font_height( width )
         return min( font_size, max_font_size )
 
-    def try3( check_size, x, y, baseline, name, dates ):
+    def get_width_areas():
+        text_baseline = inner + distance_factor * ( outer - inner )
+
+        # the height of the area is the maximum font size
+        # though a better heuristic must be used for sideways as well
+        height = text_baseline - 4
+
+        # estimate the width as the middle of the section
+        width = compute_arc_length( inner+(outer-inner)/2, d )
+        ## what if the inner arc is used
+        #text_area_width = compute_arc_length( inner, d )
+
+        return [text_baseline, height, width]
+
+    def try3( check_size, name, dates ):
         # vertical
         print( 'try rotating', file=sys.stderr ) #debug
         #if text_area_height > text_area_width:
@@ -459,15 +473,19 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         text = name
         if dates:
            text += ' ' + dates
-        # gotta do the height check flipping height and width
-        font_size = width_font_size( text_area_width, text_area_height, text )
+        # gotta do the height check flipping height and width !!!
+        area_items = get_width_areas()
+        text_baseline = area_items[0]
+        area_width = area_items[1]
+        area_height = area_items[2]
+        font_size = width_font_size( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         # oops, gotta to the actual calculations
-        single_line_height( x, y, baseline, font_size, text )
+        single_line_height( font_size, area_width, text_baseline, text )
         return False
 
-    def try2( check_size, x, y, baseline, name, dates ):
+    def try2( check_size, name, dates ):
         # break out the dates and use the longest of the two
         if not dates:
            # if no dates, this is the same as try1
@@ -476,17 +494,21 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         if len( dates ) > len( name ):
            # assuming character widths equivalent to font widths
            longest = dates
-        font_size = width_font_size( text_area_width, text_area_height, longest )
+        area_items = get_width_areas()
+        text_baseline = area_items[0]
+        area_width = area_items[1]
+        area_height = area_items[2]
+        font_size = width_font_size( area_width, area_height, longest )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         # move the baseline up
         # but now have to check that 2 lines will fit the height
         # and set the font size based on the heights
-        single_line_width( x, y, baseline, font_size, longest )
+        single_line_width( font_size, area_width, text_baseline, longest )
         # make a new line for the dates
         return True
 
-    def try1( check_size, x, y, baseline, name, dates ):
+    def try1( check_size, name, dates ):
         # one line, widthwise
         # should be good for a short name or a name with no date
         # that fits well within the width of a slice along the
@@ -494,18 +516,25 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         text = name
         if dates:
            text += ' ' + dates
-        font_size = width_font_size( text_area_width, text_area_height, text )
+        area_items = get_width_areas()
+        text_baseline = area_items[0]
+        area_width = area_items[1]
+        area_height = area_items[2]
+        font_size = width_font_size( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
-        single_line_width( x, y, baseline, font_size, text )
+        single_line_width( font_size, area_width, text_baseline, text )
         return True
 
-    def single_line_height( x, y, baseline, font_size, text ):
+    def single_line_height( font_size, area_width, baseline, text ):
         # pretend for now - need to actually make a vertical path
-        single_line_width( x, y, baseline, font_size, text )
+        single_line_width( font_size, area_width, baseline, text )
 
-    def single_line_width( x, y, baseline, font_size, text ):
+    def single_line_width( font_size, area_width, baseline, text ):
         path_id = 'text' + str(indi)
+
+        x = baseline * math.cos( half_d )
+        y = baseline * math.sin( half_d )
 
         path = 'M' + roundstr(x) +','+ roundstr(y)
         path += ' A' + roundstr(baseline) +','+ roundstr(baseline)
@@ -515,10 +544,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = text_area_width / 2 - string_length / 2
+        offset = area_width / 2 - string_length / 2
 
         # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / text_area_width
+        offset = 100.0 * offset / area_width
         # bit of a margin, 1.5%
         offset = roundstr( offset + 1.5 ) + '%'
 
@@ -527,17 +556,21 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         # this style doesn't look good
         #font_options += ' style="fill:black; stroke:white;"'
 
+        # put the text on a curve,
+        # no need for a separate graphic context
+
         print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
         print( '<text ' + font_options + '>' )
         print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
         print( '</text>' )
 
-        print( 'area size', roundstr(text_area_width), 'length', roundstr(text_area_width), 'height', roundstr(text_area_height), file=sys.stderr ) #debug
+        print( 'area size', roundstr(area_width), file=sys.stderr ) #debug
         print( 'strlen', roundstr(string_length), file=sys.stderr ) #debug
         print( roundstr(font_size), '=', text, file=sys.stderr ) #debug
 
         return True
 
+    half_d = math.radians( d/2.0 )
 
     # this is the distance where the text will be placed relative
     # to the height of the available area
@@ -557,39 +590,22 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
           dates = get_indi_years( indi )
     name = prefix + name
 
-    half_d = math.radians( d/2.0 )
-    text_baseline = inner + distance_factor * ( outer - inner )
-    x = text_baseline * math.cos( half_d )
-    y = text_baseline * math.sin( half_d )
-
-    # the height of the area is the maximum font size
-    # though a better heuristic must be used for sideways as well
-    text_area_height = text_baseline - 4
-
-    # estimate the width as the middle of the section
-    text_area_width = compute_arc_length( inner+(outer-inner)/2, d )
-    ## what if the inner arc is used
-    #text_area_width = compute_arc_length( inner, d )
-
-    # put the text on a curve,
-    # no need for a separate graphic context
-
     print( 'try=0', file=sys.stderr ) #debug
-    worked = try1( True, x, y, text_baseline, name, dates )
+    worked = try1( True, name, dates )
     if not worked:
        print( 'try=2', file=sys.stderr ) #debug
-       worked = try2( True, x, y, text_baseline, name, dates )
+       worked = try2( True, name, dates )
     if not worked:
        print( 'try=3', file=sys.stderr ) #debug
-       worked = try3( True, x, y, text_baseline, name, dates )
+       worked = try3( True, name, dates )
     if not worked:
        # final attempt
        if dates:
           print( 'try=final2', file=sys.stderr ) #debug
-          worked = try2( False, x, y, text_baseline, name, dates )
+          worked = try2( False, name, dates )
        else:
           print( 'try=final1', file=sys.stderr ) #debug
-          worked = try1( False, x, y, text_baseline, name, dates )
+          worked = try1( False, name, dates )
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
