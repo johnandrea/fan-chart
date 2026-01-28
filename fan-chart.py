@@ -48,7 +48,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.5'
+    return '0.8.6'
 
 
 def subtract_a_percentage( x, p ):
@@ -488,61 +488,65 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
+    def width_font_size( width, height, text ):
+        font_size = font_to_fit_string( width, text )
+        if estimate_font_height(font_size) > height:
+           font_size = 0.75 * reverse_font_height( width )
+        return min( font_size, max_font_size )
+
+    #def try3( check_size, x, y, baseline, name, dates ):
+        # vertical
+        # try to determine how to fit the text
+        #if text_area_height > text_area_width:
+        #   # then try flipping it
+        #   # unless the text still fits nicely in the shorter length
+        #   if font_size < min_reasonable_font_size:
+        #      # recompute all the sizes
+        #      text_area_size = text_area_width
+        #      # make a new path running vertically
+        #      text_baseline = inner + distance_factor * ( outer - inner )
+        #      x = text_baseline * math.cos( half_d )
+        #      y = text_baseline * math.sin( half_d )
+        #return False
+
     def try2( check_size, x, y, baseline, name, dates ):
-        # break out the dates
-        return single_line( check_size, x, y, baseline, name )
+        # break out the dates and use the longest of the two
+        longest = name
+        if dates:
+           if len( dates ) > len( name ):
+              longest = dates
+        font_size = width_font_size( text_area_width, text_area_height, longest )
+        if check_size and ( font_size < min_reasonable_font_size ):
+           return False
+        single_line( x, y, baseline, font_size, longest )
+        return True
 
     def try1( check_size, x, y, baseline, name, dates ):
-        # one line
+        # one line, widthwise
         text = name
         if dates:
            text += ' ' + dates
-        return single_line( check_size, x, y, baseline, text )
+        font_size = width_font_size( text_area_width, text_area_height, text )
+        if check_size and ( font_size < min_reasonable_font_size ):
+           return False
+        single_line( x, y, baseline, font_size, text )
+        return True
 
-    def single_line( check_size, x, y, baseline, text ):
+    def single_line( x, y, baseline, font_size, text ):
         path_id = 'text' + str(indi)
 
-        # start by assuming lengthwise text
         path = 'M' + roundstr(x) +','+ roundstr(y)
         path += ' A' + roundstr(baseline) +','+ roundstr(baseline)
         path += ' 0 0 0'
         path += ' ' + roundstr(x) +','+ roundstr(-y)
 
-        # save the originally calculated width
-        text_area_size = text_area_width
-
-        font_size = font_to_fit_string( text_area_size, text )
-
-        # try to determine how to fit the text
-        if text_area_height > text_area_width:
-           # then try flipping it
-           # unless the text still fits nicely in the shorter length
-           if font_size < min_reasonable_font_size:
-              # recompute all the sizes
-              text_area_size = text_area_width
-              # make a new path running vertically
-              text_baseline = inner + distance_factor * ( outer - inner )
-              x = text_baseline * math.cos( half_d )
-              y = text_baseline * math.sin( half_d )
-
-        if estimate_font_height(font_size) > text_area_height:
-           # this is where a heuristic is needed to compare the available
-           # width vs height
-           font_size = 0.75 * reverse_font_height( text_area_size )
-
-        if font_size > max_font_size:
-           font_size = max_font_size
-
-        if check_size and ( font_size < min_reasonable_font_size ):
-           return False
-
-        string_length = estimate_string_width( font_size, name )
+        string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = text_area_size / 2 - string_length / 2
+        offset = text_area_width / 2 - string_length / 2
 
         # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / text_area_size
+        offset = 100.0 * offset / text_area_width
         # bit of a margin, 1.5%
         offset = roundstr( offset + 1.5 ) + '%'
 
@@ -556,7 +560,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
         print( '</text>' )
 
-        print( 'area size', roundstr(text_area_size), 'length', roundstr(text_area_width), 'height', roundstr(text_area_height), file=sys.stderr ) #debug
+        print( 'area size', roundstr(text_area_width), 'length', roundstr(text_area_width), 'height', roundstr(text_area_height), file=sys.stderr ) #debug
         print( 'strlen', roundstr(string_length), file=sys.stderr ) #debug
         print( roundstr(font_size), '=', text, file=sys.stderr ) #debug
 
@@ -603,6 +607,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     if not worked:
        print( 'try=2', file=sys.stderr ) #debug
        worked = try2( True, x, y, text_baseline, name, dates )
+    #if not worked:
+    #   print( 'try=3', file=sys.stderr ) #debug
+    #   worked = try3( True, x, y, text_baseline, name, dates )
     if not worked:
        print( 'try=again', file=sys.stderr ) #debug
        worked = try1( False, x, y, text_baseline, name, dates )
