@@ -51,7 +51,7 @@ font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.16'
+    return '0.8.17'
 
 
 def subtract_a_percentage( x, p ):
@@ -444,15 +444,41 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     def calc_font_size_for_width( width, height, text ):
         font_size = font_to_fit_string( width, text )
         if estimate_font_height(font_size) > height:
+           # the text got too big for the height 
            font_size = 0.75 * reverse_font_height( width )
         return min( font_size, max_font_size )
 
+    def calc_font_size_for_height( width, height, text ): #???
+        font_size = font_to_fit_string( height, text )
+        if estimate_string_width( font_size, text ) > width:
+           # the text got too big for the width
+           font_size = font_to_fit_string( width, text )
+        return font_size
+
     def calc_width_areas():
+        # estimate the width at the middle of the section
+        width = compute_arc_length( inner+(outer-inner)/2, d )
+        ### what if the inner arc is used
+        ##width = compute_arc_length( inner, d )
+
+        # zero position of the line
+        # along the bottom of the slice as an estimation of the path
         text_baseline = inner + distance_factor * ( outer - inner )
 
         # the height of the area is the maximum font size
-        # though a better heuristic must be used for sideways as well
-        height = text_baseline - 4
+        height = outer - inner - 4
+
+        return [text_baseline, height, width]
+
+    def calc_height_areas(): #???
+        # this will be the maximum allowed string length
+        height = outer - inner - 4
+
+        # zero position of the line
+        # along the vertical side of the slice
+        # 'd' is the angle of this slice (consider it from 0
+        # because it will be in its own graphic context)
+        text_baseline = distance_factor * ( outer - inner )
 
         # estimate the width as the middle of the section
         width = compute_arc_length( inner+(outer-inner)/2, d )
@@ -477,12 +503,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         if dates:
            text += ' ' + dates
         # gotta do the height check flipping height and width !!!
-        area_items = calc_width_areas()
+        area_items = calc_height_areas()
         text_baseline = area_items[0]
         area_height = area_items[1]
         area_width = area_items[2]
 
-        font_size = calc_font_size_for_width( area_width, area_height, text )
+        font_size = calc_font_size_for_height( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         # oops, gotta to the actual calculations
