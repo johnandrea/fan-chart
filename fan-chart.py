@@ -43,12 +43,15 @@ n_colours = len( slice_colours )
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
+# don't bother flipping to vertical if the font is this or above
+min_reasonable_font_size = 8
+
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
 
 
 def get_version():
-    return '0.8.15'
+    return '0.8.16'
 
 
 def subtract_a_percentage( x, p ):
@@ -438,13 +441,13 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
-    def width_font_size( width, height, text ):
+    def calc_font_size_for_width( width, height, text ):
         font_size = font_to_fit_string( width, text )
         if estimate_font_height(font_size) > height:
            font_size = 0.75 * reverse_font_height( width )
         return min( font_size, max_font_size )
 
-    def get_width_areas():
+    def calc_width_areas():
         text_baseline = inner + distance_factor * ( outer - inner )
 
         # the height of the area is the maximum font size
@@ -474,12 +477,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         if dates:
            text += ' ' + dates
         # gotta do the height check flipping height and width !!!
-        area_items = get_width_areas()
+        area_items = calc_width_areas()
         text_baseline = area_items[0]
         area_height = area_items[1]
         area_width = area_items[2]
 
-        font_size = width_font_size( area_width, area_height, text )
+        font_size = calc_font_size_for_width( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         # oops, gotta to the actual calculations
@@ -495,12 +498,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         if len( dates ) > len( name ):
            # assuming character widths equivalent to font widths
            longest = dates
-        area_items = get_width_areas()
+        area_items = calc_width_areas()
         text_baseline = area_items[0]
         area_height = area_items[1]
         area_width = area_items[2]
 
-        font_size = width_font_size( area_width, area_height, longest )
+        font_size = calc_font_size_for_width( area_width, area_height, longest )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         # move the baseline up
@@ -518,12 +521,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         text = name
         if dates:
            text += ' ' + dates
-        area_items = get_width_areas()
+        area_items = calc_width_areas()
         text_baseline = area_items[0]
         area_height = area_items[1]
         area_width = area_items[2]
 
-        font_size = width_font_size( area_width, area_height, text )
+        font_size = calc_font_size_for_width( area_width, area_height, text )
         if check_size and ( font_size < min_reasonable_font_size ):
            return False
         single_line_width( font_size, area_width, text_baseline, text )
@@ -576,13 +579,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     half_d = math.radians( d/2.0 )
 
+    # should this be global ?
     # this is the distance where the text will be placed relative
     # to the height of the available area
     distance_factor = 0.9
-
-    # should this be global ?
-    # don't bother flipping to vertical if the font is this or above
-    min_reasonable_font_size = 10
 
     name = '?'
     dates = ''
