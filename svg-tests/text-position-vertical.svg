@@ -1,0 +1,90 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="400pt" height="400pt"
+ viewBox="0.00 0.00 400.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="15">put names vertically down slice</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="30">from t1 to t2</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="45">d = slice angle</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="60">margin = 5% (outer - inner)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="75">offset = 0.2% d</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="90">t1: x=(inner+margin)*cos(d/2-offset), y=(inner+margin)*sin(d/2-offset)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="105">t2: x=(outer-margin)*cos(d/2-offset), y=(outer-margin)*sin(d/2-offset)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="120">length = outer - inner</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="135">height = 2 * t1.y</text>
+
+<!-- draw x axis -->
+<path d="M200.0,200.0 400.0,200.0" style="stroke:blue;" />
+
+<!-- dot at the center -->
+<circle cx="200.0" cy="200.0"
+ fill="red" stroke="red" r="2" />
+
+<!-- inner and outer circles -->
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="50" />
+<circle cx="200.0" cy="200.0"
+ fill="none" stroke="black" r="190" />
+
+<!-- transform to center -->
+<g transform="translate(200.0,200.0)">
+
+<!-- labels and arrows to show x & y directions -->
+<text font-size="10" font-family="Times New Roman,serif"
+ x="-10" y="-2">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="-10" y="11">y &#8595;</text>
+
+<!-- graphic context for slice contents -->
+<g transform="rotate(+8,0,0)">
+
+<!-- dots on the 'corners' of the slice -->
+<circle cx="48.3" cy="-12.94"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="48.3" cy="12.94"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="183.53" cy="49.18"
+ fill="blue" stroke="blue" r="2" />
+<circle cx="183.53" cy="-49.18"
+ fill="blue" stroke="blue" r="2" />
+
+<!-- fill the slice -->
+<path style="stroke:grey; fill:lightgreen;"
+d="M48.3,-12.94
+A50,50 0 0 1 48.3,12.94
+L183.53,49.18
+A190,190 0 0 0 183.53,-49.18
+z" />
+
+<!-- points of text baseline across the slice -->
+<circle cx="55.84" cy="11.42"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="59.84" y="11.42">t1</text>
+<circle cx="179.29" cy="36.68"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="183.29" y="36.68">t2</text>
+<circle cx="55.84" cy="-11.42"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="59.84" y="-11.42">h</text>
+
+<!-- location of text baseline across the slice -->
+<path d="M55.84,11.42 179.29,36.68" style="stroke:red;" />
+
+<!-- max height of text -->
+<path d="M55.84,11.42 55.84,-11.42" style="stroke:grey;" />
+</g> <!-- finish slice context -->
+</g> <!-- finish center transform -->
+</svg>
