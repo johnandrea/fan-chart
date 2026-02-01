@@ -1,0 +1,159 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500pt" height="1000pt"
+ viewBox="0.00 0.00 500.00 1000.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="15">Narrow slices require sideway text from P7 to P8:</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="30">new-d = factor * d/2</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="45">slice-width = outer - inner</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="60">length-margin = ( 1 - factor ) * slice-width</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="75">new-inner = inner + length-margin</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="90">new-outer = outer - length-margin</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="105">P7: x=new-inner*cos(new-d), y=new-inner*sin(new-d)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="120">P8: x=new-outer*cos(new-d), y=new-outer*sin(new-d)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="270">Text area:</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="285">middle of the text line at M</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="300">middle = new-inner + ( new-outer - new_inner )/2</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="315">M: x=middle*cos(new-d), y=middle*sin(new-d)</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="345">height of text area at P9</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="360">P9: x=P7[x], y=-P7[y]</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="375">height = 2 * P7[y]</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="525">Place the text:</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="540">path from p7 to p8</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="555">place text along that path</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="570">Also need to center text width about path middle.</text>
+<text font-size="13" font-family="Times New Roman,serif"
+ x="8" y="780">Show the section rotated:</text>
+<path d="M340,40 590.0,40" style="stroke:blue;" />
+<circle cx="340" cy="40"
+ fill="red" stroke="red" r="2" />
+<circle cx="340" cy="40"
+ fill="none" stroke="black" r="80" />
+<circle cx="340" cy="40"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="38">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="51">y &#8595;</text>
+<g transform="translate(340,40)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M79.32,-10.44
+A80,80 0 0 1 79.32,10.44
+L148.72,19.58
+A150,150 0 0 0 148.72,-19.58
+z" />
+<circle cx="85.28" cy="8.96"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="89.28" y="6.96">P7</text>
+<circle cx="143.46" cy="15.08"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="147.46" y="13.08">P8</text>
+<path d="M85.28,8.96 143.46,15.08" style="stroke:red;" />
+</g>
+<path d="M340,295 590.0,295" style="stroke:blue;" />
+<circle cx="340" cy="295"
+ fill="red" stroke="red" r="2" />
+<circle cx="340" cy="295"
+ fill="none" stroke="black" r="80" />
+<circle cx="340" cy="295"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="293">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="306">y &#8595;</text>
+<g transform="translate(340,295)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M79.32,-10.44
+A80,80 0 0 1 79.32,10.44
+L148.72,19.58
+A150,150 0 0 0 148.72,-19.58
+z" />
+<circle cx="85.28" cy="8.96"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="89.28" y="6.96">P7</text>
+<circle cx="143.46" cy="15.08"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="147.46" y="13.08">P8</text>
+<path d="M85.28,8.96 143.46,15.08" style="stroke:red;" />
+<circle cx="114.37" cy="12.02"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="8" font-family="Times New Roman,serif"
+ x="114.37" y="8.02">M</text>
+<circle cx="85.28" cy="-8.96"
+ fill="blue" stroke="blue" r="2" />
+<text font-size="8" font-family="Times New Roman,serif"
+ x="85.28" y="-12.96">P9</text>
+<path d="M85.28,8.96 85.28,-8.96" style="stroke:red;" />
+</g>
+<path d="M340,550 590.0,550" style="stroke:blue;" />
+<circle cx="340" cy="550"
+ fill="red" stroke="red" r="2" />
+<circle cx="340" cy="550"
+ fill="none" stroke="black" r="80" />
+<circle cx="340" cy="550"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="548">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="561">y &#8595;</text>
+<g transform="translate(340,550)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M79.32,-10.44
+A80,80 0 0 1 79.32,10.44
+L148.72,19.58
+A150,150 0 0 0 148.72,-19.58
+z" />
+<path id="text" d="M85.28,8.96 L143.46,15.08" style="fill:none;" />
+<text font_size="12" font-family="Times New Roman,serif">
+ <textPath xlink:href="#text" startOffset="5%">Words</textPath>
+</text>
+</g>
+<path d="M340,805 590.0,805" style="stroke:blue;" />
+<circle cx="340" cy="805"
+ fill="red" stroke="red" r="2" />
+<circle cx="340" cy="805"
+ fill="none" stroke="black" r="80" />
+<circle cx="340" cy="805"
+ fill="none" stroke="black" r="150" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="803">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="330" y="816">y &#8595;</text>
+<g transform="translate(340,805)">
+<g transform="rotate(-35)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M79.32,-10.44
+A80,80 0 0 1 79.32,10.44
+L148.72,19.58
+A150,150 0 0 0 148.72,-19.58
+z" />
+<text font_size="12" font-family="Times New Roman,serif">
+ <textPath xlink:href="#text" startOffset="5%">Words</textPath>
+</text>
+</g>
+</g>
+</svg>
