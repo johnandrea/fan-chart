@@ -10,7 +10,7 @@ Reasons for making my own program:
 - scriptable
 - orient the text for reading on a large printed sheet: horizontal to outside edge and consistently clockwise
 
-[design](design.jpg)
+![design](design.jpg)
 
 ## Features
 
