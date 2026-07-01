@@ -47,6 +47,10 @@ Full path to the input file.
 
 top-person
 
+--debug
+
+Show algorithm steps on stderr. Currently useful for name placement heuristics.
+
 Id of the person at the top of the tree to be output. Value of this id depends on the "id-item" setting.
 
 --id-item=value
