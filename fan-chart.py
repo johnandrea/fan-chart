@@ -49,9 +49,12 @@ min_reasonable_font_size = 8
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
 
+# showing algorithm details when the option is selected
+debug = False
+
 
 def get_version():
-    return '0.8.17'
+    return '0.8.19'
 
 
 def subtract_a_percentage( x, p ):
@@ -216,9 +219,13 @@ def get_program_options():
     results['dates'] = False
     results['colour'] = 'standard'
     results['libpath'] = '.'
+    results['debug'] = False
 
     arg_help = 'Draw fan chart.'
     parser = argparse.ArgumentParser( description=arg_help )
+
+    arg_help = 'Debug/algorithm info to stderr.'
+    parser.add_argument( '--debug', default=results['debug'], action='store_true', help=arg_help )
 
     arg_help = 'Maximum number of generations to show. Default ' + str(results['generations'])
     parser.add_argument( '--generations', default=results['generations'], type=int, help=arg_help )
@@ -250,6 +257,7 @@ def get_program_options():
     results['id-item'] = args.id_item
     results['generations'] = args.generations
     results['dates'] = args.dates
+    results['debug'] = args.debug
 
     check_value = args.colour
     if check_value.lower() in colour_types:
@@ -444,7 +452,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     def calc_font_size_for_width( width, height, text ):
         font_size = font_to_fit_string( width, text )
         if estimate_font_height(font_size) > height:
-           # the text got too big for the height 
+           # the text got too big for the height
            font_size = 0.75 * reverse_font_height( width )
         return min( font_size, max_font_size )
 
@@ -489,7 +497,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     def try3( check_size, name, dates ):
         # vertical
-        print( 'try rotating', file=sys.stderr ) #debug
+        if debug:
+           print( 'try rotating', file=sys.stderr )
         #if text_area_height > text_area_width:
         #   # unless the text still fits nicely in the shorter length
         #   if font_size < min_reasonable_font_size:
@@ -577,7 +586,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         # try to center it on the curve
         offset = ( area_width - string_length ) / 2.0
-        print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr ) #debug
+        if debug:
+           print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
 
         # change to a percent (is that what the startOffset parameter needs?)
         offset = 100.0 * offset / area_width
@@ -597,9 +607,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
         print( '</text>' )
 
-        print( 'area size', roundstr(area_width), file=sys.stderr ) #debug
-        print( 'strlen', roundstr(string_length), file=sys.stderr ) #debug
-        print( roundstr(font_size), '=', text, file=sys.stderr ) #debug
+        if debug:
+           print( 'area size', roundstr(area_width), file=sys.stderr )
+           print( 'strlen', roundstr(string_length), file=sys.stderr )
+           print( roundstr(font_size), '=', text, file=sys.stderr )
 
         return True
 
@@ -620,21 +631,26 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
           dates = get_indi_years( indi )
     name = prefix + name
 
-    print( 'try=0', file=sys.stderr ) #debug
+    if debug:
+       print( 'try=0', file=sys.stderr )
     worked = try1( True, name, dates )
     if not worked:
-       print( 'try=2', file=sys.stderr ) #debug
+       if debug:
+          print( 'try=2', file=sys.stderr )
        worked = try2( True, name, dates )
     if not worked:
-       print( 'try=3', file=sys.stderr ) #debug
+       if debug:
+          print( 'try=3', file=sys.stderr )
        worked = try3( True, name, dates )
     if not worked:
        # final attempt
        if dates:
-          print( 'try=final2', file=sys.stderr ) #debug
+          if debug:
+             print( 'try=final2', file=sys.stderr )
           worked = try2( False, name, dates )
        else:
-          print( 'try=final1', file=sys.stderr ) #debug
+          if debug:
+             print( 'try=final1', file=sys.stderr )
           worked = try1( False, name, dates )
 
     ## show the curve
@@ -706,7 +722,8 @@ def find_spouse( fam, indi ):
 
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
-    print( 'gen', gen, file=sys.stderr ) #debug
+    if debug:
+       print( 'gen', gen, file=sys.stderr )
 
     colour_index = start_colour
 
@@ -823,6 +840,8 @@ for c in char_width_factors:
 
 options = get_program_options()
 
+debug = options['debug']
+
 if options['generations'] < 1:
    print( 'Generations must be more than zero', file=sys.stderr )
    sys.exit(1)
@@ -853,7 +872,8 @@ if len(id_match) == 1:
    max_generations = find_max_generations( start_person, options['generations'], 1 )
 
    if max_generations > 1:
-      #print( 'max gen', max_generations, file=sys.stderr ) #debug
+      if debug:
+         print( 'max gen', max_generations, file=sys.stderr )
 
       # slice size is computed by
       # 360 degrees divided by the number of people reaching the outermost layer
@@ -863,7 +883,8 @@ if len(id_match) == 1:
 
       max_slices = compute_max_gen_children( start_person, max_generations, 1 )
 
-      #print( 'slices', max_slices, file=sys.stderr ) #debug
+      if debug:
+         print( 'slices', max_slices, file=sys.stderr )
 
       # truncate to a few decimal points because the output can't be infinitely exact
       slice_decimals = 1
@@ -897,7 +918,8 @@ if len(id_match) == 1:
       # testing is using only one start family
       start_fam = diagram_data[start_person]['fams'][0]['fam']
 
-      print( 'gen', 0, file=sys.stderr ) #debug
+      if debug:
+         print( 'gen', 0, file=sys.stderr )
       output_start_names( start_fam, ring_sizes[0]['outer'] )
 
       output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
