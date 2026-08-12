@@ -29,7 +29,7 @@ No installation process. Copy the program and the library.
 
 ## Printing
 
-Some printers, even at print services such as Staples, cannot print directly from SVG. In these cases an option is to convert the output to PDF. There exist online converters, however for scripted work a solution is to use Inkscape in its command line mode to perform the conversion.
+Some printers, even at print services such as Staples, cannot directly print SVG. In these cases it is necessary to convert the SVG output to PDF. There exist online converters, however for scripted work a solution is to use Inkscape in its command line mode to perform the SVG-to-PDF conversion.
 
 ```
 /path/inkscape --export-filename=NAME.pdf NAME.svg
