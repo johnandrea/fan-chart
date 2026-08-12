@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.0'
+    return '0.9.0.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -543,18 +543,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return True
 
-    def try_format_1():
-        return 1
-    def try_format_2():
-        return 2
-    def try_format_3():
-        return 3
-    def try_format_4():
-        return 4
-    def try_format_5():
-        return 5
-    def try_format_6():
-        return 6
+    def try_format( n ):
+        return n
 
     half_d = math.radians( d/2.0 )
 
@@ -585,31 +575,11 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # 5 = horizontal same as 2
     # 6 = horizontal same as 3
 
-    try_size = try_format_1()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 1 
-    try_size = try_format_2()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 2
-    try_size = try_format_3()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 3
-    try_size = try_format_4()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 4
-    try_size = try_format_5()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 5
-    try_size = try_format_6()
-    if try_size > best_size:
-       best_size = try_size
-       best_try = 6
-
+    for i in range(6): # note: 1 based try index
+       try_size = try_format( i+1 )
+       if try_size > best_size:
+          best_size = try_size
+          best_try = i+1
     if debug:
        print( name, 'best format', best_try, best_size, file=sys.stderr )
 
