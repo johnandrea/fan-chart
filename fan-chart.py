@@ -49,12 +49,13 @@ min_reasonable_font_size = 8
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
 
-# showing algorithm details when the option is selected
+# showing algorithm details if the option is selected
+# helping with name placement heuristics
 debug = False
 
 
 def get_version():
-    return '0.8.19'
+    return '0.9.0.0'
 
 
 def subtract_a_percentage( x, p ):
@@ -495,78 +496,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [text_baseline, height, width]
 
-    def try3( check_size, name, dates ):
-        # vertical
-        if debug:
-           print( 'try rotating', file=sys.stderr )
-        #if text_area_height > text_area_width:
-        #   # unless the text still fits nicely in the shorter length
-        #   if font_size < min_reasonable_font_size:
-        #      # recompute all the sizes
-        #      text_area_size = text_area_width
-        #      # make a new path running vertically
-        #      text_baseline = inner + distance_factor * ( outer - inner )
-        #      x = text_baseline * math.cos( half_d )
-        #      y = text_baseline * math.sin( half_d )
-        text = name
-        if dates:
-           text += ' ' + dates
-        # gotta do the height check flipping height and width !!!
-        area_items = calc_height_areas()
-        text_baseline = area_items[0]
-        area_height = area_items[1]
-        area_width = area_items[2]
-
-        font_size = calc_font_size_for_height( area_width, area_height, text )
-        if check_size and ( font_size < min_reasonable_font_size ):
-           return False
-        # oops, gotta to the actual calculations
-        single_line_height( font_size, area_width, text_baseline, text )
-        return False
-
-    def try2( check_size, name, dates ):
-        # break out the dates and use the longest of the two
-        if not dates:
-           # if no dates, this is the same as try1
-           return False
-        longest = name
-        if len( dates ) > len( name ):
-           # assuming character widths equivalent to font widths
-           longest = dates
-        area_items = calc_width_areas()
-        text_baseline = area_items[0]
-        area_height = area_items[1]
-        area_width = area_items[2]
-
-        font_size = calc_font_size_for_width( area_width, area_height, longest )
-        if check_size and ( font_size < min_reasonable_font_size ):
-           return False
-        # move the baseline up
-        # but now have to check that 2 lines will fit the height
-        # and set the font size based on the heights
-        single_line_width( font_size, area_width, text_baseline, longest )
-        # make a new line for the dates
-        return True
-
-    def try1( check_size, name, dates ):
-        # one line, widthwise
-        # should be good for a short name or a name with no date
-        # that fits well within the width of a slice along the
-        # baseline
-        text = name
-        if dates:
-           text += ' ' + dates
-        area_items = calc_width_areas()
-        text_baseline = area_items[0]
-        area_height = area_items[1]
-        area_width = area_items[2]
-
-        font_size = calc_font_size_for_width( area_width, area_height, text )
-        if check_size and ( font_size < min_reasonable_font_size ):
-           return False
-        single_line_width( font_size, area_width, text_baseline, text )
-        return True
-
     def single_line_height( font_size, area_width, baseline, text ):
         # pretend for now - need to actually make a vertical path
         single_line_width( font_size, area_width, baseline, text )
@@ -614,6 +543,19 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return True
 
+    def try_format_1():
+        return 1
+    def try_format_2():
+        return 2
+    def try_format_3():
+        return 3
+    def try_format_4():
+        return 4
+    def try_format_5():
+        return 5
+    def try_format_6():
+        return 6
+
     half_d = math.radians( d/2.0 )
 
     # should this be global ?
@@ -631,27 +573,45 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
           dates = get_indi_years( indi )
     name = prefix + name
 
+    # try some different formats of the name and use the
+    # one which trsults in the largest size
+    best_size = 0
+    best_try = 0
+
+    # 1 = vertical name and date all one line (maybe no date)
+    # 2 = vertical name break date (same as 1 if no date)
+    # 3 = vertical first break last break date (maybe no date)
+    # 4 = horizontal same as 1
+    # 5 = horizontal same as 2
+    # 6 = horizontal same as 3
+
+    try_size = try_format_1()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 1 
+    try_size = try_format_2()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 2
+    try_size = try_format_3()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 3
+    try_size = try_format_4()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 4
+    try_size = try_format_5()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 5
+    try_size = try_format_6()
+    if try_size > best_size:
+       best_size = try_size
+       best_try = 6
+
     if debug:
-       print( 'try=0', file=sys.stderr )
-    worked = try1( True, name, dates )
-    if not worked:
-       if debug:
-          print( 'try=2', file=sys.stderr )
-       worked = try2( True, name, dates )
-    if not worked:
-       if debug:
-          print( 'try=3', file=sys.stderr )
-       worked = try3( True, name, dates )
-    if not worked:
-       # final attempt
-       if dates:
-          if debug:
-             print( 'try=final2', file=sys.stderr )
-          worked = try2( False, name, dates )
-       else:
-          if debug:
-             print( 'try=final1', file=sys.stderr )
-          worked = try1( False, name, dates )
+       print( name, 'best format', best_try, best_size, file=sys.stderr )
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
