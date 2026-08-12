@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.1'
+    return '0.9.0.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -543,7 +543,10 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return True
 
-    def try_format( n ):
+    def try_format( n, name ):
+        name_width = 
+        name_height = 
+
         return n
 
     half_d = math.radians( d/2.0 )
@@ -564,7 +567,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     name = prefix + name
 
     # try some different formats of the name and use the
-    # one which trsults in the largest size
+    # one which results in the largest size which fits the slice area
     best_size = 0
     best_try = 0
 
@@ -576,7 +579,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # 6 = horizontal same as 3
 
     for i in range(6): # note: 1 based try index
-       try_size = try_format( i+1 )
+       try_size = try_format( i+1, name )
        if try_size > best_size:
           best_size = try_size
           best_try = i+1
