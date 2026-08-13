@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.9'
+    return '0.9.0.10'
 
 
 def subtract_a_percentage( x, p ):
@@ -474,12 +474,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [ width, height, text_baseline ]
 
-    def single_line_vertical( font_size, area_width, baseline, text ):
+    def single_line_vertical( id_suffix, font_size, area_width, baseline, text ):
         # pretend for now - need to actually make a vertical path
-        single_line_horizontal( font_size, area_width, baseline, text )
+        single_line_horizontal( id_suffix, font_size, area_width, baseline, text )
 
-    def single_line_horizontal( font_size, area_width, baseline, text ):
-        path_id = 'text' + str(indi)
+    def single_line_horizontal( id_suffix, font_size, area_width, baseline, text ):
+        path_id = 'txt' + str(indi) + '_' + str(id_suffix)
 
         x = baseline * math.cos( half_d )
         y = baseline * math.sin( half_d )
@@ -608,17 +608,17 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
+          single_line_horizontal( best_try, best_size, slice_size[0], slice_size[2], text )
        if best_try == 1:
-          single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
+          single_line_horizontal( best_try, best_size, slice_size[0], slice_size[2], text )
           # now do the second line with the date
     else:
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_vertical( best_size, slice_size[1], slice_size[2], text )
+          single_line_vertical( best_try, best_size, slice_size[1], slice_size[2], text )
        if best_try == 1:
-          single_line_vertical( best_size, slice_size[1], slice_size[2], text )
+          single_line_vertical( best_try, best_size, slice_size[1], slice_size[2], text )
           # now do the second line with the date
 
 
