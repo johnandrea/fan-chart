@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.3'
+    return '0.9.0.4'
 
 
 def subtract_a_percentage( x, p ):
@@ -72,14 +72,9 @@ def compute_arc_length( radius, arc_degrees ):
     return radius * math.radians( arc_degrees )
 
 
-def estimate_font_height( font_size ):
-    # result in pixels
-    return font_size * 2.0 / 3.0
-
-
-def reverse_font_height( pixels ):
-    # from pixels to estimated font size
-    return pixels * 3.0 / 2.0
+#def reverse_font_height( pixels ):
+#    # from pixels to estimated font size
+#    return pixels * 3.0 / 2.0
 
 
 def setup_char_widths():
@@ -134,16 +129,21 @@ def estimate_string_width( font_size, s ):
     return result
 
 
-def font_to_fit_string( width, s ):
-    # return the font size that will fit the given string to the width
-    trial_font = 25
-    s_w = estimate_string_width( trial_font, s )
-    # from the width estimation: width = slope * fontsize
-    # reverse it using a big character
-    wide_char_w = trial_font * char_width_factors[widest_char]
-    # so the font size to fit the string is the ratio
-    result = width * wide_char_w / s_w
-    return result
+def estimate_font_height( font_size ):
+    # result in pixels
+    return font_size * 2.0 / 3.0
+
+
+#def font_to_fit_string( width, s ):
+#    # return the font size that will fit the given string to the width
+#    trial_font = 25
+#    s_w = estimate_string_width( trial_font, s )
+#    # from the width estimation: width = slope * fontsize
+#    # reverse it using a big character
+#    wide_char_w = trial_font * char_width_factors[widest_char]
+#    # so the font size to fit the string is the ratio
+#    result = width * wide_char_w / s_w
+#    return result
 
 
 def calculate_generation_rings( n_gen ):
@@ -450,6 +450,13 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
+    half_d = math.radians( d/2.0 )
+
+    # should this be global ?
+    # this is the distance where the text will be placed relative
+    # to the height of the available area
+    distance_factor = 0.9
+
     def calc_slice_size():
         # estimate the width at the middle of the section
         width = compute_arc_length( inner+(outer-inner)/2, d )
@@ -548,13 +555,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         return scale * approx_font
 
     slice_size = calc_slice_size()
-
-    half_d = math.radians( d/2.0 )
-
-    # should this be global ?
-    # this is the distance where the text will be placed relative
-    # to the height of the available area
-    distance_factor = 0.9
 
     name = '?'
     dates = ''
