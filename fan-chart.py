@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.10'
+    return '0.9.0.11'
 
 
 def subtract_a_percentage( x, p ):
@@ -474,11 +474,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [ width, height, text_baseline ]
 
-    def single_line_vertical( id_suffix, font_size, area_width, baseline, text ):
-        # pretend for now - need to actually make a vertical path
-        single_line_horizontal( id_suffix, font_size, area_width, baseline, text )
-
-    def single_line_horizontal( id_suffix, font_size, area_width, baseline, text ):
+    def single_line_vertical( id_suffix, font_size, slice_size, baseline, text ):
+        # ??? actually this is still code for horizontal
         path_id = 'txt' + str(indi) + '_' + str(id_suffix)
 
         x = baseline * math.cos( half_d )
@@ -492,12 +489,48 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = ( area_width - string_length ) / 2.0
+        offset = ( slice_size - string_length ) / 2.0
         #if debug:
         #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
 
         # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / area_width
+        offset = 100.0 * offset / slice_size
+        # bit of a margin, 1.5%
+        offset = roundstr( offset + 1.5 ) + '%'
+
+        font_options = ' font-size="' + roundstr(font_size) + '"'
+        font_options += ' ' + font_selection
+        # this style doesn't look good
+        #font_options += ' style="fill:black; stroke:white;"'
+
+        # put the text on a curve,
+        # no need for a separate graphic context
+
+        print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
+        print( '<text ' + font_options + '>' )
+        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
+        print( '</text>' )
+
+    def single_line_horizontal( id_suffix, font_size, slice_size, baseline, text ):
+        path_id = 'txt' + str(indi) + '_' + str(id_suffix)
+
+        x = baseline * math.cos( half_d )
+        y = baseline * math.sin( half_d )
+
+        path = 'M' + roundstr(x) +','+ roundstr(y)
+        path += ' A' + roundstr(baseline) +','+ roundstr(baseline)
+        path += ' 0 0 0'
+        path += ' ' + roundstr(x) +','+ roundstr(-y)
+
+        string_length = estimate_string_width( font_size, text )
+
+        # try to center it on the curve
+        offset = ( slice_size - string_length ) / 2.0
+        #if debug:
+        #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
+
+        # change to a percent (is that what the startOffset parameter needs?)
+        offset = 100.0 * offset / slice_size
         # bit of a margin, 1.5%
         offset = roundstr( offset + 1.5 ) + '%'
 
