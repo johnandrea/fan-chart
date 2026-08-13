@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.2'
+    return '0.9.0.3'
 
 
 def subtract_a_percentage( x, p ):
@@ -450,51 +450,20 @@ def output_trailer():
 
 
 def output_name( d, inner, outer, draw_separator, prefix, indi ):
-    def calc_font_size_for_width( width, height, text ):
-        font_size = font_to_fit_string( width, text )
-        if estimate_font_height(font_size) > height:
-           # the text got too big for the height
-           font_size = 0.75 * reverse_font_height( width )
-        return min( font_size, max_font_size )
-
-    def calc_font_size_for_height( width, height, text ): #???
-        font_size = font_to_fit_string( height, text )
-        if estimate_string_width( font_size, text ) > width:
-           # the text got too big for the width
-           font_size = font_to_fit_string( width, text )
-        return font_size
-
-    def calc_width_areas():
+    def calc_slice_size():
         # estimate the width at the middle of the section
         width = compute_arc_length( inner+(outer-inner)/2, d )
         ### what if the inner arc is used
         ##width = compute_arc_length( inner, d )
 
+        # the height of the area is the maximum font size
+        height = outer - inner - 4
+
         # zero position of the line
         # along the bottom of the slice as an estimation of the path
         text_baseline = inner + distance_factor * ( outer - inner )
 
-        # the height of the area is the maximum font size
-        height = outer - inner - 4
-
-        return [text_baseline, height, width]
-
-    def calc_height_areas(): #???
-        # this will be the maximum allowed string length
-        height = outer - inner - 4
-
-        # zero position of the line
-        # along the vertical side of the slice
-        # 'd' is the angle of this slice (consider it from 0
-        # because it will be in its own graphic context)
-        text_baseline = distance_factor * ( outer - inner )
-
-        # estimate the width as the middle of the section
-        width = compute_arc_length( inner+(outer-inner)/2, d )
-        ## what if the inner arc is used
-        #text_area_width = compute_arc_length( inner, d )
-
-        return [text_baseline, height, width]
+        return [ width, height, text_baseline ]
 
     def single_line_height( font_size, area_width, baseline, text ):
         # pretend for now - need to actually make a vertical path
@@ -543,11 +512,42 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return True
 
-    def try_format( n, name ):
-        name_width = 
-        name_height = 
+    def try_format( n, name, dates, slice_width, slice_height ):
+        approx_font = 12
 
-        return n
+        space_width = estimate_string_width( approx_font, ' ' )
+        name_width = estimate_string_width( approx_font, name )
+
+        font_height = estimate_font_height( approx_font )
+        name_area_width = name_width
+        name_area_height = font_height
+        # ??? what is the approx line separation height
+        line_break = 2
+
+        if n == 1:
+           # one line
+           if dates:
+              name_area_width += space_width + estimate_string_width( approx_font, dates )
+
+        if n == 2:
+           # dates on a separate line
+           if dates:
+              name_area_width = max( name_area_width, estimate_string_width( approx_font, dates ) )
+              name_area_height += line_break + font_height
+
+        # scale the name area to fit within the slice
+        # must keep the same aspect ratio
+        scale = 1
+        if name_area_width > name_area_height:
+           scale = slice_width / name_area_width
+        else:
+           scale = slice_height / name_area_height
+
+        # and the font gets that same scale
+
+        return scale * approx_font
+
+    slice_size = calc_slice_size()
 
     half_d = math.radians( d/2.0 )
 
@@ -571,18 +571,18 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     best_size = 0
     best_try = 0
 
-    # 1 = vertical name and date all one line (maybe no date)
-    # 2 = vertical name break date (same as 1 if no date)
-    # 3 = vertical first break last break date (maybe no date)
+    # 0 = vertical name and date all one line (maybe no date)
+    # 1 = vertical name break date (same as 0 if no date)
+    # 2 = vertical first break last break date (maybe no date)
+    # 3 = horizontal same as 0
     # 4 = horizontal same as 1
     # 5 = horizontal same as 2
-    # 6 = horizontal same as 3
 
-    for i in range(6): # note: 1 based try index
-       try_size = try_format( i+1, name )
+    for i in range(6):
+       try_size = try_format( i, name, dates, slice_size[0], slice_size[1] )
        if try_size > best_size:
           best_size = try_size
-          best_try = i+1
+          best_try = i
     if debug:
        print( name, 'best format', best_try, best_size, file=sys.stderr )
 
