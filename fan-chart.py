@@ -41,7 +41,7 @@ slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 n_colours = len( slice_colours )
 
 # even on a large sheet, no need for huge fonts
-max_font_size = 20
+max_font_size = 22
 
 # don't bother flipping to vertical if the font is this or above
 min_reasonable_font_size = 8
@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.6'
+    return '0.9.0.7'
 
 
 def subtract_a_percentage( x, p ):
@@ -474,9 +474,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [ width, height, text_baseline ]
 
-    #def single_line_vertical( font_size, area_width, baseline, text ):
-    #    # pretend for now - need to actually make a vertical path
-    #    single_line_horizontal( font_size, area_width, baseline, text )
+    def single_line_vertical( font_size, area_width, baseline, text ):
+        # pretend for now - need to actually make a vertical path
+        single_line_horizontal( font_size, area_width, baseline, text )
 
     def single_line_horizontal( font_size, area_width, baseline, text ):
         path_id = 'text' + str(indi)
@@ -493,8 +493,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         # try to center it on the curve
         offset = ( area_width - string_length ) / 2.0
-        if debug:
-           print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
+        #if debug:
+        #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
 
         # change to a percent (is that what the startOffset parameter needs?)
         offset = 100.0 * offset / area_width
@@ -570,7 +570,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            if estimate_font_height( scaled_font ) > slice_width:
               scaled_font = subtract_a_percentage( reverse_font_height( slice_width ), 10 )
 
-        return scaled_font
+        return min( scaled_font, max_font_size )
 
     slice_size = calc_slice_size()
 
@@ -619,6 +619,15 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        if best_try == 3:
           single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
           # now do the second line with the date
+    else:
+       if best_try == 0:
+          if dates:
+             text += ' ' + dates
+          single_line_vertical( best_size, slice_size[1], slice_size[2], text )
+       if best_try == 1:
+          single_line_vertical( best_size, slice_size[1], slice_size[2], text )
+          # now do the second line with the date
+       
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
