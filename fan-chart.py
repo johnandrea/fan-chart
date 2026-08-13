@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.5'
+    return '0.9.0.6'
 
 
 def subtract_a_percentage( x, p ):
@@ -70,11 +70,6 @@ def roundstr( x ):
 def compute_arc_length( radius, arc_degrees ):
     # standard trig function
     return radius * math.radians( arc_degrees )
-
-
-#def reverse_font_height( pixels ):
-#    # from pixels to estimated font size
-#    return pixels * 3.0 / 2.0
 
 
 def setup_char_widths():
@@ -132,6 +127,10 @@ def estimate_string_width( font_size, s ):
 def estimate_font_height( font_size ):
     # result in pixels
     return font_size * 2.0 / 3.0
+
+def reverse_font_height( pixels ):
+    # from pixels to estimated font size
+    return pixels * 3.0 / 2.0
 
 
 #def font_to_fit_string( width, s ):
@@ -457,6 +456,9 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # to the height of the available area
     distance_factor = 0.9
 
+    # ??? what is the approx line separation height
+    line_break = 2
+
     def calc_slice_size():
         # estimate the width at the middle of the section
         width = compute_arc_length( inner+(outer-inner)/2, d )
@@ -472,11 +474,11 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [ width, height, text_baseline ]
 
-    def single_line_height( font_size, area_width, baseline, text ):
-        # pretend for now - need to actually make a vertical path
-        single_line_width( font_size, area_width, baseline, text )
+    #def single_line_vertical( font_size, area_width, baseline, text ):
+    #    # pretend for now - need to actually make a vertical path
+    #    single_line_horizontal( font_size, area_width, baseline, text )
 
-    def single_line_width( font_size, area_width, baseline, text ):
+    def single_line_horizontal( font_size, area_width, baseline, text ):
         path_id = 'text' + str(indi)
 
         x = baseline * math.cos( half_d )
@@ -512,15 +514,15 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
         print( '</text>' )
 
-        if debug:
-           print( 'area size', roundstr(area_width), file=sys.stderr )
-           print( 'strlen', roundstr(string_length), file=sys.stderr )
-           print( roundstr(font_size), '=', text, file=sys.stderr )
+        #if debug:
+        #   print( 'area size', roundstr(area_width), file=sys.stderr )
+        #   print( 'strlen', roundstr(string_length), file=sys.stderr )
+        #   print( roundstr(font_size), '=', text, file=sys.stderr )
 
-        return True
 
     def try_format( n, orientation, name, dates, slice_width, slice_height ):
         approx_font = 12
+        scaled_font = 1
 
         space_width = estimate_string_width( approx_font, ' ' )
         name_width = estimate_string_width( approx_font, name )
@@ -528,8 +530,6 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         font_height = estimate_font_height( approx_font )
         name_area_width = name_width
         name_area_height = font_height
-        # ??? what is the approx line separation height
-        line_break = 2
 
         if n in (0,2):
            # one line
@@ -559,8 +559,18 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
               scale = slice_width / name_area_height
 
         # and the font gets that same scale
+        scaled_font = scale * approx_font
 
-        return scale * approx_font
+        # wait
+        # width might be ok, but if the height is too much then reduce it
+        if orientation == 'h':
+           if estimate_font_height( scaled_font ) > slice_height:
+              scaled_font = subtract_a_percentage( reverse_font_height( slice_height ), 10 )
+        else:
+           if estimate_font_height( scaled_font ) > slice_width:
+              scaled_font = subtract_a_percentage( reverse_font_height( slice_width ), 10 )
+
+        return scaled_font
 
     slice_size = calc_slice_size()
 
@@ -579,6 +589,8 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     best_size = 0
     best_try = 0
 
+    # this could be organized better
+
     # verticals first, so that a later horizontal will take preference
     # 0 = vertical name and date all one line (maybe no date)
     # 1 = vertical name break date (same as 0 if no date)
@@ -588,15 +600,25 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     orientation = 'v'
     orientation_flip = 2
 
-    for i in range(6):
+    for i in range(4):
        if i == orientation_flip:
           orientation = 'h'
        try_size = try_format( i, orientation, name, dates, slice_size[0], slice_size[1] )
        if try_size > best_size:
           best_size = try_size
           best_try = i
-    if debug:
-       print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
+    #if debug:
+    #   print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
+
+    text = name
+    if orientation == 'h':
+       if best_try == 2:
+          if dates:
+             text += ' ' + dates
+          single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
+       if best_try == 3:
+          single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
+          # now do the second line with the date
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
