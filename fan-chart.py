@@ -41,7 +41,7 @@ slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 n_colours = len( slice_colours )
 
 # even on a large sheet, no need for huge fonts
-max_font_size = 22
+max_font_size = 20
 
 # don't bother flipping to vertical if the font is this or above
 min_reasonable_font_size = 8
@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.8'
+    return '0.9.0.9'
 
 
 def subtract_a_percentage( x, p ):
