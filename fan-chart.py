@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.11'
+    return '0.9.0.12'
 
 
 def subtract_a_percentage( x, p ):
@@ -457,7 +457,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     distance_factor = 0.9
 
     # ??? what is the approx line separation height
-    line_break = 2
+    line_sep = 2
 
     def calc_slice_size():
         # estimate the width at the middle of the section
@@ -572,7 +572,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
            # dates on a separate line
            if dates:
               name_area_width = max( name_area_width, estimate_string_width( approx_font, dates ) )
-              name_area_height += line_break + font_height
+              name_area_height += line_sep + font_height
 
         # scale the name area to fit within the slice
         # must keep the same aspect ratio
@@ -643,16 +643,23 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
              text += ' ' + dates
           single_line_horizontal( best_try, best_size, slice_size[0], slice_size[2], text )
        if best_try == 1:
-          single_line_horizontal( best_try, best_size, slice_size[0], slice_size[2], text )
+          #baseline = slice_size[2] - best_size - line_sep
+          baseline = slice_size[2]
+          single_line_horizontal( best_try, best_size, slice_size[0], baseline, text )
           # now do the second line with the date
+          #baseline = slice_size[2]
+
     else:
        if best_try == 0:
           if dates:
              text += ' ' + dates
           single_line_vertical( best_try, best_size, slice_size[1], slice_size[2], text )
        if best_try == 1:
-          single_line_vertical( best_try, best_size, slice_size[1], slice_size[2], text )
+          #baseline = slice_size[2] - best_size - line_sep
+          baseline = slice_size[2]
+          single_line_vertical( best_try, best_size, slice_size[1], baseline, text )
           # now do the second line with the date
+          #baseline = slice_size[2]
 
 
     ## show the curve
