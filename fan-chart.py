@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.7'
+    return '0.9.0.8'
 
 
 def subtract_a_percentage( x, p ):
@@ -519,8 +519,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         #   print( 'strlen', roundstr(string_length), file=sys.stderr )
         #   print( roundstr(font_size), '=', text, file=sys.stderr )
 
-
-    def try_format( n, orientation, name, dates, slice_width, slice_height ):
+    def try_format( style, orientation, name, dates, slice_width, slice_height ):
         approx_font = 12
         scaled_font = 1
 
@@ -531,12 +530,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         name_area_width = name_width
         name_area_height = font_height
 
-        if n in (0,2):
+        if style == 0:
            # one line
            if dates:
               name_area_width += space_width + estimate_string_width( approx_font, dates )
 
-        if n in (1,3):
+        if style == 1:
            # dates on a separate line
            if dates:
               name_area_width = max( name_area_width, estimate_string_width( approx_font, dates ) )
@@ -588,35 +587,29 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # one which results in the largest size which fits the slice area
     best_size = 0
     best_try = 0
+    best_orientation = 'h'
 
-    # this could be organized better
-
+    # 0 = name and date all one line (maybe no date)
+    # 1 = name break date (same as 0 if no date)
     # verticals first, so that a later horizontal will take preference
-    # 0 = vertical name and date all one line (maybe no date)
-    # 1 = vertical name break date (same as 0 if no date)
-    # 2 = horizontal same as 0
-    # 3 = horizontal same as 1
 
-    orientation = 'v'
-    orientation_flip = 2
-
-    for i in range(4):
-       if i == orientation_flip:
-          orientation = 'h'
-       try_size = try_format( i, orientation, name, dates, slice_size[0], slice_size[1] )
-       if try_size > best_size:
-          best_size = try_size
-          best_try = i
+    for orientation in ['v', 'h']:
+        for style in [0, 1]:
+           try_size = try_format( style, orientation, name, dates, slice_size[0], slice_size[1] )
+           if try_size > best_size:
+              best_size = try_size
+              best_try = style
+              best_orientation = orientation
     #if debug:
     #   print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
 
     text = name
-    if orientation == 'h':
-       if best_try == 2:
+    if best_orientation == 'h':
+       if best_try == 0:
           if dates:
              text += ' ' + dates
           single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
-       if best_try == 3:
+       if best_try == 1:
           single_line_horizontal( best_size, slice_size[0], slice_size[2], text )
           # now do the second line with the date
     else:
@@ -627,7 +620,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
        if best_try == 1:
           single_line_vertical( best_size, slice_size[1], slice_size[2], text )
           # now do the second line with the date
-       
+
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
