@@ -55,7 +55,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.4'
+    return '0.9.0.5'
 
 
 def subtract_a_percentage( x, p ):
@@ -519,7 +519,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return True
 
-    def try_format( n, name, dates, slice_width, slice_height ):
+    def try_format( n, orientation, name, dates, slice_width, slice_height ):
         approx_font = 12
 
         space_width = estimate_string_width( approx_font, ' ' )
@@ -531,12 +531,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         # ??? what is the approx line separation height
         line_break = 2
 
-        if n == 1:
+        if n in (0,2):
            # one line
            if dates:
               name_area_width += space_width + estimate_string_width( approx_font, dates )
 
-        if n == 2:
+        if n in (1,3):
            # dates on a separate line
            if dates:
               name_area_width = max( name_area_width, estimate_string_width( approx_font, dates ) )
@@ -546,9 +546,17 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         # must keep the same aspect ratio
         scale = 1
         if name_area_width > name_area_height:
-           scale = slice_width / name_area_width
+           if orientation == 'h':
+              scale = slice_width / name_area_width
+           else:
+              # other direction
+              scale = slice_height / name_area_width
         else:
-           scale = slice_height / name_area_height
+           if orientation == 'h':
+              scale = slice_height / name_area_height
+           else:
+              # other direction
+              scale = slice_width / name_area_height
 
         # and the font gets that same scale
 
@@ -571,20 +579,24 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     best_size = 0
     best_try = 0
 
+    # verticals first, so that a later horizontal will take preference
     # 0 = vertical name and date all one line (maybe no date)
     # 1 = vertical name break date (same as 0 if no date)
-    # 2 = vertical first break last break date (maybe no date)
-    # 3 = horizontal same as 0
-    # 4 = horizontal same as 1
-    # 5 = horizontal same as 2
+    # 2 = horizontal same as 0
+    # 3 = horizontal same as 1
+
+    orientation = 'v'
+    orientation_flip = 2
 
     for i in range(6):
-       try_size = try_format( i, name, dates, slice_size[0], slice_size[1] )
+       if i == orientation_flip:
+          orientation = 'h'
+       try_size = try_format( i, orientation, name, dates, slice_size[0], slice_size[1] )
        if try_size > best_size:
           best_size = try_size
           best_try = i
     if debug:
-       print( name, 'best format', best_try, best_size, file=sys.stderr )
+       print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
 
     ## show the curve
     # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
