@@ -35,7 +35,7 @@ def plain_text( x, y, size, s ):
     print( ' x="' + roundstr(x) + '" y="' + roundstr(y) + '">' + s + '</text>' )
 
 def draw_labels( x, y ):
-    # remind me of the directions
+    # remind me of the grid directions
     plain_text( x - 10, y - 2, 10, 'x &#8594;' )
     plain_text( x - 10, y + 11, 10, 'y &#8595;' )
 
@@ -65,6 +65,48 @@ def draw_sector( inner, outer, d ):
     r = roundstr(outer) + ',' + roundstr(outer)
     print( 'A' + r + ' 0 0 0 ' + p4 )
     print( 'z" />' )
+
+def text_on_path( path, path_id ):
+    text = 'Given Last'
+    font_size = 14
+    font_options = ' font-size="' + roundstr(font_size) + '"'
+    font_options += ' font-family="Times New Roman,serif"'
+
+    print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
+    print( '<text ' + font_options + '>' )
+    print( ' <textPath xlink:href="#' + path_id + '" startOffset="0%">' + text + '</textPath>' )
+    print( '</text>' )
+
+def horizontal_name( outer, d ):
+    half_d = math.radians( d/2.0 )
+
+    p3_x = outer * math.cos(half_d)
+    p3_y = outer * math.sin(half_d)
+    p3 = roundstr(p3_x) + ',' + roundstr(p3_y)
+
+    p4_x = p3_x
+    p4_y = - p3_y
+    p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
+
+    path = 'M' + p3 + ' L' + p4
+    text_on_path( path, 'hpath1' )
+
+def vertical_name( inner, outer, d ):
+    half_d = math.radians( d/2.0 )
+
+    p1_x = inner * math.cos(half_d)
+    p1_y = - inner * math.sin(half_d)
+
+    p2_x = p1_x
+    p2_y = - p1_y
+    p2 = roundstr(p2_x) + ',' + roundstr(p2_y)
+
+    p3_x = outer * math.cos(half_d)
+    p3_y = outer * math.sin(half_d)
+    p3 = roundstr(p3_x) + ',' + roundstr(p3_y)
+
+    path = 'M' + p2 + ' L' + p3
+    text_on_path( path, 'vpath2' )
 
 def horizontal_name_base( outer, d ):
     half_d = math.radians( d/2.0 )
@@ -96,6 +138,7 @@ def slice_with_horizontal_name( x, y, inner, outer, slice_angle, rotate ):
     print( '<g transform="rotate(' + str(rotate) + ')">' )
     draw_sector( inner, outer, slice_angle )
     horizontal_name_base( outer, slice_angle )
+    horizontal_name( outer, slice_angle )
     print( '</g>' )
     print( '</g>' )
 
@@ -105,6 +148,7 @@ def slice_with_vertical_name( x, y, inner, outer, slice_angle, rotate ):
     print( '<g transform="rotate(' + str(rotate) + ')">' )
     draw_sector( inner, outer, slice_angle )
     vertical_name_base( inner, outer, slice_angle )
+    vertical_name( inner, outer, slice_angle )
     print( '</g>' )
     print( '</g>' )
 
