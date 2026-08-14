@@ -56,7 +56,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.14'
+    return '0.9.0.15'
 
 
 def subtract_a_percentage( x, p ):
@@ -471,9 +471,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         # zero position of the line
         # along the bottom of the slice as an estimation of the path
-        text_baseline = inner + distance_factor * ( outer - inner )
+        horizontal_baseline = inner + distance_factor * ( outer - inner )
 
-        return [ width, height, text_baseline ]
+        # along the side of the slice
+        vertical_baseline = distance_factor * ( outer - inner )
+
+        return [ width, height, horizontal_baseline, vertical_baseline ]
 
     def single_line_vertical( id_suffix, font_size, slice_size, baseline, text ):
         # ??? actually this is still code for horizontal
@@ -638,30 +641,33 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     #if debug:
     #   print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
 
+    slice_width = slice_size[0]
+    slice_height = slice_size[1]
+
     text = fullname
     if best_orientation == 'h':
+       baseline = slice_size[2]
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_horizontal( best_try, best_size, slice_size[0], slice_size[2], text )
+          single_line_horizontal( best_try, best_size, slice_width, baseline, text )
        if best_try == 1:
-          #baseline = slice_size[2] - best_size - line_sep
-          baseline = slice_size[2]
-          single_line_horizontal( best_try, best_size, slice_size[0], baseline, text )
+          #baseline -= best_size + line_sep
+          single_line_horizontal( best_try, best_size, slice_width, baseline, text )
           # now do the second line with the date
-          #baseline = slice_size[2]
+          #baseline = ?
 
     else:
+       baseline = slice_size[3]
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_vertical( best_try, best_size, slice_size[1], slice_size[2], text )
+          single_line_vertical( best_try, best_size, slice_height, baseline, text )
        if best_try == 1:
-          #baseline = slice_size[2] - best_size - line_sep
-          baseline = slice_size[2]
-          single_line_vertical( best_try, best_size, slice_size[1], baseline, text )
+          #baseline -= best_size + line_sep
+          single_line_vertical( best_try, best_size, slice_height, baseline, text )
           # now do the second line with the date
-          #baseline = slice_size[2]
+          #baseline = ?
 
 
     ## show the curve
