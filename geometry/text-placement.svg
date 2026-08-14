@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="450pt" height="400pt"
+ viewBox="0.00 0.00 450.00 400.00"
+ version="1.1"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M200,200 430,200" style="stroke:blue;" />
+<circle cx="200" cy="200"
+ fill="none" stroke="grey" r="180" />
+<circle cx="200" cy="200"
+ fill="none" stroke="grey" r="100" />
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190" y="198">x &#8594;</text>
+<text font-size="10" font-family="Times New Roman,serif"
+ x="190" y="211">y &#8595;</text>
+<g transform="translate(200,200)">
+<g transform="rotate(-40)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M97.81,-20.79
+A100,100 0 0 1 97.81,20.79
+L176.07,37.42
+A180,180 0 0 0 176.07,-37.42
+z" />
+<path d="M176.07,37.42 176.07,-37.42" style="stroke:blue;" />
+<path id="hpath1" d="M176.07,37.42 L176.07,-37.42" style="fill:none;" />
+<text  font-size="15" font-family="Times New Roman,serif">
+ <textPath xlink:href="#hpath1" startOffset="0%">Full name</textPath>
+</text>
+</g>
+</g>
+<g transform="translate(200,200)">
+<g transform="rotate(18)">
+<path style="stroke:grey; fill:lightgreen;"
+d="M99.14,-13.05
+A100,100 0 0 1 99.14,13.05
+L178.46,23.49
+A180,180 0 0 0 178.46,-23.49
+z" />
+<path d="M99.14,13.05 178.46,23.49" style="stroke:blue;" />
+<path id="vpath2" d="M99.14,13.05 L178.46,23.49" style="fill:none;" />
+<text  font-size="15" font-family="Times New Roman,serif">
+ <textPath xlink:href="#vpath2" startOffset="0%">Full name</textPath>
+</text>
+</g>
+</g>
+</svg>
