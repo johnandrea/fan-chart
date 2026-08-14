@@ -56,7 +56,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.15'
+    return '0.9.0.16'
 
 
 def subtract_a_percentage( x, p ):
@@ -478,7 +478,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         return [ width, height, horizontal_baseline, vertical_baseline ]
 
-    def single_line_vertical( id_suffix, font_size, slice_size, baseline, text ):
+    def single_line_vertical( id_suffix, font_size, available_width, baseline, text ):
         # ??? actually this is still code for horizontal
         path_id = 'txt' + str(indi) + '_' + str(id_suffix)
 
@@ -493,12 +493,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = ( slice_size - string_length ) / 2.0
+        offset = ( available_width - string_length ) / 2.0
         #if debug:
         #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
 
         # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / slice_size
+        offset = 100.0 * offset / available_width
         # bit of a margin, 1.5%
         offset = roundstr( offset + 1.5 ) + '%'
 
@@ -515,7 +515,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
         print( '</text>' )
 
-    def single_line_horizontal( id_suffix, font_size, slice_size, baseline, text ):
+    def single_line_horizontal( id_suffix, font_size, available_width, baseline, text ):
         path_id = 'txt' + str(indi) + '_' + str(id_suffix)
 
         x = baseline * math.cos( half_d )
@@ -529,12 +529,12 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         string_length = estimate_string_width( font_size, text )
 
         # try to center it on the curve
-        offset = ( slice_size - string_length ) / 2.0
+        offset = ( available_width - string_length ) / 2.0
         #if debug:
         #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
 
         # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / slice_size
+        offset = 100.0 * offset / available_width
         # bit of a margin, 1.5%
         offset = roundstr( offset + 1.5 ) + '%'
 
@@ -556,7 +556,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         #   print( 'strlen', roundstr(string_length), file=sys.stderr )
         #   print( roundstr(font_size), '=', text, file=sys.stderr )
 
-    def try_format( style, orientation, name, dates, slice_width, slice_height ):
+    def try_format( style, orientation, name, dates, available_width, available_height ):
         approx_font = 12
         scaled_font = 1
 
@@ -583,16 +583,16 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         scale = 1
         if name_area_width > name_area_height:
            if orientation == 'h':
-              scale = slice_width / name_area_width
+              scale = available_width / name_area_width
            else:
               # other direction
-              scale = slice_height / name_area_width
+              scale = available_height / name_area_width
         else:
            if orientation == 'h':
-              scale = slice_height / name_area_height
+              scale = available_height / name_area_height
            else:
               # other direction
-              scale = slice_width / name_area_height
+              scale = available_width / name_area_height
 
         # and the font gets that same scale
         scaled_font = scale * approx_font
@@ -600,11 +600,11 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
         # wait
         # width might be ok, but if the height is too much then reduce it
         if orientation == 'h':
-           if estimate_font_height( scaled_font ) > slice_height:
-              scaled_font = subtract_a_percentage( reverse_font_height( slice_height ), 10 )
+           if estimate_font_height( scaled_font ) > available_height:
+              scaled_font = subtract_a_percentage( reverse_font_height( available_height ), 10 )
         else:
-           if estimate_font_height( scaled_font ) > slice_width:
-              scaled_font = subtract_a_percentage( reverse_font_height( slice_width ), 10 )
+           if estimate_font_height( scaled_font ) > available_width:
+              scaled_font = subtract_a_percentage( reverse_font_height( available_width ), 10 )
 
         return min( scaled_font, max_font_size )
 
@@ -629,7 +629,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # 0 = name and date all one line (maybe no date)
     # 1 = name break date (same as 0 if no date)
     # verticals first, so that a later horizontal will take preference
-    # Another style is givenname break surname break date before zero
+    # Another style is givenname break surname break date as the first test
 
     for orientation in ['v', 'h']:
         for style in [0, 1]:
