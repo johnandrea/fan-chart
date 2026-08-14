@@ -21,8 +21,16 @@ A100,100 0 0 1 97.81,20.79
 L176.07,37.42
 A180,180 0 0 0 176.07,-37.42
 z" />
-<path d="M176.07,37.42 176.07,-37.42" style="stroke:blue;" />
-<path id="hpath1" d="M176.07,37.42 L176.07,-37.42" style="fill:none;" />
+<circle cx="107.2" cy="-15.8"
+ fill="none" stroke="red" r="2" />
+<circle cx="107.2" cy="15.8"
+ fill="none" stroke="red" r="2" />
+<circle cx="166.68" cy="28.44"
+ fill="none" stroke="red" r="2" />
+<circle cx="166.68" cy="-28.44"
+ fill="none" stroke="red" r="2" />
+<path d="M166.68,28.44 166.68,-28.44" style="stroke:blue;" />
+<path id="hpath1" d="M166.68,28.44 L166.68,-28.44" style="fill:none;" />
 <text  font-size="15" font-family="Times New Roman,serif">
  <textPath xlink:href="#hpath1" startOffset="0%">Full name</textPath>
 </text>
@@ -36,8 +44,16 @@ A100,100 0 0 1 99.14,13.05
 L178.46,23.49
 A180,180 0 0 0 178.46,-23.49
 z" />
-<path d="M99.14,13.05 178.46,23.49" style="stroke:blue;" />
-<path id="vpath2" d="M99.14,13.05 L178.46,23.49" style="fill:none;" />
+<circle cx="108.66" cy="-9.92"
+ fill="none" stroke="red" r="2" />
+<circle cx="108.66" cy="9.92"
+ fill="none" stroke="red" r="2" />
+<circle cx="168.94" cy="17.86"
+ fill="none" stroke="red" r="2" />
+<circle cx="168.94" cy="-17.86"
+ fill="none" stroke="red" r="2" />
+<path d="M108.66,9.92 168.94,17.86" style="stroke:blue;" />
+<path id="vpath2" d="M108.66,9.92 L168.94,17.86" style="fill:none;" />
 <text  font-size="15" font-family="Times New Roman,serif">
  <textPath xlink:href="#vpath2" startOffset="0%">Full name</textPath>
 </text>
