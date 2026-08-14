@@ -43,8 +43,9 @@ n_colours = len( slice_colours )
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
-# don't bother flipping to vertical if the font is this or above
-min_reasonable_font_size = 8
+# currently not using this
+## don't bother flipping to vertical if the font is this or above
+#min_reasonable_font_size = 8
 
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
@@ -55,7 +56,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.12'
+    return '0.9.0.14'
 
 
 def subtract_a_percentage( x, p ):
@@ -508,7 +509,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
         print( '<text ' + font_options + '>' )
-        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
+        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
         print( '</text>' )
 
     def single_line_horizontal( id_suffix, font_size, slice_size, baseline, text ):
@@ -544,7 +545,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
         print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
         print( '<text ' + font_options + '>' )
-        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + name + '</textPath>' )
+        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
         print( '</text>' )
 
         #if debug:
@@ -606,15 +607,15 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
 
     slice_size = calc_slice_size()
 
-    name = '?'
+    fullname = '?'
     dates = ''
     if indi:
        # possibly the family has an unknown spouse
-       name = data[ikey][indi]['name'][0]['html']
+       fullname = data[ikey][indi]['name'][0]['html']
        if options['dates']:
           # in this test, the dates are simply appended to the name
           dates = get_indi_years( indi )
-    name = prefix + name
+    fullname = prefix + fullname
 
     # try some different formats of the name and use the
     # one which results in the largest size which fits the slice area
@@ -625,10 +626,11 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # 0 = name and date all one line (maybe no date)
     # 1 = name break date (same as 0 if no date)
     # verticals first, so that a later horizontal will take preference
+    # Another style is givenname break surname break date before zero
 
     for orientation in ['v', 'h']:
         for style in [0, 1]:
-           try_size = try_format( style, orientation, name, dates, slice_size[0], slice_size[1] )
+           try_size = try_format( style, orientation, fullname, dates, slice_size[0], slice_size[1] )
            if try_size > best_size:
               best_size = try_size
               best_try = style
@@ -636,7 +638,7 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     #if debug:
     #   print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
 
-    text = name
+    text = fullname
     if best_orientation == 'h':
        if best_try == 0:
           if dates:
