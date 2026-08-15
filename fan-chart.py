@@ -47,6 +47,9 @@ max_font_size = 20
 ## don't bother flipping to vertical if the font is this or above
 #min_reasonable_font_size = 8
 
+# spacing around the text as a percentage of the slice size
+text_margin = 8
+
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
 
@@ -56,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.0.16'
+    return '0.9.1.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -449,112 +452,55 @@ def output_trailer():
     print( '</svg>' )
 
 
-def output_name( d, inner, outer, draw_separator, prefix, indi ):
-    half_d = math.radians( d/2.0 )
+def find_spouse( fam, indi ):
+    if indi:
+       known = 'husb'
+       other = 'wife'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+       known = 'wife'
+       other = 'husb'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+    return None
 
-    # should this be global ?
-    # this is the distance where the text will be placed relative
-    # to the height of the available area
-    distance_factor = 0.9
 
+def text_on_path( path_id_suffix, path, font_size, text ):
+    path_id = 'txt' + '_' + path_id_suffix
+
+    font_options = ' font-size="' + roundstr(font_size) + '"'
+    font_options += ' ' + font_selection
+
+    print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
+    print( '<text ' + font_options + '>' )
+    print( ' <textPath xlink:href="#' + path_id + '" startOffset="0%">' + text + '</textPath>' )
+    print( '</text>' )
+
+    #??? draw the path
+    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+
+
+def output_name( coords, draw_separator, prefix, indi ):
     # ??? what is the approx line separation height
     line_sep = 2
 
     def calc_slice_size():
-        # estimate the width at the middle of the section
-        width = compute_arc_length( inner+(outer-inner)/2, d )
-        ### what if the inner arc is used
-        ##width = compute_arc_length( inner, d )
+        # width at the bottom of the slice
+        width = abs( coords[3][1] - coords[4][1] )
+        height = abs( coords[2][0] - coords[3][0] )
+        return [ width, height ]
 
-        # the height of the area is the maximum font size
-        height = outer - inner - 4
+    def horizontal_name( font_size, path_id_suffix, coords, text ):
+        path = 'M' + coords[3][2] + ' L' + coords[4][2]
+        text_on_path( path_id_suffix, path, font_size, text )
 
-        # zero position of the line
-        # along the bottom of the slice as an estimation of the path
-        horizontal_baseline = inner + distance_factor * ( outer - inner )
-
-        # along the side of the slice
-        vertical_baseline = distance_factor * ( outer - inner )
-
-        return [ width, height, horizontal_baseline, vertical_baseline ]
-
-    def single_line_vertical( id_suffix, font_size, available_width, baseline, text ):
-        # ??? actually this is still code for horizontal
-        path_id = 'txt' + str(indi) + '_' + str(id_suffix)
-
-        x = baseline * math.cos( half_d )
-        y = baseline * math.sin( half_d )
-
-        path = 'M' + roundstr(x) +','+ roundstr(y)
-        path += ' A' + roundstr(baseline) +','+ roundstr(baseline)
-        path += ' 0 0 0'
-        path += ' ' + roundstr(x) +','+ roundstr(-y)
-
-        string_length = estimate_string_width( font_size, text )
-
-        # try to center it on the curve
-        offset = ( available_width - string_length ) / 2.0
-        #if debug:
-        #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
-
-        # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / available_width
-        # bit of a margin, 1.5%
-        offset = roundstr( offset + 1.5 ) + '%'
-
-        font_options = ' font-size="' + roundstr(font_size) + '"'
-        font_options += ' ' + font_selection
-        # this style doesn't look good
-        #font_options += ' style="fill:black; stroke:white;"'
-
-        # put the text on a curve,
-        # no need for a separate graphic context
-
-        print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
-        print( '<text ' + font_options + '>' )
-        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
-        print( '</text>' )
-
-    def single_line_horizontal( id_suffix, font_size, available_width, baseline, text ):
-        path_id = 'txt' + str(indi) + '_' + str(id_suffix)
-
-        x = baseline * math.cos( half_d )
-        y = baseline * math.sin( half_d )
-
-        path = 'M' + roundstr(x) +','+ roundstr(y)
-        path += ' A' + roundstr(baseline) +','+ roundstr(baseline)
-        path += ' 0 0 0'
-        path += ' ' + roundstr(x) +','+ roundstr(-y)
-
-        string_length = estimate_string_width( font_size, text )
-
-        # try to center it on the curve
-        offset = ( available_width - string_length ) / 2.0
-        #if debug:
-        #   print( 'string', roundstr(string_length), 'offset', roundstr(offset), file=sys.stderr )
-
-        # change to a percent (is that what the startOffset parameter needs?)
-        offset = 100.0 * offset / available_width
-        # bit of a margin, 1.5%
-        offset = roundstr( offset + 1.5 ) + '%'
-
-        font_options = ' font-size="' + roundstr(font_size) + '"'
-        font_options += ' ' + font_selection
-        # this style doesn't look good
-        #font_options += ' style="fill:black; stroke:white;"'
-
-        # put the text on a curve,
-        # no need for a separate graphic context
-
-        print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
-        print( '<text ' + font_options + '>' )
-        print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
-        print( '</text>' )
-
-        #if debug:
-        #   print( 'area size', roundstr(area_width), file=sys.stderr )
-        #   print( 'strlen', roundstr(string_length), file=sys.stderr )
-        #   print( roundstr(font_size), '=', text, file=sys.stderr )
+    def vertical_name( font_size, path_id_suffix, coords, text ):
+        path = 'M' + coords[2][2] + ' L' + coords[3][2]
+        text_on_path( path_id_suffix, path, font_size, text )
 
     def try_format( style, orientation, name, dates, available_width, available_height ):
         approx_font = 12
@@ -631,63 +577,74 @@ def output_name( d, inner, outer, draw_separator, prefix, indi ):
     # verticals first, so that a later horizontal will take preference
     # Another style is givenname break surname break date as the first test
 
+    slice_width = slice_size[1]
+    slice_height = slice_size[0]
+
     for orientation in ['v', 'h']:
         for style in [0, 1]:
-           try_size = try_format( style, orientation, fullname, dates, slice_size[0], slice_size[1] )
+           try_size = try_format( style, orientation, fullname, dates, slice_width, slice_height )
            if try_size > best_size:
               best_size = try_size
               best_try = style
               best_orientation = orientation
-    #if debug:
-    #   print( name, 'best format', orientation, best_try, best_size, file=sys.stderr )
+        # flip orientation
+        slice_width = slice_size[0]
+        slice_height = slice_size[1]
 
-    slice_width = slice_size[0]
-    slice_height = slice_size[1]
+    if debug:
+       print( fullname, 'best format', orientation, best_try, best_size, file=sys.stderr )
+
+    # ??? fake it
+    dates = ''
+    best_size = 12
+    best_try = 0
+    best_orientation = 'h'
+
+    path_id = str(indi) + '_' + str(best_try)
 
     text = fullname
     if best_orientation == 'h':
-       baseline = slice_size[2]
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_horizontal( best_try, best_size, slice_width, baseline, text )
+          horizontal_name( best_size, path_id, coords, text )
        if best_try == 1:
           #baseline -= best_size + line_sep
-          single_line_horizontal( best_try, best_size, slice_width, baseline, text )
+          horizontal_name( best_size, path_id, coords, text )
           # now do the second line with the date
           #baseline = ?
-
     else:
-       baseline = slice_size[3]
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          single_line_vertical( best_try, best_size, slice_height, baseline, text )
+          vertical_name( best_size, path_id, coords, text )
        if best_try == 1:
           #baseline -= best_size + line_sep
-          single_line_vertical( best_try, best_size, slice_height, baseline, text )
+          vertical_name( best_size, path_id, coords, text )
           # now do the second line with the date
           #baseline = ?
-
-
-    ## show the curve
-    # print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
     if draw_separator:
        # put a line in front of the name
        # used for separating multiple marriages
-       x = outer * math.cos(half_d)
-       y = outer * math.sin(half_d)
+       half_d = coords[0][3]
+       cos_half_d = math.cos( half_d )
+       sin_half_d = math.sin( half_d )
+       outer = coords[0][2]
+       x = outer * cos_half_d
+       y = outer * sin_half_d
        line = 'M' + roundstr(x) +','+ roundstr(y)
-       x = inner * math.cos(half_d)
-       y = inner * math.sin(half_d)
+       inner = coords[0][1]
+       x = inner * cos_half_d
+       y = inner * sin_half_d
        line += ' L' + roundstr(x) +','+ roundstr(y)
        print( '<path d="' + line + '" style="stroke:grey; stroke-width:2;" />' )
 
 
-def output_a_slice( d, inner, outer, colour ):
+def compute_slice( d, inner, outer ):
     # slice of a ring given inner and outer radius
-    # with center at 0,0 and centered on the x-axis
+    # with center at 0,0 and centered on the x-axis because of the
+    # translated and rotated graphic context
 
     half_d = math.radians( d / 2.0 )
 
@@ -707,40 +664,36 @@ def output_a_slice( d, inner, outer, colour ):
     p4_y = - p3_y
     p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
 
+    # indexes:
+    # 0: input parameters, half_d
+    # 1: p1 x, y, both
+    # 2: p2 x, y, both
+    # 3: p3 x, y, both
+    # 4: p4 x, y, both
+    return [ [d, inner, outer, half_d], [p1_x, p1_y, p1], [p2_x, p2_y, p2], [p3_x, p3_y, p3], [p4_x, p4_y, p4] ]
+
+
+def output_a_slice( coords, colour ):
+    inner = roundstr(coords[0][1])
+    outer = roundstr(coords[0][2])
     print( '<path style="stroke:grey; stroke-width:2; fill:' + colour +';"' )
-    print( 'd="M' + p1 )
-    r = roundstr(inner) + ',' + roundstr(inner)
-    print( 'A' + r + ' 0 0 1 ' + p2 )
-    print( 'L' + p3 )
-    r = roundstr(outer) + ',' + roundstr(outer)
-    print( 'A' + r + ' 0 0 0 ' + p4 )
+    print( 'd="M' + coords[1][2] )
+    r = inner + ',' + inner
+    print( 'A' + r + ' 0 0 1 ' + coords[2][2] )
+    print( 'L' + coords[3][2] )
+    r = outer + ',' + outer
+    print( 'A' + r + ' 0 0 0 ' + coords[4][2] )
     print( 'z" />' )
 
     ## for debugging text, put a line at the bottom of the slice
     #print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
 
 
-def find_spouse( fam, indi ):
-    if indi:
-       known = 'husb'
-       other = 'wife'
-       if known in data[fkey][fam]:
-          if indi == data[fkey][fam][known][0]:
-             if other in data[fkey][fam]:
-                return data[fkey][fam][other][0]
-       known = 'wife'
-       other = 'husb'
-       if known in data[fkey][fam]:
-          if indi == data[fkey][fam][known][0]:
-             if other in data[fkey][fam]:
-                return data[fkey][fam][other][0]
-    return None
-
-
 def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     if debug:
        print( 'gen', gen, file=sys.stderr )
+       print( '<!-- gen', gen, '-->' )
 
     colour_index = start_colour
 
@@ -754,6 +707,9 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 
     first_child = True
     for child in data[fkey][start_fam]['chil']:
+        first_child_flag = ''
+        if first_child:
+           first_child_flag = 'first child'
         n_slices = diagram_data[child]['slices']
         slice_degrees = degrees_per_slice * n_slices
 
@@ -769,20 +725,28 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 
         # each child gets their own graphic context
         g_rotate = 'rotate(' + roundstr(rotation) + ',0,0)'
+        if debug:
+           print( '<!-- gen', gen, first_child_flag, '-->' )
         print( '<g transform="' + g_rotate + '">' )
 
+        ring_inner = ring_data[gen]['inner']
+        ring_outer = ring_data[gen]['outer']
+
+        slice_coords = compute_slice( slice_degrees, ring_inner, ring_outer )
+
         colour_index = colour_index % n_colours
-        output_a_slice( slice_degrees, ring_data[gen]['inner'], ring_data[gen]['outer'], slice_colours[colour_index] )
+        output_a_slice( slice_coords, slice_colours[colour_index] )
 
         # a person with no families takes up the whole slice
         # but with families the person gets the upper half
         # and the spouse gets the lower half
-        ring_inner = ring_data[gen]['inner']
-        ring_outer = ring_data[gen]['outer']
+
         if n_fams > 0:
            ring_outer = ring_inner + ( ring_outer - ring_inner ) / 2.0
+           # recompute slice, this time not drawing it
+           slice_coords = compute_slice( slice_degrees, ring_inner, ring_outer )
 
-        output_name( slice_degrees, ring_inner, ring_outer, False, '', child )
+        output_name( slice_coords, False, '', child )
 
         # output each spouse name, each gets their own graphic context
         if n_fams > 0:
@@ -797,9 +761,13 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
                spouse = find_spouse( fam, child )
                fam_degrees = fam_data['slices'] * degrees_per_slice
                fam_rotation = 0 - slice_degrees /2 + fam_degrees /2 + fam_sum
+
+               # again recompute
+               slice_coords = compute_slice( fam_degrees, ring_inner, ring_outer )
+
                g_rotate = 'rotate(' + roundstr(fam_rotation) + ',0,0)'
                print( '<g transform="' + g_rotate + '">' )
-               output_name( fam_degrees, ring_inner, ring_outer, True, '+ ', spouse )
+               output_name( slice_coords, True, '+ ', spouse )
                print( '</g>' )
                fam_sum += fam_degrees
 
@@ -832,11 +800,13 @@ def output_start_names( fam, ring_outer ):
     rotate = 0
     prefix = ''
     for partner in ['husb','wife']:
+        path_id = 'txt_' + partner
+        #path =
         indi = None
         if partner in data[fkey][fam]:
            indi = data[fkey][fam][partner][0]
         print( '<g transform="rotate(' + str(rotate) + ',0,0)">' )
-        output_name( d, inner, outer, False, prefix, indi )
+        #text_on_path( path_id, path, font_size, text )
         print( '</g>' )
         prefix = '+ '
         rotate = 180
