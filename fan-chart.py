@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.1.2'
+    return '0.9.2.1'
 
 
 def subtract_a_percentage( x, p ):
@@ -469,6 +469,19 @@ def find_spouse( fam, indi ):
     return None
 
 
+def path_for_arc( radius, start_xy, end_xy ):
+    path = 'M' + start_xy
+    path += ' A' + roundstr(radius) +','+ roundstr(radius)
+    path += ' 0 0 0'
+    path += ' ' + end_xy
+    return path
+
+
+def path_for_line( start_xy, end_xy ):
+    path = 'M' + start_xy + ' L' + end_xy
+    return path
+
+
 def text_on_path( path_id_suffix, path, font_size, text ):
     path_id = 'txt' + '_' + path_id_suffix
 
@@ -495,11 +508,11 @@ def output_name( coords, draw_separator, prefix, indi ):
         return [ width, height ]
 
     def horizontal_name( font_size, path_id_suffix, coords, text ):
-        path = 'M' + coords[3][2] + ' L' + coords[4][2]
+        path = path_for_arc( coords[0][2], coords[3][2], coords[4][2] )
         text_on_path( path_id_suffix, path, font_size, text )
 
     def vertical_name( font_size, path_id_suffix, coords, text ):
-        path = 'M' + coords[2][2] + ' L' + coords[3][2]
+        path = path_for_line( coords[2][2], coords[3][2] )
         text_on_path( path_id_suffix, path, font_size, text )
 
     def try_format( style, orientation, name, dates, available_width, available_height ):
