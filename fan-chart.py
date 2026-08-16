@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.2.1'
+    return '0.9.2.2'
 
 
 def subtract_a_percentage( x, p ):
@@ -493,8 +493,8 @@ def text_on_path( path_id_suffix, path, font_size, text ):
     print( ' <textPath xlink:href="#' + path_id + '" startOffset="0%">' + text + '</textPath>' )
     print( '</text>' )
 
-    #??? draw the path
-    print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
+    ## draw the path
+    #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
 def output_name( coords, draw_separator, prefix, indi ):
@@ -813,13 +813,12 @@ def output_start_names( fam, ring_outer ):
     rotate = 0
     prefix = ''
     for partner in ['husb','wife']:
-        path_id = 'txt_' + partner
-        #path =
+        coords = compute_slice( d, inner, outer )
         indi = None
         if partner in data[fkey][fam]:
            indi = data[fkey][fam][partner][0]
         print( '<g transform="rotate(' + str(rotate) + ',0,0)">' )
-        #text_on_path( path_id, path, font_size, text )
+        output_name( coords, False, prefix, indi )
         print( '</g>' )
         prefix = '+ '
         rotate = 180
