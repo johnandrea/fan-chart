@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.2.3'
+    return '0.9.2.4'
 
 
 def percentage_of( x, p ):
@@ -504,7 +504,14 @@ def output_name( coords, draw_separator, prefix, indi ):
     # ??? what is the approx line separation height
     line_sep = 2
 
-    def calc_slice_size():
+    def calc_coords_with_margin():
+        new_d = subtract_a_percentage( coords[0][0], text_margin )
+        inner = coords[0][1]
+        outer = coords[0][2]
+        height_diff = percentage_of( outer - inner, text_margin )
+        return compute_slice( new_d, inner + height_diff, outer - height_diff )
+
+    def calc_slice_size( coords ):
         # width at the bottom of the slice
         width = abs( coords[3][1] - coords[4][1] )
         height = abs( coords[2][0] - coords[3][0] )
@@ -570,7 +577,9 @@ def output_name( coords, draw_separator, prefix, indi ):
 
         return min( scaled_font, max_font_size )
 
-    slice_size = calc_slice_size()
+    margin_coords = calc_coords_with_margin()
+
+    slice_size = calc_slice_size( margin_coords )
 
     fullname = '?'
     dates = ''
@@ -623,20 +632,20 @@ def output_name( coords, draw_separator, prefix, indi ):
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          horizontal_name( best_size, path_id, coords, text )
+          horizontal_name( best_size, path_id, margin_coords, text )
        if best_try == 1:
           #baseline -= best_size + line_sep
-          horizontal_name( best_size, path_id, coords, text )
+          horizontal_name( best_size, path_id, margin_coords, text )
           # now do the second line with the date
           #baseline = ?
     else:
        if best_try == 0:
           if dates:
              text += ' ' + dates
-          vertical_name( best_size, path_id, coords, text )
+          vertical_name( best_size, path_id, margin_coords, text )
        if best_try == 1:
           #baseline -= best_size + line_sep
-          vertical_name( best_size, path_id, coords, text )
+          vertical_name( best_size, path_id, margin_coords, text )
           # now do the second line with the date
           #baseline = ?
 
