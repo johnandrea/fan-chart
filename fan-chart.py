@@ -48,7 +48,7 @@ max_font_size = 20
 #min_reasonable_font_size = 8
 
 # spacing around the text as a percentage of the slice size
-text_margin = 8
+text_margin = 10
 
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.2.4'
+    return '0.9.3.1'
 
 
 def percentage_of( x, p ):
@@ -140,16 +140,11 @@ def reverse_font_height( pixels ):
     return pixels * 3.0 / 2.0
 
 
-#def font_to_fit_string( width, s ):
-#    # return the font size that will fit the given string to the width
-#    trial_font = 25
-#    s_w = estimate_string_width( trial_font, s )
-#    # from the width estimation: width = slope * fontsize
-#    # reverse it using a big character
-#    wide_char_w = trial_font * char_width_factors[widest_char]
-#    # so the font size to fit the string is the ratio
-#    result = width * wide_char_w / s_w
-#    return result
+def font_to_fit_width( available_width, text ):
+    # return the font size that will fit the given string to the width
+    trial_font = 12
+    scale = available_width / estimate_string_width( trial_font, text )
+    return trial_font / scale
 
 
 def calculate_generation_rings( n_gen ):
@@ -501,8 +496,8 @@ def text_on_path( path_id_suffix, path, font_size, text ):
 
 
 def output_name( coords, draw_separator, prefix, indi ):
-    # ??? what is the approx line separation height
-    line_sep = 2
+    ## ??? what is the approx line separation height
+    #line_sep = 2
 
     def calc_coords_with_margin():
         new_d = subtract_a_percentage( coords[0][0], text_margin )
@@ -513,7 +508,7 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     def calc_slice_size( coords ):
         # width at the bottom of the slice
-        width = abs( coords[3][1] - coords[4][1] )
+        width = compute_arc_length( coords[0][2], coords[0][0] )
         height = abs( coords[2][0] - coords[3][0] )
         return [ width, height ]
 
@@ -525,62 +520,6 @@ def output_name( coords, draw_separator, prefix, indi ):
         path = path_for_line( coords[2][2], coords[3][2] )
         text_on_path( path_id_suffix, path, font_size, text )
 
-    def try_format( style, orientation, name, dates, available_width, available_height ):
-        approx_font = 12
-        scaled_font = 1
-
-        space_width = estimate_string_width( approx_font, ' ' )
-        name_width = estimate_string_width( approx_font, name )
-
-        font_height = estimate_font_height( approx_font )
-        name_area_width = name_width
-        name_area_height = font_height
-
-        if style == 0:
-           # one line
-           if dates:
-              name_area_width += space_width + estimate_string_width( approx_font, dates )
-
-        if style == 1:
-           # dates on a separate line
-           if dates:
-              name_area_width = max( name_area_width, estimate_string_width( approx_font, dates ) )
-              name_area_height += line_sep + font_height
-
-        # scale the name area to fit within the slice
-        # must keep the same aspect ratio
-        scale = 1
-        if name_area_width > name_area_height:
-           if orientation == 'h':
-              scale = available_width / name_area_width
-           else:
-              # other direction
-              scale = available_height / name_area_width
-        else:
-           if orientation == 'h':
-              scale = available_height / name_area_height
-           else:
-              # other direction
-              scale = available_width / name_area_height
-
-        # and the font gets that same scale
-        scaled_font = scale * approx_font
-
-        # wait
-        # width might be ok, but if the height is too much then reduce it
-        if orientation == 'h':
-           if estimate_font_height( scaled_font ) > available_height:
-              scaled_font = subtract_a_percentage( reverse_font_height( available_height ), 10 )
-        else:
-           if estimate_font_height( scaled_font ) > available_width:
-              scaled_font = subtract_a_percentage( reverse_font_height( available_width ), 10 )
-
-        return min( scaled_font, max_font_size )
-
-    margin_coords = calc_coords_with_margin()
-
-    slice_size = calc_slice_size( margin_coords )
-
     fullname = '?'
     dates = ''
     if indi:
@@ -591,63 +530,19 @@ def output_name( coords, draw_separator, prefix, indi ):
           dates = get_indi_years( indi )
     fullname = prefix + fullname
 
-    # try some different formats of the name and use the
-    # one which results in the largest size which fits the slice area
-    best_size = 0
-    best_try = 0
-    best_orientation = 'h'
+    margin_coords = calc_coords_with_margin()
 
-    # 0 = name and date all one line (maybe no date)
-    # 1 = name break date (same as 0 if no date)
-    # verticals first, so that a later horizontal will take preference
-    # Another style is givenname break surname break date as the first test
-
+    slice_size = calc_slice_size( margin_coords )
     slice_width = slice_size[1]
-    slice_height = slice_size[0]
-
-    for orientation in ['v', 'h']:
-        for style in [0, 1]:
-           try_size = try_format( style, orientation, fullname, dates, slice_width, slice_height )
-           if try_size > best_size:
-              best_size = try_size
-              best_try = style
-              best_orientation = orientation
-        # flip orientation
-        slice_width = slice_size[0]
-        slice_height = slice_size[1]
-
-    if debug:
-       print( fullname, 'best format', orientation, best_try, best_size, file=sys.stderr )
-
-    # ??? fake it
-    dates = ''
-    best_size = 12
-    best_try = 0
-    best_orientation = 'h'
-
-    path_id = str(indi) + '_' + str(best_try)
+    #slice_height = slice_size[0]
 
     text = fullname
-    if best_orientation == 'h':
-       if best_try == 0:
-          if dates:
-             text += ' ' + dates
-          horizontal_name( best_size, path_id, margin_coords, text )
-       if best_try == 1:
-          #baseline -= best_size + line_sep
-          horizontal_name( best_size, path_id, margin_coords, text )
-          # now do the second line with the date
-          #baseline = ?
-    else:
-       if best_try == 0:
-          if dates:
-             text += ' ' + dates
-          vertical_name( best_size, path_id, margin_coords, text )
-       if best_try == 1:
-          #baseline -= best_size + line_sep
-          vertical_name( best_size, path_id, margin_coords, text )
-          # now do the second line with the date
-          #baseline = ?
+    path_id = str(indi)
+
+    font_size = min( max_font_size, font_to_fit_width( slice_width, text ) )
+    #font_size = font_to_fit_width( slice_width, text )
+
+    horizontal_name( font_size, path_id, margin_coords, text )
 
     if draw_separator:
        # put a line in front of the name
