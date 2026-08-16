@@ -59,8 +59,11 @@ debug = False
 
 
 def get_version():
-    return '0.9.2.2'
+    return '0.9.2.3'
 
+
+def percentage_of( x, p ):
+    return x * p / 100.0
 
 def subtract_a_percentage( x, p ):
     return x - x * p / 100.0
