@@ -60,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.3'
+    return '0.9.4.4'
 
 
 def percentage_of( x, p ):
@@ -106,8 +106,8 @@ def setup_char_widths():
     results.update({"0":0.496, "1":0.457, "2":0.494, "3":0.491, "4":0.494})
     results.update({"5":0.492, "6":0.496, "7":0.493, "8":0.494, "9":0.497})
 
-    # These two were defined previously, to be used for characters
-    # not matching the below definitions
+    # These two to be used for characters
+    # not matching the above definitions
     results["generic lower"] = 0.4615
     results["generic upper"] = 0.657
 
