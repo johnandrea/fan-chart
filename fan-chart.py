@@ -60,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.2'
+    return '0.9.4.3'
 
 
 def percentage_of( x, p ):
@@ -498,13 +498,14 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
 
 
 def output_name( coords, draw_separator, prefix, indi ):
-    # the person counter is used for the text path, in case in some weird
-    # situation the indi value does not exist
+    # the person counter is used for the id of text path,
+    # in situation the indi value does not exist because there is no
+    # known partner but still want tp show a questiion mark
     countables['names'] += 1
     n_person_name = countables['names']
 
-    ## ??? what is the approx line separation height
-    #line_sep = 2
+    # ??? what is the approx line separation height
+    line_sep = 3
 
     indent = '  '
 
