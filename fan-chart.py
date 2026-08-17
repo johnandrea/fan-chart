@@ -28,6 +28,7 @@ import argparse
 import importlib.util
 import os
 import math
+from collections import Counter
 
 # define an svg page size
 # arbitrary and square, but scalable
@@ -59,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.1'
+    return '0.9.4.2'
 
 
 def percentage_of( x, p ):
@@ -497,10 +498,10 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
 
 
 def output_name( coords, draw_separator, prefix, indi ):
-    global n_person_name
     # the person counter is used for the text path, in case in some weird
     # situation the indi value does not exist
-    n_person_name += 1
+    countables['names'] += 1
+    n_person_name = countables['names']
 
     ## ??? what is the approx line separation height
     #line_sep = 2
@@ -548,7 +549,11 @@ def output_name( coords, draw_separator, prefix, indi ):
     fullname = prefix + fullname
     if debug:
        print( fullname, file=sys.stderr )
-       print( indent, 'person', n_person_name, file=sys.stderr )
+       print( indent, 'dates', dates, file=sys.stderr )
+       print( indent, 'indi', indi, file=sys.stderr )
+       print( indent, 'n person', n_person_name, file=sys.stderr )
+       print( '<!-- person id', n_person_name, '-->' )
+       print( '<!-- indi', indi, '-->' )
 
     margin_coords = calc_coords_with_margin()
 
@@ -783,8 +788,8 @@ def output_start_names( fam, ring_outer ):
 cx = page_size / 2.0
 cy = cx
 
-# see "output_name" for a description
-n_person_name = 0
+# see functin "output_name" for a description
+countables = Counter( names = 0 )
 
 char_width_factors = setup_char_widths()
 # this is used to find font for widths
@@ -875,6 +880,8 @@ if len(id_match) == 1:
 
       if debug:
          print( 'gen', 0, file=sys.stderr )
+         print( '<!-- gen 0 -->' )
+
       output_start_names( start_fam, ring_sizes[0]['outer'] )
 
       output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
