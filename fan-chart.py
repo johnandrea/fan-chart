@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.3'
+    return '0.9.3.4'
 
 
 def percentage_of( x, p ):
@@ -155,10 +155,10 @@ def reverse_font_height( pixels ):
     return pixels * 3.0 / 2.0
 
 
-def font_to_fit_width( available_width, text ):
+def font_to_fit_area( available_width, available_height, text ):
     # return the font size that will fit the given string to the width
     trial_font = 12
-    scale = estimate_string_width( trial_font, text ) / available_width
+    scale = available_width / estimate_string_width( trial_font, text )
     return trial_font * scale
 
 
@@ -534,13 +534,13 @@ def output_name( coords, draw_separator, prefix, indi ):
     margin_coords = calc_coords_with_margin()
 
     slice_size = calc_slice_size( margin_coords )
-    slice_width = slice_size[1]
-    #slice_height = slice_size[0]
+    slice_width = slice_size[0]
+    slice_height = slice_size[1]
 
     text = fullname
     path_id = str(indi)
 
-    font_size = min( max_font_size, font_to_fit_width( slice_width, text ) )
+    font_size = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
     #font_size = font_to_fit_width( slice_width, text )
 
     horizontal_name( font_size, path_id, margin_coords, text )
