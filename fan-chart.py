@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.4'
+    return '0.9.3.5'
 
 
 def percentage_of( x, p ):
@@ -480,7 +480,7 @@ def path_for_line( start_xy, end_xy ):
     return path
 
 
-def text_on_path( path_id_suffix, path, font_size, text ):
+def text_on_path( path_id_suffix, path, font_size, offset, text ):
     path_id = 'txt' + '_' + path_id_suffix
 
     font_options = ' font-size="' + roundstr(font_size) + '"'
@@ -488,7 +488,7 @@ def text_on_path( path_id_suffix, path, font_size, text ):
 
     print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
     print( '<text ' + font_options + '>' )
-    print( ' <textPath xlink:href="#' + path_id + '" startOffset="0%">' + text + '</textPath>' )
+    print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
     print( '</text>' )
 
     ## draw the path
@@ -513,13 +513,19 @@ def output_name( coords, draw_separator, prefix, indi ):
         height = abs( coords['p2']['x'] - coords['p3']['x'] )
         return [ width, height ]
 
-    def horizontal_name( font_size, path_id_suffix, coords, text ):
+    def horizontal_name( font_size, path_id_suffix, coords, offset, text ):
         path = path_for_arc( coords['input']['outer'], coords['p3']['xy'], coords['p4']['xy'] )
-        text_on_path( path_id_suffix, path, font_size, text )
+        text_on_path( path_id_suffix, path, font_size, offset, text )
 
-    def vertical_name( font_size, path_id_suffix, coords, text ):
+    def vertical_name( font_size, path_id_suffix, coords, offset, text ):
         path = path_for_line( coords['p2']['xy'], coords['p3']['xy'] )
-        text_on_path( path_id_suffix, path, font_size, text )
+        text_on_path( path_id_suffix, path, font_size, offset, text )
+
+    def offset_to_center( font_size, available_width, text ):
+        empty_space = available_width - estimate_string_width( font_size, text )
+        # change to a percent (is that what the startOffset parameter needs?)
+        offset = ( 100.0 * empty_space / available_width ) / 2.0
+        return roundstr(max( 0.0, offset )) + '%'
 
     fullname = '?'
     dates = ''
@@ -530,6 +536,8 @@ def output_name( coords, draw_separator, prefix, indi ):
           # in this test, the dates are simply appended to the name
           dates = get_indi_years( indi )
     fullname = prefix + fullname
+    if debug:
+       print( fullname, file=sys.stderr )
 
     margin_coords = calc_coords_with_margin()
 
@@ -543,7 +551,11 @@ def output_name( coords, draw_separator, prefix, indi ):
     font_size = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
     #font_size = font_to_fit_width( slice_width, text )
 
-    horizontal_name( font_size, path_id, margin_coords, text )
+    centering = offset_to_center( font_size, slice_width, text )
+    if debug:
+       print( 'centering:', centering, file=sys.stderr )
+
+    horizontal_name( font_size, path_id, margin_coords, centering, text )
 
     if draw_separator:
        # put a line in front of the name
