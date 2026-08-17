@@ -48,7 +48,7 @@ max_font_size = 20
 #min_reasonable_font_size = 8
 
 # spacing around the text as a percentage of the slice size
-text_margin = 10
+text_margin = 9
 
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.1'
+    return '0.9.3.2'
 
 
 def percentage_of( x, p ):
@@ -500,24 +500,25 @@ def output_name( coords, draw_separator, prefix, indi ):
     #line_sep = 2
 
     def calc_coords_with_margin():
-        new_d = subtract_a_percentage( coords[0][0], text_margin )
-        inner = coords[0][1]
-        outer = coords[0][2]
+        # double margin to get it on both sides
+        new_d = subtract_a_percentage( coords['input']['d'], 2 * text_margin )
+        inner = coords['input']['inner']
+        outer = coords['input']['outer']
         height_diff = percentage_of( outer - inner, text_margin )
         return compute_slice( new_d, inner + height_diff, outer - height_diff )
 
     def calc_slice_size( coords ):
         # width at the bottom of the slice
-        width = compute_arc_length( coords[0][2], coords[0][0] )
-        height = abs( coords[2][0] - coords[3][0] )
+        width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
+        height = abs( coords['p2']['x'] - coords['p3']['x'] )
         return [ width, height ]
 
     def horizontal_name( font_size, path_id_suffix, coords, text ):
-        path = path_for_arc( coords[0][2], coords[3][2], coords[4][2] )
+        path = path_for_arc( coords['input']['outer'], coords['p3']['xy'], coords['p4']['xy'] )
         text_on_path( path_id_suffix, path, font_size, text )
 
     def vertical_name( font_size, path_id_suffix, coords, text ):
-        path = path_for_line( coords[2][2], coords[3][2] )
+        path = path_for_line( coords['p2']['xy'], coords['p3']['xy'] )
         text_on_path( path_id_suffix, path, font_size, text )
 
     fullname = '?'
@@ -547,14 +548,14 @@ def output_name( coords, draw_separator, prefix, indi ):
     if draw_separator:
        # put a line in front of the name
        # used for separating multiple marriages
-       half_d = coords[0][3]
+       half_d = coords['input']['half_d']
        cos_half_d = math.cos( half_d )
        sin_half_d = math.sin( half_d )
-       outer = coords[0][2]
+       outer = coords['input']['outer']
        x = outer * cos_half_d
        y = outer * sin_half_d
        line = 'M' + roundstr(x) +','+ roundstr(y)
-       inner = coords[0][1]
+       inner = coords['input']['inner']
        x = inner * cos_half_d
        y = inner * sin_half_d
        line += ' L' + roundstr(x) +','+ roundstr(y)
@@ -584,25 +585,25 @@ def compute_slice( d, inner, outer ):
     p4_y = - p3_y
     p4 = roundstr(p4_x) + ',' + roundstr(p4_y)
 
-    # indexes:
-    # 0: input parameters, half_d
-    # 1: p1 x, y, both
-    # 2: p2 x, y, both
-    # 3: p3 x, y, both
-    # 4: p4 x, y, both
-    return [ [d, inner, outer, half_d], [p1_x, p1_y, p1], [p2_x, p2_y, p2], [p3_x, p3_y, p3], [p4_x, p4_y, p4] ]
+    result = dict()
+    result['input'] = {'d':d, 'inner':inner, 'outer':outer, 'half_d':half_d}
+    result['p1'] = {'x':p1_x, 'y':p1_y, 'xy':p1}
+    result['p2'] = {'x':p2_x, 'y':p2_y, 'xy':p2}
+    result['p3'] = {'x':p3_x, 'y':p3_y, 'xy':p3}
+    result['p4'] = {'x':p4_x, 'y':p4_y, 'xy':p4}
+    return result
 
 
 def output_a_slice( coords, colour ):
-    inner = roundstr(coords[0][1])
-    outer = roundstr(coords[0][2])
+    inner = roundstr(coords['input']['inner'])
+    outer = roundstr(coords['input']['outer'])
     print( '<path style="stroke:grey; stroke-width:2; fill:' + colour +';"' )
-    print( 'd="M' + coords[1][2] )
+    print( 'd="M' + coords['p1']['xy'] )
     r = inner + ',' + inner
-    print( 'A' + r + ' 0 0 1 ' + coords[2][2] )
-    print( 'L' + coords[3][2] )
+    print( 'A' + r + ' 0 0 1 ' + coords['p2']['xy'] )
+    print( 'L' + coords['p3']['xy'] )
     r = outer + ',' + outer
-    print( 'A' + r + ' 0 0 0 ' + coords[4][2] )
+    print( 'A' + r + ' 0 0 0 ' + coords['p4']['xy'] )
     print( 'z" />' )
 
     ## for debugging text, put a line at the bottom of the slice
