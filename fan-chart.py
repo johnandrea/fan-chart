@@ -60,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.4'
+    return '0.9.4.5'
 
 
 def percentage_of( x, p ):
@@ -802,6 +802,9 @@ for c in char_width_factors:
 options = get_program_options()
 
 debug = options['debug']
+
+if debug:
+   print( 'version', get_version(), file=sys.stderr )
 
 if options['generations'] < 1:
    print( 'Generations must be more than zero', file=sys.stderr )
