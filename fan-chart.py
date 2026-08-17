@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.7'
+    return '0.9.4.1'
 
 
 def percentage_of( x, p ):
@@ -497,8 +497,15 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
 
 
 def output_name( coords, draw_separator, prefix, indi ):
+    global n_person_name
+    # the person counter is used for the text path, in case in some weird
+    # situation the indi value does not exist
+    n_person_name += 1
+
     ## ??? what is the approx line separation height
     #line_sep = 2
+
+    indent = '  '
 
     def calc_coords_with_margin():
         # double margin to get it on both sides
@@ -530,6 +537,8 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     fullname = '?'
     dates = ''
+    path_id = str(n_person_name)
+
     if indi:
        # possibly the family has an unknown spouse
        fullname = data[ikey][indi]['name'][0]['html']
@@ -539,6 +548,7 @@ def output_name( coords, draw_separator, prefix, indi ):
     fullname = prefix + fullname
     if debug:
        print( fullname, file=sys.stderr )
+       print( indent, 'person', n_person_name, file=sys.stderr )
 
     margin_coords = calc_coords_with_margin()
 
@@ -547,36 +557,43 @@ def output_name( coords, draw_separator, prefix, indi ):
     slice_height = slice_size[1]
     higher = slice_height > slice_width
     if debug:
-       print( '   in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
+       print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
        if higher:
-          print( '   ! higher than wide', file=sys.stderr )
+          print( indent, '! higher than wide', file=sys.stderr )
 
     text = fullname
-    path_id = str(indi)
+    if dates:
+       text += ' ' + dates
 
-    font_size = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
+    h_size_1 = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
     if debug:
-       print( '   horizontal font:', roundstr(font_size), file=sys.stderr )
-       print( '     text width:',  roundstr( estimate_string_width( font_size, text ) ), file=sys.stderr )
+       print( indent, 'horizontal font:', roundstr(h_size_1), file=sys.stderr )
+       print( indent, indent, 'text width:',  roundstr( estimate_string_width( h_size_1, text ) ), file=sys.stderr )
 
-    vert_size = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
+    v_size_1 = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
     if debug:
-       print( '   vertical font:', roundstr(vert_size), file=sys.stderr )
-       print( '     text width:',  roundstr( estimate_string_width( vert_size, text ) ), file=sys.stderr )
+       print( indent, 'vertical font:', roundstr(v_size_1), file=sys.stderr )
+       print( indent, indent, 'text width:',  roundstr( estimate_string_width( v_size_1, text ) ), file=sys.stderr )
 
-    if higher and ( vert_size > font_size ):
-       centering = offset_to_center( vert_size, slice_height, text )
+    # try again, separating the date
+    if dates:
        if debug:
-          print( '   using vertical', file=sys.stderr )
-          print( '   centering with:', centering, file=sys.stderr )
-       vertical_name( vert_size, path_id, margin_coords, centering, text )
+          print( indent, 'trying with dates separated', file=sys.stderr )
+          print( indent, indent, '? in progress', file=sys.stderr )
+
+    if higher and ( v_size_1 > h_size_1 ):
+       centering = offset_to_center( v_size_1, slice_height, text )
+       if debug:
+          print( indent, 'using vertical', file=sys.stderr )
+          print( indent, 'centering with:', centering, file=sys.stderr )
+       vertical_name( v_size_1, path_id, margin_coords, centering, text )
 
     else:
-       centering = offset_to_center( font_size, slice_width, text )
+       centering = offset_to_center( h_size_1, slice_width, text )
        if debug:
-          print( '   using horizontal', file=sys.stderr )
-          print( '   centering with:', centering, file=sys.stderr )
-       horizontal_name( font_size, path_id, margin_coords, centering, text )
+          print( indent, 'using horizontal', file=sys.stderr )
+          print( indent, 'centering with:', centering, file=sys.stderr )
+       horizontal_name( h_size_1, path_id, margin_coords, centering, text )
 
     if draw_separator:
        # put a line in front of the name
@@ -766,13 +783,15 @@ def output_start_names( fam, ring_outer ):
 cx = page_size / 2.0
 cy = cx
 
+# see "output_name" for a description
+n_person_name = 0
+
 char_width_factors = setup_char_widths()
 # this is used to find font for widths
 widest_char = ' '
 for c in char_width_factors:
     if char_width_factors[c] > char_width_factors[widest_char]:
        widest_char = c
-
 
 options = get_program_options()
 
