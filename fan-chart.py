@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.6'
+    return '0.9.3.7'
 
 
 def percentage_of( x, p ):
@@ -545,9 +545,10 @@ def output_name( coords, draw_separator, prefix, indi ):
     slice_size = calc_slice_size( margin_coords )
     slice_width = slice_size[0]
     slice_height = slice_size[1]
+    higher = slice_height > slice_width
     if debug:
        print( '   in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
-       if slice_height > slice_width:
+       if higher:
           print( '   ! higher than wide', file=sys.stderr )
 
     text = fullname
@@ -563,9 +564,19 @@ def output_name( coords, draw_separator, prefix, indi ):
        print( '   vertical font:', roundstr(vert_size), file=sys.stderr )
        print( '     text width:',  roundstr( estimate_string_width( vert_size, text ) ), file=sys.stderr )
 
+    if higher and ( vert_size > font_size ):
+       centering = offset_to_center( vert_size, slice_height, text )
+       if debug:
+          print( '   using vertical', file=sys.stderr )
+          print( '   centering with:', centering, file=sys.stderr )
+       vertical_name( vert_size, path_id, margin_coords, centering, text )
 
-    centering = offset_to_center( font_size, slice_width, text )
-    horizontal_name( font_size, path_id, margin_coords, centering, text )
+    else:
+       centering = offset_to_center( font_size, slice_width, text )
+       if debug:
+          print( '   using horizontal', file=sys.stderr )
+          print( '   centering with:', centering, file=sys.stderr )
+       horizontal_name( font_size, path_id, margin_coords, centering, text )
 
     if draw_separator:
        # put a line in front of the name
