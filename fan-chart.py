@@ -59,7 +59,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.3.5'
+    return '0.9.3.6'
 
 
 def percentage_of( x, p ):
@@ -189,6 +189,7 @@ def calculate_generation_rings( n_gen ):
 
 
 def outline_generations( rings ):
+    print( '<!-- generation circles -->' )
     # increase stroke width in order to hide any small drawing errors
     circle = '<circle cx="0" cy="0"'
     circle += ' fill="none" stroke-width="2" stroke="grey" r="'
@@ -487,7 +488,7 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
     font_options += ' ' + font_selection
 
     print( '<path id="' + path_id + '" d="' + path + '" style="fill:none;" />' )
-    print( '<text ' + font_options + '>' )
+    print( '<text' + font_options + '>' )
     print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
     print( '</text>' )
 
@@ -544,17 +545,26 @@ def output_name( coords, draw_separator, prefix, indi ):
     slice_size = calc_slice_size( margin_coords )
     slice_width = slice_size[0]
     slice_height = slice_size[1]
+    if debug:
+       print( '   in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
+       if slice_height > slice_width:
+          print( '   ! higher than wide', file=sys.stderr )
 
     text = fullname
     path_id = str(indi)
 
     font_size = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
-    #font_size = font_to_fit_width( slice_width, text )
+    if debug:
+       print( '   horizontal font:', roundstr(font_size), file=sys.stderr )
+       print( '     text width:',  roundstr( estimate_string_width( font_size, text ) ), file=sys.stderr )
+
+    vert_size = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
+    if debug:
+       print( '   vertical font:', roundstr(vert_size), file=sys.stderr )
+       print( '     text width:',  roundstr( estimate_string_width( vert_size, text ) ), file=sys.stderr )
+
 
     centering = offset_to_center( font_size, slice_width, text )
-    if debug:
-       print( 'centering:', centering, file=sys.stderr )
-
     horizontal_name( font_size, path_id, margin_coords, centering, text )
 
     if draw_separator:
