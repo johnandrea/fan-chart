@@ -60,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.6'
+    return '0.9.4.8'
 
 
 def percentage_of( x, p ):
@@ -517,6 +517,7 @@ def output_name( coords, draw_separator, prefix, indi ):
     # 3 three lines (or 2 if no date): given name break surname break dates
     # and 4, 5, 6 to fit vertically.
     # What should be the citeria for choosing the best format.
+    # The goal is to display the name as large as possible.
 
     indent = '  '
 
