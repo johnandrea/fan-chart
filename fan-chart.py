@@ -49,7 +49,7 @@ max_font_size = 20
 #min_reasonable_font_size = 8
 
 # spacing around the text as a percentage of the slice size
-text_margin = 9
+text_margin = 11
 
 # all the text sizes are based on this typeface
 font_selection = 'font-family="Times New Roman,serif"'
@@ -60,7 +60,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.5'
+    return '0.9.4.6'
 
 
 def percentage_of( x, p ):
@@ -156,48 +156,6 @@ def reverse_font_height( pixels ):
     return pixels * 3.0 / 2.0
 
 
-def font_to_fit_area( available_width, available_height, text ):
-    # return the font size that will fit the given string to the width
-    trial_font = 12
-    scale = available_width / estimate_string_width( trial_font, text )
-    return trial_font * scale
-
-
-def calculate_generation_rings( n_gen ):
-    # generation zero circle surrounded by rings for the other generations
-    # Show the complete circles because it helps to visualize families which
-    # don't reach the maximum generations.
-    #
-    # return a list with computed dimensions for each ring
-    # with the index being the generation number
-
-    # width of each ring - for now each is the same width
-    # a little smaller then the whole page to leave a margin
-    width = ( page_size - 20 ) / 2 / n_gen
-
-    results = []
-
-    # inside circle radius is the ring width
-    inner = 0
-    r = width
-    for _ in range( n_gen ):
-        results.append( {'outer':r, 'inner':inner} )
-        # increase radius for each generation
-        inner = r
-        r += width
-
-    return results
-
-
-def outline_generations( rings ):
-    print( '<!-- generation circles -->' )
-    # increase stroke width in order to hide any small drawing errors
-    circle = '<circle cx="0" cy="0"'
-    circle += ' fill="none" stroke-width="2" stroke="grey" r="'
-    for detail in rings:
-        print( circle + str(detail['outer']) + '"/>' )
-
-
 def load_my_module( module_name, relative_path ):
     """
     Load a module in my own single .py file. Requires Python 3.6+
@@ -287,6 +245,23 @@ def get_program_options():
     return results
 
 
+def find_spouse( fam, indi ):
+    if indi:
+       known = 'husb'
+       other = 'wife'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+       known = 'wife'
+       other = 'husb'
+       if known in data[fkey][fam]:
+          if indi == data[fkey][fam][known][0]:
+             if other in data[fkey][fam]:
+                return data[fkey][fam][other][0]
+    return None
+
+
 def get_indi_years( indi ):
     # return birth - death or birth- or -death
     # but None if both dates are empty
@@ -314,6 +289,41 @@ def get_indi_years( indi ):
        result = birth +'-'+ death
 
     return result
+
+
+def calculate_generation_rings( n_gen ):
+    # generation zero circle surrounded by rings for the other generations
+    # Show the complete circles because it helps to visualize families which
+    # don't reach the maximum generations.
+    #
+    # return a list with computed dimensions for each ring
+    # with the index being the generation number
+
+    # width of each ring - for now each is the same width
+    # a little smaller then the whole page to leave a margin
+    width = ( page_size - 20 ) / 2 / n_gen
+
+    results = []
+
+    # inside circle radius is the ring width
+    inner = 0
+    r = width
+    for _ in range( n_gen ):
+        results.append( {'outer':r, 'inner':inner} )
+        # increase radius for each generation
+        inner = r
+        r += width
+
+    return results
+
+
+def outline_generations( rings ):
+    print( '<!-- generation circles -->' )
+    # increase stroke width in order to hide any small drawing errors
+    circle = '<circle cx="0" cy="0"'
+    circle += ' fill="none" stroke-width="2" stroke="grey" r="'
+    for detail in rings:
+        print( circle + str(detail['outer']) + '"/>' )
 
 
 def find_max_generations( indi, max_gen, n_gen ):
@@ -452,23 +462,6 @@ def count_slices( indi, max_gen, n_gen ):
     return n
 
 
-def find_spouse( fam, indi ):
-    if indi:
-       known = 'husb'
-       other = 'wife'
-       if known in data[fkey][fam]:
-          if indi == data[fkey][fam][known][0]:
-             if other in data[fkey][fam]:
-                return data[fkey][fam][other][0]
-       known = 'wife'
-       other = 'husb'
-       if known in data[fkey][fam]:
-          if indi == data[fkey][fam][known][0]:
-             if other in data[fkey][fam]:
-                return data[fkey][fam][other][0]
-    return None
-
-
 def path_for_arc( radius, start_xy, end_xy ):
     path = 'M' + start_xy
     path += ' A' + roundstr(radius) +','+ roundstr(radius)
@@ -497,6 +490,17 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
     #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
+def font_to_fit_area( available_width, available_height, text ):
+    # return the font size that will fit the given string to the width
+    trial_font = 12
+    scale = available_width / estimate_string_width( trial_font, text )
+    scaled_font = trial_font * scale
+    # don't let it get too high
+    if estimate_font_height( scaled_font ) > available_height:
+       scaled_font = reverse_font_height( available_height )
+    return scaled_font
+
+
 def output_name( coords, draw_separator, prefix, indi ):
     # the person counter is used for the id of text path,
     # in situation the indi value does not exist because there is no
@@ -506,6 +510,13 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     # ??? what is the approx line separation height
     line_sep = 3
+
+    # there are several formats to fit the name within the slice
+    # 1 one line: fullname dates
+    # 2 two lines (if dates exist): fullname break dates
+    # 3 three lines (or 2 if no date): given name break surname break dates
+    # and 4, 5, 6 to fit vertically.
+    # What should be the citeria for choosing the best format.
 
     indent = '  '
 
@@ -518,6 +529,13 @@ def output_name( coords, draw_separator, prefix, indi ):
         return compute_slice( new_d, inner + height_diff, outer - height_diff )
 
     def calc_slice_size( coords ):
+        # width at the bottom of the slice
+        width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
+        height = abs( coords['p2']['x'] - coords['p3']['x'] )
+        return [ width, height ]
+
+    def calc_slice_size_half( coords, separation ):
+        # ??? test with same spacing as full
         # width at the bottom of the slice
         width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
         height = abs( coords['p2']['x'] - coords['p3']['x'] )
@@ -586,6 +604,11 @@ def output_name( coords, draw_separator, prefix, indi ):
        if debug:
           print( indent, 'trying with dates separated', file=sys.stderr )
           print( indent, indent, '? in progress', file=sys.stderr )
+       # the size of the dates shouldn't be any bigger than the name
+       # so find the name size in the upper portion of the slice
+       slice_size = calc_slice_size_half( margin_coords, line_sep )
+       slice_width = slice_size[0]
+       slice_height = slice_size[1]
 
     if higher and ( v_size_1 > h_size_1 ):
        centering = offset_to_center( v_size_1, slice_height, text )
