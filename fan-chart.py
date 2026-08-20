@@ -46,7 +46,8 @@ max_font_size = 20
 
 # when the height to width ration is greater than this
 # the name is placed vertically
-ratio_for_vertical = 1.16
+# found by trial-and-error
+ratio_for_vertical = 1.3
 
 # spacing around the text as a percentage of the slice size
 text_margin = 11
@@ -60,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.8'
+    return '0.9.4.9'
 
 
 def percentage_of( x, p ):
@@ -577,53 +578,49 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     margin_coords = calc_coords_with_margin()
 
-    slice_size = calc_slice_size( margin_coords )
-    slice_width = slice_size[0]
-    slice_height = slice_size[1]
-    higher = slice_height > slice_width
-    if debug:
-       print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
-       if higher:
-          print( indent, '! higher than wide', file=sys.stderr )
-
     text = fullname
     if dates:
        text += ' ' + dates
 
-    h_size_1 = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
+    slice_size = calc_slice_size( margin_coords )
+    slice_width = slice_size[0]
+    slice_height = slice_size[1]
     if debug:
-       print( indent, 'horizontal font:', roundstr(h_size_1), file=sys.stderr )
-       print( indent, indent, 'text width:',  roundstr( estimate_string_width( h_size_1, text ) ), file=sys.stderr )
+       print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
+       print( indent, 'compare to', ratio_for_vertical, file=sys.stderr )
+       print( indent, 'found', roundstr(slice_width / slice_height), file=sys.stderr )
 
-    v_size_1 = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
-    if debug:
-       print( indent, 'vertical font:', roundstr(v_size_1), file=sys.stderr )
-       print( indent, indent, 'text width:',  roundstr( estimate_string_width( v_size_1, text ) ), file=sys.stderr )
-
-    # try again, separating the date
-    if dates:
+    if slice_height > ratio_for_vertical * slice_width:
+       size_1 = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
+       centering = offset_to_center( size_1, slice_height, text )
        if debug:
-          print( indent, 'trying with dates separated', file=sys.stderr )
-          print( indent, indent, '? in progress', file=sys.stderr )
-       # the size of the dates shouldn't be any bigger than the name
-       # so find the name size in the upper portion of the slice
-       slice_size = calc_slice_size_half( margin_coords, line_sep )
-       slice_width = slice_size[0]
-       slice_height = slice_size[1]
-
-    if higher and ( v_size_1 > h_size_1 ):
-       centering = offset_to_center( v_size_1, slice_height, text )
-       if debug:
-          print( indent, 'using vertical', file=sys.stderr )
+          print( indent, 'vertical font:', roundstr(size_1), file=sys.stderr )
+          print( indent, indent, 'text width:',  roundstr( estimate_string_width( size_1, text ) ), file=sys.stderr )
           print( indent, 'centering with:', centering, file=sys.stderr )
-       vertical_name( v_size_1, path_id, margin_coords, centering, text )
+       vertical_name( size_1, path_id, margin_coords, centering, text )
+
+       ## try again, separating the date
 
     else:
-       centering = offset_to_center( h_size_1, slice_width, text )
+       size_1 = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
+       centering = offset_to_center( size_1, slice_width, text )
        if debug:
-          print( indent, 'using horizontal', file=sys.stderr )
+          print( indent, 'horizontal font:', roundstr(size_1), file=sys.stderr )
+          print( indent, indent, 'text width:',  roundstr( estimate_string_width( size_1, text ) ), file=sys.stderr )
           print( indent, 'centering with:', centering, file=sys.stderr )
-       horizontal_name( h_size_1, path_id, margin_coords, centering, text )
+       horizontal_name( size_1, path_id, margin_coords, centering, text )
+
+       ## try again, separating the date
+       #if dates:
+       #   if debug:
+       #      print( indent, 'trying with dates separated', file=sys.stderr )
+       #      print( indent, indent, '? in progress', file=sys.stderr )
+       #   # the size of the dates shouldn't be any bigger than the name
+       #   # so find the name size in the upper portion of the slice
+       #   slice_size = calc_slice_size_half( margin_coords, line_sep )
+       #   slice_width = slice_size[0]
+       #   slice_height = slice_size[1]
+
 
     if draw_separator:
        # put a line in front of the name
