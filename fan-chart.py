@@ -44,9 +44,9 @@ n_colours = len( slice_colours )
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
-# when the height to width ration is greater than this
-# the name is placed vertically
-# found by trial-and-error
+# when the height is greater than this much times width
+# then the name is placed vertically
+# Found by trial-and-error
 ratio_for_vertical = 1.3
 
 # spacing around the text as a percentage of the slice size
@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.9'
+    return '0.9.4.10'
 
 
 def percentage_of( x, p ):
@@ -587,8 +587,6 @@ def output_name( coords, draw_separator, prefix, indi ):
     slice_height = slice_size[1]
     if debug:
        print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
-       print( indent, 'compare to', ratio_for_vertical, file=sys.stderr )
-       print( indent, 'found', roundstr(slice_width / slice_height), file=sys.stderr )
 
     if slice_height > ratio_for_vertical * slice_width:
        size_1 = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
