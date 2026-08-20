@@ -44,9 +44,9 @@ n_colours = len( slice_colours )
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
-# currently not using this
-## don't bother flipping to vertical if the font is this or above
-#min_reasonable_font_size = 8
+# when the height to width ration is greater than this
+# the name is placed vertically
+ratio_for_vertical = 1.16
 
 # spacing around the text as a percentage of the slice size
 text_margin = 11
