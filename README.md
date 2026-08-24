@@ -105,4 +105,5 @@ This code is provided with neither support nor warranty.
 - Alternately start with a specific family, in cases where a person has more than one family
 - Handle non-ASCII names in a manner better for SVG output.
 - Output to SVG or PDF
+- Maybe add an option to display names in the traditional downward direction
 
