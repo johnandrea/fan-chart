@@ -591,10 +591,6 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     margin_coords = calc_coords_with_margin()
 
-    text = fullname
-    if dates:
-       text += ' ' + dates
-
     slice_size = calc_slice_size( margin_coords )
     slice_width = slice_size[0]
     slice_height = slice_size[1]
@@ -606,11 +602,9 @@ def output_name( coords, draw_separator, prefix, indi ):
        if dates:
           text += ' ' + dates
        size_1 = font_for_vertical_1_line( slice_width, slice_height, text )
-       centering = offset_to_center( size_1, slice_height, text )
        if debug:
-          print( indent, 'vertical font:', roundstr(size_1), file=sys.stderr )
-          print( indent, indent, 'text width:',  roundstr( estimate_string_width( size_1, text ) ), file=sys.stderr )
-          print( indent, 'centering with:', centering, file=sys.stderr )
+          print( indent, 'vertical size1:', roundstr(size_1), file=sys.stderr )
+       centering = offset_to_center( size_1, slice_height, text )
        vertical_name( size_1, path_id, margin_coords, centering, text )
 
        ## try again, separating the date
@@ -620,11 +614,9 @@ def output_name( coords, draw_separator, prefix, indi ):
        if dates:
           text += ' ' + dates
        size_1 = font_for_horizontal_1_line( slice_width, slice_height, text )
-       centering = offset_to_center( size_1, slice_width, text )
        if debug:
-          print( indent, 'horizontal font:', roundstr(size_1), file=sys.stderr )
-          print( indent, indent, 'text width:',  roundstr( estimate_string_width( size_1, text ) ), file=sys.stderr )
-          print( indent, 'centering with:', centering, file=sys.stderr )
+          print( indent, 'horizontal size1:', roundstr(size_1), file=sys.stderr )
+       centering = offset_to_center( size_1, slice_width, text )
        horizontal_name( size_1, path_id, margin_coords, centering, text )
 
        ## try again, separating the date
