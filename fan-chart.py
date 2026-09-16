@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.18'
+    return '0.9.4.19'
 
 
 def percentage_of( x, p ):
@@ -632,16 +632,17 @@ def output_name( coords, draw_separator, prefix, indi ):
           print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
        if size_1 >= size_2:
+          centering = offset_to_center( size_1, slice_height, text1 )
+          vertical_name( size_1, path_id, margin_coords, centering, text1 )
           if debug:
              print( indent, 'using size 1', file=sys.stderr )
        else:
+          # ??? just use the name on one line for testing, not the two
+          centering = offset_to_center( size_2, slice_height, fullname )
+          vertical_name( size_2, path_id + '_1', margin_coords, centering, fullname )
+          # second line here
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
-
-       centering = offset_to_center( size_1, slice_height, text1 )
-       vertical_name( size_1, path_id, margin_coords, centering, text1 )
-
-       ## try again, separating the date
 
     else:
        if debug:
@@ -654,25 +655,17 @@ def output_name( coords, draw_separator, prefix, indi ):
           print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
        if size_1 >= size_2:
+          centering = offset_to_center( size_1, slice_width, text1 )
+          horizontal_name( size_1, path_id, margin_coords, centering, text1 )
           if debug:
              print( indent, 'using size 1', file=sys.stderr )
        else:
+          # ??? see vertical comment
+          centering = offset_to_center( size_2, slice_width, fullname )
+          horizontal_name( size_2, path_id + '_1', margin_coords, centering, fullname )
+          # second line here
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
-
-       centering = offset_to_center( size_1, slice_width, text1 )
-       horizontal_name( size_1, path_id, margin_coords, centering, text1 )
-
-       ## try again, separating the date
-       #if dates:
-       #   if debug:
-       #      print( indent, 'trying with dates separated', file=sys.stderr )
-       #      print( indent, indent, '? in progress', file=sys.stderr )
-       #   # the size of the dates shouldn't be any bigger than the name
-       #   # so find the name size in the upper portion of the slice
-       #   slice_size = calc_slice_size_half( margin_coords, line_sep )
-       #   slice_width = slice_size[0]
-       #   slice_height = slice_size[1]
 
 
     if draw_separator:
