@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.20'
+    return '0.9.4.21'
 
 
 def percentage_of( x, p ):
@@ -561,8 +561,7 @@ def output_name( coords, draw_separator, prefix, indi ):
         return min( max_font_size, font_to_fit_area( width, height, text ) )
 
     def font_for_vertical( width, height, text ):
-        # flip the dimensions
-        return min( max_font_size, font_to_fit_area( height, width, text ) )
+        return min( max_font_size, font_to_fit_area( width, height, text ) )
 
     def font_for_horizontal_1_line( width, height, text ):
         return font_for_horizontal( width, height, text )
@@ -574,9 +573,8 @@ def output_name( coords, draw_separator, prefix, indi ):
         result = -1 #default to the one line calculation
         if line2:
            half_height = height / 2.0
-           # ??? need to take spacing into account
            size_1 = font_for_horizontal_1_line( width, half_height, line1 )
-           size_2 = font_for_horizontal_1_line( width, half_height, line2 )
+           size_2 = font_for_horizontal_1_line( width, half_height - line_sep, line2 )
            result = min( size_1, size_2 )
         return result
 
@@ -584,9 +582,8 @@ def output_name( coords, draw_separator, prefix, indi ):
         result = -1 #default to the one line calculation
         if line2:
            half_height = height / 2.0
-           # ??? see horiz comment
            size_1 = font_for_vertical_1_line( width, half_height, line1 )
-           size_2 = font_for_vertical_1_line( width, half_height, line2 )
+           size_2 = font_for_vertical_1_line( width, half_height - line_sep, line2 )
            result = min( size_1, size_2 )
         return result
 
@@ -622,12 +619,13 @@ def output_name( coords, draw_separator, prefix, indi ):
        text1 += ' ' + dates
 
     if slice_height > ratio_for_vertical * slice_width:
+       # vertical, so flip the dimensions
        if debug:
           print( indent, 'vertical sizing', file=sys.stderr )
-       size_1 = font_for_vertical_1_line( slice_width, slice_height, text1 )
+       size_1 = font_for_vertical_1_line( slice_height, slice_width, text1 )
        if debug:
           print( indent, 'size1:', roundstr(size_1), file=sys.stderr )
-       size_2 = font_for_vertical_2_lines( slice_width, slice_height, fullname, dates )
+       size_2 = font_for_vertical_2_lines( slice_height, slice_width, fullname, dates )
        if debug:
           print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
@@ -641,8 +639,8 @@ def output_name( coords, draw_separator, prefix, indi ):
           centering = offset_to_center( size_2, slice_height, fullname )
           vertical_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
-          centering = offset_to_center( size_2, slice_height, dates )
-          vertical_name( size_2, path_id + '_2', margin_coords, centering, dates )
+          #centering = offset_to_center( size_2, slice_height, dates )
+          #vertical_name( size_2, path_id + '_2', margin_coords, centering, dates )
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
 
@@ -666,8 +664,8 @@ def output_name( coords, draw_separator, prefix, indi ):
           centering = offset_to_center( size_2, slice_width, fullname )
           horizontal_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
-          centering = offset_to_center( size_2, slice_width, dates )
-          horizontal_name( size_2, path_id + '_2', margin_coords, centering, dates )
+          #centering = offset_to_center( size_2, slice_width, dates )
+          #horizontal_name( size_2, path_id + '_2', margin_coords, centering, dates )
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
 
