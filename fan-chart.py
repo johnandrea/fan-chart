@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.21'
+    return '0.9.5.0'
 
 
 def percentage_of( x, p ):
@@ -620,55 +620,50 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     if slice_height > ratio_for_vertical * slice_width:
        # vertical, so flip the dimensions
-       if debug:
-          print( indent, 'vertical sizing', file=sys.stderr )
        size_1 = font_for_vertical_1_line( slice_height, slice_width, text1 )
-       if debug:
-          print( indent, 'size1:', roundstr(size_1), file=sys.stderr )
        size_2 = font_for_vertical_2_lines( slice_height, slice_width, fullname, dates )
        if debug:
-          print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
+          print( indent, 'vertical', file=sys.stderr )
+          print( indent, indent, 'size1:', roundstr(size_1), file=sys.stderr )
+          print( indent, indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
        if size_1 >= size_2:
-          centering = offset_to_center( size_1, slice_height, text1 )
-          vertical_name( size_1, path_id, margin_coords, centering, text1 )
           if debug:
              print( indent, 'using size 1', file=sys.stderr )
+          centering = offset_to_center( size_1, slice_height, text1 )
+          vertical_name( size_1, path_id, margin_coords, centering, text1 )
+
        else:
-          # ??? just use the name on one line for testing, not the two
+          if debug:
+             print( indent, 'using size 2', file=sys.stderr )
           centering = offset_to_center( size_2, slice_height, fullname )
           vertical_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
-          #centering = offset_to_center( size_2, slice_height, dates )
+          centering = offset_to_center( size_2, slice_height, dates )
           #vertical_name( size_2, path_id + '_2', margin_coords, centering, dates )
-          if debug:
-             print( indent, 'using size 2', file=sys.stderr )
 
     else:
-       if debug:
-          print( indent, 'horizontal sizing', file=sys.stderr )
        size_1 = font_for_horizontal_1_line( slice_width, slice_height, text1 )
-       if debug:
-          print( indent, 'size1:', roundstr(size_1), file=sys.stderr )
        size_2 = font_for_horizontal_2_lines( slice_width, slice_height, fullname, dates )
        if debug:
-          print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
+          print( indent, 'horizontal', file=sys.stderr )
+          print( indent, indent, 'size1:', roundstr(size_1), file=sys.stderr )
+          print( indent, indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
        if size_1 >= size_2:
-          centering = offset_to_center( size_1, slice_width, text1 )
-          horizontal_name( size_1, path_id, margin_coords, centering, text1 )
           if debug:
              print( indent, 'using size 1', file=sys.stderr )
+          centering = offset_to_center( size_1, slice_width, text1 )
+          horizontal_name( size_1, path_id, margin_coords, centering, text1 )
+
        else:
-          # ??? see vertical comment
+          if debug:
+             print( indent, 'using size 2', file=sys.stderr )
           centering = offset_to_center( size_2, slice_width, fullname )
           horizontal_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
-          #centering = offset_to_center( size_2, slice_width, dates )
+          centering = offset_to_center( size_2, slice_width, dates )
           #horizontal_name( size_2, path_id + '_2', margin_coords, centering, dates )
-          if debug:
-             print( indent, 'using size 2', file=sys.stderr )
-
 
     if draw_separator:
        # put a line in front of the name
