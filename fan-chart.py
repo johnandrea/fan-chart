@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.13'
+    return '0.9.4.14'
 
 
 def percentage_of( x, p ):
@@ -597,27 +597,25 @@ def output_name( coords, draw_separator, prefix, indi ):
     if debug:
        print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
 
+    text1 = fullname
+    if dates:
+       text1 += ' ' + dates
+
     if slice_height > ratio_for_vertical * slice_width:
-       text = fullname
-       if dates:
-          text += ' ' + dates
-       size_1 = font_for_vertical_1_line( slice_width, slice_height, text )
+       size_1 = font_for_vertical_1_line( slice_width, slice_height, text1 )
        if debug:
           print( indent, 'vertical size1:', roundstr(size_1), file=sys.stderr )
-       centering = offset_to_center( size_1, slice_height, text )
-       vertical_name( size_1, path_id, margin_coords, centering, text )
+       centering = offset_to_center( size_1, slice_height, text1 )
+       vertical_name( size_1, path_id, margin_coords, centering, text1 )
 
        ## try again, separating the date
 
     else:
-       text = fullname
-       if dates:
-          text += ' ' + dates
-       size_1 = font_for_horizontal_1_line( slice_width, slice_height, text )
+       size_1 = font_for_horizontal_1_line( slice_width, slice_height, text1 )
        if debug:
           print( indent, 'horizontal size1:', roundstr(size_1), file=sys.stderr )
-       centering = offset_to_center( size_1, slice_width, text )
-       horizontal_name( size_1, path_id, margin_coords, centering, text )
+       centering = offset_to_center( size_1, slice_width, text1 )
+       horizontal_name( size_1, path_id, margin_coords, centering, text1 )
 
        ## try again, separating the date
        #if dates:
