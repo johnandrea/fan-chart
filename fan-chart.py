@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.16'
+    return '0.9.4.17'
 
 
 def percentage_of( x, p ):
@@ -573,15 +573,21 @@ def output_name( coords, draw_separator, prefix, indi ):
     def font_for_horizontal_2_lines( width, height, line1, line2 ):
         result = -1 #default to the one line calculation
         if line2:
-           # ??? this is fake for testing - just do one line
-           result = font_for_horizontal_1_line( width, height, line1 )
+           half_height = height / 2.0
+           # ??? need to take spacing into account
+           size_1 = font_for_horizontal_1_line( width, half_height, line1 )
+           size_2 = font_for_horizontal_1_line( width, half_height, line2 )
+           result = min( size_1, size_2 )
         return result
 
     def font_for_vertical_2_lines( width, height, line1, line2 ):
         result = -1 #default to the one line calculation
         if line2:
+           half_height = height / 2.0
            # ??? see horiz comment
-           result = font_for_horizontal_1_line( width, height, line1 )
+           size_1 = font_for_vertical_1_line( width, half_height, line1 )
+           size_2 = font_for_vertical_1_line( width, half_height, line2 )
+           result = min( size_1, size_2 )
         return result
 
     fullname = '?'
