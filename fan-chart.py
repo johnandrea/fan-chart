@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.17'
+    return '0.9.4.18'
 
 
 def percentage_of( x, p ):
@@ -631,11 +631,12 @@ def output_name( coords, draw_separator, prefix, indi ):
        if debug:
           print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
-       if debug:
-          mess = 'size 2 gt 1'
-          if size_1 >= size_2:
-             mess = 'size 1 gt-eq 2'
-          print( indent, indent, mess, file=sys.stderr )
+       if size_1 >= size_2:
+          if debug:
+             print( indent, 'using size 1', file=sys.stderr )
+       else:
+          if debug:
+             print( indent, 'using size 2', file=sys.stderr )
 
        centering = offset_to_center( size_1, slice_height, text1 )
        vertical_name( size_1, path_id, margin_coords, centering, text1 )
@@ -652,11 +653,12 @@ def output_name( coords, draw_separator, prefix, indi ):
        if debug:
           print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
 
-       if debug:
-          mess = 'size 2 gt 1'
-          if size_1 >= size_2:
-             mess = 'size 1 gt-eq 2'
-          print( indent, indent, mess, file=sys.stderr )
+       if size_1 >= size_2:
+          if debug:
+             print( indent, 'using size 1', file=sys.stderr )
+       else:
+          if debug:
+             print( indent, 'using size 2', file=sys.stderr )
 
        centering = offset_to_center( size_1, slice_width, text1 )
        horizontal_name( size_1, path_id, margin_coords, centering, text1 )
