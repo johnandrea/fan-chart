@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.14'
+    return '0.9.4.15'
 
 
 def percentage_of( x, p ):
@@ -570,6 +570,20 @@ def output_name( coords, draw_separator, prefix, indi ):
     def font_for_vertical_1_line( width, height, text ):
         return font_for_vertical( width, height, text )
 
+    def font_for_horizontal_2_lines( width, height, line1, line2 ):
+        result = -1 #default to the one line calculation
+        if line2:
+           # ??? this is fake for testing - just do one line
+           result = font_for_horizontal_1_line( width, height, line1 )
+        return result
+
+    def font_for_vertical_2_lines( width, height, line1, line2 ):
+        result = -1 #default to the one line calculation
+        if line2:
+           # ??? see horiz comment
+           result = font_for_horizontal_1_line( width, height, line1 )
+        return result
+
     fullname = '?'
     dates = ''
     path_id = str(n_person_name)
@@ -602,18 +616,30 @@ def output_name( coords, draw_separator, prefix, indi ):
        text1 += ' ' + dates
 
     if slice_height > ratio_for_vertical * slice_width:
+       if debug:
+          print( indent, 'vertical sizing', file=sys.stderr )
        size_1 = font_for_vertical_1_line( slice_width, slice_height, text1 )
        if debug:
-          print( indent, 'vertical size1:', roundstr(size_1), file=sys.stderr )
+          print( indent, 'size1:', roundstr(size_1), file=sys.stderr )
+       size_2 = font_for_vertical_2_lines( slice_width, slice_height, fullname, dates )
+       if debug:
+          print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
+
        centering = offset_to_center( size_1, slice_height, text1 )
        vertical_name( size_1, path_id, margin_coords, centering, text1 )
 
        ## try again, separating the date
 
     else:
+       if debug:
+          print( indent, 'horizontal sizing', file=sys.stderr )
        size_1 = font_for_horizontal_1_line( slice_width, slice_height, text1 )
        if debug:
-          print( indent, 'horizontal size1:', roundstr(size_1), file=sys.stderr )
+          print( indent, 'size1:', roundstr(size_1), file=sys.stderr )
+       size_2 = font_for_horizontal_2_lines( slice_width, slice_height, fullname, dates )
+       if debug:
+          print( indent, 'size2:', roundstr(size_2), file=sys.stderr )
+
        centering = offset_to_center( size_1, slice_width, text1 )
        horizontal_name( size_1, path_id, margin_coords, centering, text1 )
 
