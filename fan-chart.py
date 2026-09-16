@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.19'
+    return '0.9.4.20'
 
 
 def percentage_of( x, p ):
@@ -641,6 +641,8 @@ def output_name( coords, draw_separator, prefix, indi ):
           centering = offset_to_center( size_2, slice_height, fullname )
           vertical_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
+          centering = offset_to_center( size_2, slice_height, dates )
+          vertical_name( size_2, path_id + '_2', margin_coords, centering, dates )
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
 
@@ -664,6 +666,8 @@ def output_name( coords, draw_separator, prefix, indi ):
           centering = offset_to_center( size_2, slice_width, fullname )
           horizontal_name( size_2, path_id + '_1', margin_coords, centering, fullname )
           # second line here
+          centering = offset_to_center( size_2, slice_width, dates )
+          horizontal_name( size_2, path_id + '_2', margin_coords, centering, dates )
           if debug:
              print( indent, 'using size 2', file=sys.stderr )
 
