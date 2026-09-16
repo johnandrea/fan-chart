@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.4.10'
+    return '0.9.4.12'
 
 
 def percentage_of( x, p ):
@@ -557,6 +557,13 @@ def output_name( coords, draw_separator, prefix, indi ):
         offset = ( 100.0 * empty_space / available_width ) / 2.0
         return roundstr(max( 0.0, offset )) + '%'
 
+    def font_for_horizontal( width, height, text ):
+        return min( max_font_size, font_to_fit_area( width, height, text ) )
+
+    def font_for_vertical( width, height, text ):
+        # flip the dimensions
+        return min( max_font_size, font_to_fit_area( height, width, text ) )
+
     fullname = '?'
     dates = ''
     path_id = str(n_person_name)
@@ -589,7 +596,7 @@ def output_name( coords, draw_separator, prefix, indi ):
        print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
 
     if slice_height > ratio_for_vertical * slice_width:
-       size_1 = min( max_font_size, font_to_fit_area( slice_height, slice_width, text ) )
+       size_1 = font_for_vertical( slice_width, slice_height, text )
        centering = offset_to_center( size_1, slice_height, text )
        if debug:
           print( indent, 'vertical font:', roundstr(size_1), file=sys.stderr )
@@ -600,7 +607,7 @@ def output_name( coords, draw_separator, prefix, indi ):
        ## try again, separating the date
 
     else:
-       size_1 = min( max_font_size, font_to_fit_area( slice_width, slice_height, text ) )
+       size_1 = font_for_horizontal( slice_width, slice_height, text )
        centering = offset_to_center( size_1, slice_width, text )
        if debug:
           print( indent, 'horizontal font:', roundstr(size_1), file=sys.stderr )
