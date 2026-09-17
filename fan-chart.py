@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.3'
+    return '0.9.5.4'
 
 
 def percentage_of( x, p ):
@@ -493,6 +493,8 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
 
 def font_to_fit_area( available_width, available_height, text ):
     # return the font size that will fit the given string to the width
+    # and the available height might be trouble because on a tight curve the top
+    # of the text might stretch outside the border of the slice
     trial_font = 12
     scale = available_width / estimate_string_width( trial_font, text )
     scaled_font = trial_font * scale
