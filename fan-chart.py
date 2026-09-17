@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.0'
+    return '0.9.5.2'
 
 
 def percentage_of( x, p ):
@@ -504,23 +504,15 @@ def font_to_fit_area( available_width, available_height, text ):
 
 def output_name( coords, draw_separator, prefix, indi ):
     # the person counter is used for the id of text path,
-    # in situation the indi value does not exist because there is no
-    # known partner but still want tp show a questiion mark
+    # in situations where the indi value does not exist because there is no
+    # known partner though still want to show a questiion mark
     countables['names'] += 1
     n_person_name = countables['names']
 
     # ??? what is the approx line separation height
     line_sep = 3
 
-    # there are several formats to fit the name within the slice
-    # 1 one line: fullname dates
-    # 2 two lines (if dates exist): fullname break dates
-    # 3 three lines (or 2 if no date): given name break surname break dates
-    # and 4, 5, 6 to fit vertically.
-    # What should be the citeria for choosing the best format.
-    # The goal is to display the name as large as possible.
-
-    indent = '  '
+    indent = '  '  # for debug output
 
     def calc_coords_with_margin():
         # double margin to get it on both sides
@@ -536,12 +528,18 @@ def output_name( coords, draw_separator, prefix, indi ):
         height = abs( coords['p2']['x'] - coords['p3']['x'] )
         return [ width, height ]
 
-    def calc_slice_size_half( coords, separation ):
-        # ??? test with same spacing as full
-        # width at the bottom of the slice
-        width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
-        height = abs( coords['p2']['x'] - coords['p3']['x'] )
-        return [ width, height ]
+    #def calc_slice_size_half( coords, separation ):
+    #    # ??? test with same spacing as full
+    #    # width at the bottom of the slice
+    #    width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
+    #    height = abs( coords['p2']['x'] - coords['p3']['x'] )
+    #    return [ width, height ]
+
+    def offset_to_center( font_size, available_width, text ):
+        empty_space = available_width - estimate_string_width( font_size, text )
+        # change to a percent (is that what the startOffset parameter needs?)
+        offset = ( 100.0 * empty_space / available_width ) / 2.0
+        return roundstr(max( 0.0, offset )) + '%'
 
     def horizontal_name( font_size, path_id_suffix, coords, offset, text ):
         path = path_for_arc( coords['input']['outer'], coords['p3']['xy'], coords['p4']['xy'] )
@@ -551,11 +549,21 @@ def output_name( coords, draw_separator, prefix, indi ):
         path = path_for_line( coords['p2']['xy'], coords['p3']['xy'] )
         text_on_path( path_id_suffix, path, font_size, offset, text )
 
-    def offset_to_center( font_size, available_width, text ):
-        empty_space = available_width - estimate_string_width( font_size, text )
-        # change to a percent (is that what the startOffset parameter needs?)
-        offset = ( 100.0 * empty_space / available_width ) / 2.0
-        return roundstr(max( 0.0, offset )) + '%'
+    def horizontal_name_lines( font_size, path_id_suffix, coords, width, display ):
+        lines = display.split( '\n' )
+        for line in lines:
+            offset = offset_to_center( font_size, width, line )
+            horizontal_name( font_size, path_id_suffix, coords, offset, line )
+            # ??? still working on placement, do only one
+            return
+
+    def vertical_name_lines( font_size, path_id_suffix, coords, width, display ):
+        lines = display.split( '\n' )
+        for line in lines:
+            offset = offset_to_center( font_size, width, line )
+            vertical_name( font_size, path_id_suffix, coords, offset, line )
+            # ??? still working on placement, do only one
+            return
 
     def font_for_horizontal( width, height, text ):
         return min( max_font_size, font_to_fit_area( width, height, text ) )
@@ -563,46 +571,47 @@ def output_name( coords, draw_separator, prefix, indi ):
     def font_for_vertical( width, height, text ):
         return min( max_font_size, font_to_fit_area( width, height, text ) )
 
-    def font_for_horizontal_1_line( width, height, text ):
-        return font_for_horizontal( width, height, text )
+    def font_for_horizontal_lines( width, height, display ):
+        lines = display.split( '\n' )
+        n_lines = len( lines )
+        size = max_font_size + 1
+        partial_height = height / n_lines
+        if n_lines > 1:
+           partial_height -= line_sep
+        for line in lines:
+            size = min( size, font_for_horizontal( width, partial_height, line ) )
+        return size
 
-    def font_for_vertical_1_line( width, height, text ):
-        return font_for_vertical( width, height, text )
-
-    def font_for_horizontal_2_lines( width, height, line1, line2 ):
-        result = -1 #default to the one line calculation
-        if line2:
-           half_height = height / 2.0
-           size_1 = font_for_horizontal_1_line( width, half_height, line1 )
-           size_2 = font_for_horizontal_1_line( width, half_height - line_sep, line2 )
-           result = min( size_1, size_2 )
-        return result
-
-    def font_for_vertical_2_lines( width, height, line1, line2 ):
-        result = -1 #default to the one line calculation
-        if line2:
-           half_height = height / 2.0
-           size_1 = font_for_vertical_1_line( width, half_height, line1 )
-           size_2 = font_for_vertical_1_line( width, half_height - line_sep, line2 )
-           result = min( size_1, size_2 )
-        return result
+    def font_for_vertical_lines( width, height, display ):
+        lines = display.split( '\n' )
+        n_lines = len( lines )
+        size = max_font_size + 1
+        partial_height = height / n_lines
+        if n_lines > 1:
+           partial_height -= line_sep
+        for line in lines:
+            size = min( size, font_for_vertical( width, partial_height, line ) )
+        return size
 
     fullname = '?'
     dates = ''
     path_id = str(n_person_name)
 
     if indi:
-       # possibly the family has an unknown spouse
+       # possibly no known spouse so use the default "?"
        fullname = data[ikey][indi]['name'][0]['html']
        if options['dates']:
-          # in this test, the dates are simply appended to the name
           dates = get_indi_years( indi )
-    fullname = prefix + fullname
+
+    # ??? for now fake the name parts, and make them long to prevent actual output
+    given_name = 'given name faked for testing'
+    sur_name = 'surname faked for testing'
+
     if debug:
        print( fullname, file=sys.stderr )
        print( indent, 'dates', dates, file=sys.stderr )
        print( indent, 'indi', indi, file=sys.stderr )
-       print( indent, 'n person', n_person_name, file=sys.stderr )
+       print( indent, 'n-person', n_person_name, file=sys.stderr )
        print( '<!-- person id', n_person_name, '-->' )
        print( '<!-- indi', indi, '-->' )
 
@@ -614,56 +623,56 @@ def output_name( coords, draw_separator, prefix, indi ):
     if debug:
        print( indent, 'in slice of w:', roundstr(slice_width), 'h:', roundstr(slice_height), file=sys.stderr )
 
-    text1 = fullname
-    if dates:
-       text1 += ' ' + dates
+    # each of the potential name display formats
+    # in search of the best fit
 
+    displayables = []
+    best_size = 0
+    best_index = 0
+
+    if dates:
+       displayables.append( prefix + fullname + ' ' + dates )
+       displayables.append( prefix + fullname + '\n' + dates )
+       displayables.append( prefix + given_name + '\n' + sur_name + '\n' + dates )
+    else:
+       displayables.append( prefix + fullname )
+       displayables.append( prefix + given_name + '\n' + sur_name )
+
+    i = 0
     if slice_height > ratio_for_vertical * slice_width:
-       # vertical, so flip the dimensions
-       size_1 = font_for_vertical_1_line( slice_height, slice_width, text1 )
-       size_2 = font_for_vertical_2_lines( slice_height, slice_width, fullname, dates )
        if debug:
           print( indent, 'vertical', file=sys.stderr )
-          print( indent, indent, 'size1:', roundstr(size_1), file=sys.stderr )
-          print( indent, indent, 'size2:', roundstr(size_2), file=sys.stderr )
+       # vertical, so flip the dimensions
+       for displayable in displayables:
+           size = font_for_vertical_lines( slice_height, slice_width, displayable )
+           if debug:
+              print( indent, indent, i, 'size:', roundstr(size), file=sys.stderr )
+           if size >  best_size:
+              best_size = size
+              best_index = i
+           i += 1
 
-       if size_1 >= size_2:
-          if debug:
-             print( indent, 'using size 1', file=sys.stderr )
-          centering = offset_to_center( size_1, slice_height, text1 )
-          vertical_name( size_1, path_id, margin_coords, centering, text1 )
+       if debug:
+          print( indent, 'using', best_index, file=sys.stderr )
 
-       else:
-          if debug:
-             print( indent, 'using size 2', file=sys.stderr )
-          centering = offset_to_center( size_2, slice_height, fullname )
-          vertical_name( size_2, path_id + '_1', margin_coords, centering, fullname )
-          # second line here
-          centering = offset_to_center( size_2, slice_height, dates )
-          #vertical_name( size_2, path_id + '_2', margin_coords, centering, dates )
+       vertical_name_lines( best_size, path_id, margin_coords, slice_height, displayables[best_index] )
 
     else:
-       size_1 = font_for_horizontal_1_line( slice_width, slice_height, text1 )
-       size_2 = font_for_horizontal_2_lines( slice_width, slice_height, fullname, dates )
        if debug:
           print( indent, 'horizontal', file=sys.stderr )
-          print( indent, indent, 'size1:', roundstr(size_1), file=sys.stderr )
-          print( indent, indent, 'size2:', roundstr(size_2), file=sys.stderr )
+       for displayable in displayables:
+           size = font_for_horizontal_lines( slice_width, slice_height, displayable )
+           if debug:
+              print( indent, indent, i, 'size:', roundstr(size), file=sys.stderr )
+           if size >  best_size:
+              best_size = size
+              best_index = i
+           i += 1
 
-       if size_1 >= size_2:
-          if debug:
-             print( indent, 'using size 1', file=sys.stderr )
-          centering = offset_to_center( size_1, slice_width, text1 )
-          horizontal_name( size_1, path_id, margin_coords, centering, text1 )
+       if debug:
+          print( indent, 'using', best_index, file=sys.stderr )
 
-       else:
-          if debug:
-             print( indent, 'using size 2', file=sys.stderr )
-          centering = offset_to_center( size_2, slice_width, fullname )
-          horizontal_name( size_2, path_id + '_1', margin_coords, centering, fullname )
-          # second line here
-          centering = offset_to_center( size_2, slice_width, dates )
-          #horizontal_name( size_2, path_id + '_2', margin_coords, centering, dates )
+       horizontal_name_lines( best_size, path_id, margin_coords, slice_width, displayables[best_index] )
 
     if draw_separator:
        # put a line in front of the name
