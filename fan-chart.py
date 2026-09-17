@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.2'
+    return '0.9.5.3'
 
 
 def percentage_of( x, p ):
@@ -549,16 +549,14 @@ def output_name( coords, draw_separator, prefix, indi ):
         path = path_for_line( coords['p2']['xy'], coords['p3']['xy'] )
         text_on_path( path_id_suffix, path, font_size, offset, text )
 
-    def horizontal_name_lines( font_size, path_id_suffix, coords, width, display ):
-        lines = display.split( '\n' )
+    def horizontal_name_lines( font_size, path_id_suffix, coords, width, lines ):
         for line in lines:
             offset = offset_to_center( font_size, width, line )
             horizontal_name( font_size, path_id_suffix, coords, offset, line )
             # ??? still working on placement, do only one
             return
 
-    def vertical_name_lines( font_size, path_id_suffix, coords, width, display ):
-        lines = display.split( '\n' )
+    def vertical_name_lines( font_size, path_id_suffix, coords, width, lines ):
         for line in lines:
             offset = offset_to_center( font_size, width, line )
             vertical_name( font_size, path_id_suffix, coords, offset, line )
@@ -571,8 +569,7 @@ def output_name( coords, draw_separator, prefix, indi ):
     def font_for_vertical( width, height, text ):
         return min( max_font_size, font_to_fit_area( width, height, text ) )
 
-    def font_for_horizontal_lines( width, height, display ):
-        lines = display.split( '\n' )
+    def font_for_horizontal_lines( width, height, lines ):
         n_lines = len( lines )
         size = max_font_size + 1
         partial_height = height / n_lines
@@ -582,8 +579,7 @@ def output_name( coords, draw_separator, prefix, indi ):
             size = min( size, font_for_horizontal( width, partial_height, line ) )
         return size
 
-    def font_for_vertical_lines( width, height, display ):
-        lines = display.split( '\n' )
+    def font_for_vertical_lines( width, height, lines ):
         n_lines = len( lines )
         size = max_font_size + 1
         partial_height = height / n_lines
@@ -631,12 +627,17 @@ def output_name( coords, draw_separator, prefix, indi ):
     best_index = 0
 
     if dates:
-       displayables.append( prefix + fullname + ' ' + dates )
-       displayables.append( prefix + fullname + '\n' + dates )
-       displayables.append( prefix + given_name + '\n' + sur_name + '\n' + dates )
+       text = prefix + fullname + ' ' + dates
+       displayables.append( text.split('\n') )
+       text = prefix + fullname + '\n' + dates
+       displayables.append( text.split('\n') )
+       text = prefix + given_name + '\n' + sur_name + '\n' + dates
+       displayables.append( text.split('\n') )
     else:
-       displayables.append( prefix + fullname )
-       displayables.append( prefix + given_name + '\n' + sur_name )
+       text = prefix + fullname
+       displayables.append( text.split('\n') )
+       text = prefix + given_name + '\n' + sur_name
+       displayables.append( text.split('\n') )
 
     i = 0
     if slice_height > ratio_for_vertical * slice_width:
@@ -646,7 +647,7 @@ def output_name( coords, draw_separator, prefix, indi ):
        for displayable in displayables:
            size = font_for_vertical_lines( slice_height, slice_width, displayable )
            if debug:
-              print( indent, indent, i, 'size:', roundstr(size), file=sys.stderr )
+              print( indent, indent, i, 'size:', roundstr(size), 'lines:', len(displayable), file=sys.stderr )
            if size >  best_size:
               best_size = size
               best_index = i
@@ -663,7 +664,7 @@ def output_name( coords, draw_separator, prefix, indi ):
        for displayable in displayables:
            size = font_for_horizontal_lines( slice_width, slice_height, displayable )
            if debug:
-              print( indent, indent, i, 'size:', roundstr(size), file=sys.stderr )
+              print( indent, indent, i, 'size:', roundstr(size), 'lines:', len(displayable), file=sys.stderr )
            if size >  best_size:
               best_size = size
               best_index = i
