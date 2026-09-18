@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.4'
+    return '0.9.5.6'
 
 
 def percentage_of( x, p ):
@@ -487,14 +487,15 @@ def text_on_path( path_id_suffix, path, font_size, offset, text ):
     print( ' <textPath xlink:href="#' + path_id + '" startOffset="' + offset + '">' + text + '</textPath>' )
     print( '</text>' )
 
-    ## draw the path
+    ## draw the path itself
     #print( '<path d="' + path + '" style="stroke:red; fill:none;" />' )
 
 
 def font_to_fit_area( available_width, available_height, text ):
     # return the font size that will fit the given string to the width
     # and the available height might be trouble because on a tight curve the top
-    # of the text might stretch outside the border of the slice
+    # of the text might stretch outside the border of the slice - the narrower
+    # the slice the greater the chance of text outside the border
     trial_font = 12
     scale = available_width / estimate_string_width( trial_font, text )
     scaled_font = trial_font * scale
@@ -629,17 +630,12 @@ def output_name( coords, draw_separator, prefix, indi ):
     best_index = 0
 
     if dates:
-       text = prefix + fullname + ' ' + dates
-       displayables.append( text.split('\n') )
-       text = prefix + fullname + '\n' + dates
-       displayables.append( text.split('\n') )
-       text = prefix + given_name + '\n' + sur_name + '\n' + dates
-       displayables.append( text.split('\n') )
+       displayables.append( (prefix + fullname + ' ' + dates).split('\n') )
+       displayables.append( (prefix + fullname + '\n' + dates).split('\n') )
+       displayables.append( (prefix + given_name + '\n' + sur_name + '\n' + dates).split('\n') )
     else:
-       text = prefix + fullname
-       displayables.append( text.split('\n') )
-       text = prefix + given_name + '\n' + sur_name
-       displayables.append( text.split('\n') )
+       displayables.append( (prefix + fullname).split('\n') )
+       displayables.append( (prefix + given_name + '\n' + sur_name).split('\n') )
 
     i = 0
     if slice_height > ratio_for_vertical * slice_width:
