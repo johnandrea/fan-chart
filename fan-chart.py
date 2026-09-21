@@ -61,7 +61,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.6'
+    return '0.9.5.8'
 
 
 def percentage_of( x, p ):
@@ -527,9 +527,12 @@ def output_name( coords, draw_separator, prefix, indi ):
 
     def calc_slice_size( coords ):
         # width at the bottom of the slice
+        # 'd' is the central angle in degrees
         width = compute_arc_length( coords['input']['outer'], coords['input']['d'] )
         height = abs( coords['p2']['x'] - coords['p3']['x'] )
-        return [ width, height ]
+        # also the width at the top of the slice, by definition shorter than the top
+        top_width = compute_arc_length( coords['input']['inner'], coords['input']['d'] )
+        return [ width, height, top_width ]
 
     #def calc_slice_size_half( coords, separation ):
     #    # ??? test with same spacing as full
@@ -692,6 +695,7 @@ def output_name( coords, draw_separator, prefix, indi ):
 
 def compute_slice( d, inner, outer ):
     # slice of a ring given inner and outer radius
+    # and d is the central angle in degrees
     # with center at 0,0 and centered on the x-axis because of the
     # translated and rotated graphic context
 
