@@ -39,6 +39,28 @@ page_size = 600
 slice_colours = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
 slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 
+# 20 colours via Sasha Trubetskoy. But these are generally too dark.
+# https://sashamaps.net/resources/20-colors/
+# '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4',
+# '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff',
+# '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
+# '#000075', '#a9a9a9', '#ffffff', '#000000'
+
+# other colour sets
+# using https://convertcolorcode.com/convert/hsl/hex
+# 7 colours = ['#ffccc1','#88fca4','#bae3ff','#ffe6cc','#ccffe6','#d5ccff','#ffccee']
+
+# other colour sets based on oklab triadic https://colors.reprdev.com/
+# this set might be too dark
+# 8 colours = ['#0bcccc', '#60aabb', '#408b9c', '#d299ec', '#bc8bb0']
+# .extend( ['#8475a8', '#e3a694', '#b09b64'] )
+
+# other colour sets, based on oklab even lightness
+# 11 colours = ['#de9ec9','#ea9ca6','#e9a285','#d9ad6f','#bcba72']
+# .extend( ['#96c48a','#72c9ae','#63c7d0','#77bfe9','#9bb4f2','#bea8e9'] )
+# 9 colours = ['#de9ec9','#eb9d9d','#e2a778','#c4b76f','#96c48a']
+# .extend( ['#6bc9b7','#6ac4de','#91b7f2','#bea8e9'] )
+
 n_colours = len( slice_colours )
 
 # even on a large sheet, no need for huge fonts
@@ -61,7 +83,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.8'
+    return '0.9.5.10'
 
 
 def percentage_of( x, p ):
