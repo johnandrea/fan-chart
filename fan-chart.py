@@ -34,27 +34,22 @@ from collections import Counter
 # arbitrary and square, but scalable
 page_size = 600
 
-# "standard" colour scheme
+colour_schemes = {}
 # based on https://colorbrewer2.org/?type=qualitative&scheme=Pastel1&n=9
-slice_colours = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
-slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
-
+colour_schemes['standard'] = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
+colour_schemes['standard'].extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 # monochrome, white and two light grey
-# mono_colours = ['#ffffff', '#f8f8f8', '#efefef' ]
-
+colour_schemes['mono'] = ['#ffffff', '#f8f8f8', '#efefef' ]
 # 16 bright and hopefully non-overlapping colours
-# 16 = ['#ffc4bd', '#89fd91', '#fffea6', '#caddff', '#7ef1ff', '#ffb1ff', '#c3f34a']
-# .entend( ['#ffdee0', '#e8e800', '#dcbeff', '#f3eebc', '#aaffc3'] )
-# .entend( ['#72c9ae', '#e3e57e', '#ffd8b1', '#f1f1f1'] )
-#
-# other colour sets
+colour_schemes['bright16'] = ['#ffc4bd', '#89fd91', '#fffea6', '#caddff']
+colour_schemes['bright16'].extend( ['#7ef1ff', '#ffb1ff', '#c3f34a'] )
+colour_schemes['bright16'].extend( ['#ffdee0', '#e8e800', '#dcbeff', '#f3eebc', '#aaffc3'] )
+colour_schemes['bright16'].extend( ['#72c9ae', '#e3e57e', '#ffd8b1', '#f1f1f1'] )
 # using https://convertcolorcode.com/convert/hsl/hex
-# 7 colours = ['#ffccc1','#88fca4','#bae3ff','#ffe6cc','#ccffe6','#d5ccff','#ffccee']
-# similar
-# 9 colours = ['#de9ec9','#eb9d9d','#e2a778','#c4b76f','#96c48a']
-# .extend( ['#6bc9b7','#6ac4de','#91b7f2','#bea8e9'] )
-
-n_colours = len( slice_colours )
+colour_schemes['pastel7'] = ['#ffccc1','#88fca4','#bae3ff','#ffe6cc','#ccffe6','#d5ccff','#ffccee']
+# similar method
+colour_schemes['dark9'] = ['#de9ec9','#eb9d9d','#e2a778','#c4b76f','#96c48a']
+colour_schemes['dark9'].extend( ['#6bc9b7','#6ac4de','#91b7f2','#bea8e9'] )
 
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
@@ -76,7 +71,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.12'
+    return '0.9.5.13'
 
 
 def percentage_of( x, p ):
@@ -203,7 +198,7 @@ def load_my_module( module_name, relative_path ):
 def get_program_options():
     results = {}
 
-    colour_types = ['standard','bw']
+    colour_types = list(colour_schemes)
 
     results['infile'] = None
     results['personid'] = None
@@ -799,7 +794,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
         slice_coords = compute_slice( slice_degrees, ring_inner, ring_outer )
 
         colour_index = colour_index % n_colours
-        output_a_slice( slice_coords, slice_colours[colour_index] )
+        output_a_slice( slice_coords, colour_schemes[options['colour']][colour_index] )
 
         # a person with no families takes up the whole slice
         # but with families the person gets the upper half
@@ -842,7 +837,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            child_rotation = rotation - slice_degrees / 2.0
            for next_fam_data in diagram_data[child]['fams']:
                next_fam = next_fam_data['fam']
-               output_slices( gen+1, child_rotation, colour_index, colour_skip+2, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
+               output_slices( gen+1, child_rotation, colour_index, colour_skip+1, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
                next_slices = next_fam_data['slices']
                child_rotation += next_slices * degrees_per_slice
 
@@ -892,7 +887,8 @@ for c in char_width_factors:
 
 options = get_program_options()
 
-debug = options['debug']
+debug = options['debug'] #global
+n_colours = len( colour_schemes[options['colour']] ) #global
 
 if debug:
    print( 'version', get_version(), file=sys.stderr )
