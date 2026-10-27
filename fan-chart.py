@@ -34,49 +34,23 @@ from collections import Counter
 # arbitrary and square, but scalable
 page_size = 600
 
-# "standard" colour scheme - maybe later allow option for others
+# "standard" colour scheme
 # based on https://colorbrewer2.org/?type=qualitative&scheme=Pastel1&n=9
 slice_colours = ['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6']
 slice_colours.extend( ['#ffffcc','#e5d8bd','#fddaec','#f2f2f2'] )
 
-# 20 colours via Sasha Trubetskoy. But these are generally too dark.
-# https://sashamaps.net/resources/20-colors/
-# converted to OKLCH via https://convertcolorcode.com/convert/hex/oklch
-# #e6194B = oklch( 0.594  0.228   16.834  )  red
-# #3cb44b = oklch( 0.68   0.18   145.28   )  green
-# #ffe119 = oklch( 0.9069 0.1846  99.2215 )  yellow
-# #4363d8 = oklch( 0.542  0.183  268.167  )  blue
-# #f58231 = oklch( 0.723  0.1663  51.2725 )  orange
-# #911eb4 = oklch( 0.497  0.222  316.297  )  purple
-# #42d4f4 = oklch( 0.807  0.127  215.916  )  cyan
-# #f032e6 = oklch( 0.68   0.281  330.59   )  magenta
-# #bfef45 = oklch( 0.888  0.196  124.233  )  lime
-# #fabed4 = oklch( 0.862  0.074  354.921  )  pink
-# #469990 = oklch( 0.629  0.082  185.852  )  teal
-# #dcbeff = oklch( 0.849  0.094  305.515  )  lavender
-# #9A6324 = oklch( 0.549  0.105   65.605  )  brown
-# #fffac8 = oklch( 0.977  0.064  102.769  )  beige
-# #800000 = oklch( 0.377  0.155   29.234  )  maroon
-# #aaffc3 = oklch( 0.93   0.116  152.97   )  mint
-# #808000 = oklch( 0.581  0.127  109.769  )  olive
-# #ffd8b1 = oklch( 0.906  0.067   66.807  )  apricot
-# #000075 = oklch( 0.254  0.176  264.052  )  navy
-# #a9a9a9 = oklch( 0.735  0        0      )  grey
-# #ffffff = oklch( 1      0        0      )  white
-# #000000 = oklch( 0      0        0      )  black
+# monochrome, white and two light grey
+# mono_colours = ['#ffffff', '#f8f8f8', '#efefef' ]
 
+# 16 bright and hopefully non-overlapping colours
+# 16 = ['#ffc4bd', '#89fd91', '#fffea6', '#caddff', '#7ef1ff', '#ffb1ff', '#c3f34a']
+# .entend( ['#ffdee0', '#e8e800', '#dcbeff', '#f3eebc', '#aaffc3'] )
+# .entend( ['#72c9ae', '#e3e57e', '#ffd8b1', '#f1f1f1'] )
+#
 # other colour sets
 # using https://convertcolorcode.com/convert/hsl/hex
 # 7 colours = ['#ffccc1','#88fca4','#bae3ff','#ffe6cc','#ccffe6','#d5ccff','#ffccee']
-
-# other colour sets based on oklab triadic https://colors.reprdev.com/
-# this set might be too dark
-# 8 colours = ['#0bcccc', '#60aabb', '#408b9c', '#d299ec', '#bc8bb0']
-# .extend( ['#8475a8', '#e3a694', '#b09b64'] )
-
-# other colour sets, based on oklab even lightness
-# 11 colours = ['#de9ec9','#ea9ca6','#e9a285','#d9ad6f','#bcba72']
-# .extend( ['#96c48a','#72c9ae','#63c7d0','#77bfe9','#9bb4f2','#bea8e9'] )
+# similar
 # 9 colours = ['#de9ec9','#eb9d9d','#e2a778','#c4b76f','#96c48a']
 # .extend( ['#6bc9b7','#6ac4de','#91b7f2','#bea8e9'] )
 
@@ -102,7 +76,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.11'
+    return '0.9.5.12'
 
 
 def percentage_of( x, p ):
