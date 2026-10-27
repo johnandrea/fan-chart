@@ -66,9 +66,9 @@ Maximum number of generations to output. Default 5.
 In theory there is no upper limit, but around 12 the text gets too small to be useful for a reasonably
 sized hardcopy paper sheet.
 
---colour=colour scheme
+--colour=colour-scheme
 
-Currently only "standard"
+Options "standard", "mono", "pastel7", "bright16". Default is "standard"
 
 --dates
 
