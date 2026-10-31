@@ -51,6 +51,9 @@ colour_schemes['pastel7'] = ['#ffccc1','#88fca4','#bae3ff','#ffe6cc','#ccffe6','
 colour_schemes['dark9'] = ['#de9ec9','#eb9d9d','#e2a778','#c4b76f','#96c48a']
 colour_schemes['dark9'].extend( ['#6bc9b7','#6ac4de','#91b7f2','#bea8e9'] )
 
+# global for colour picking
+colour_index = 0 #start here
+
 # even on a large sheet, no need for huge fonts
 max_font_size = 20
 
@@ -71,7 +74,7 @@ debug = False
 
 
 def get_version():
-    return '0.9.5.13'
+    return '0.9.6.0'
 
 
 def percentage_of( x, p ):
@@ -254,6 +257,16 @@ def get_program_options():
     results['libpath'] = args.libpath
 
     return results
+
+
+def set_next_colour():
+    global colour_index
+    colour_index += 1
+    if colour_index >= n_colours:
+       colour_index = 0
+
+def get_colour():
+    return colour_schemes[colour_scheme][colour_index]
 
 
 def find_spouse( fam, indi ):
@@ -732,10 +745,10 @@ def compute_slice( d, inner, outer ):
     return result
 
 
-def output_a_slice( coords, colour ):
+def output_a_slice( coords ):
     inner = roundstr(coords['input']['inner'])
     outer = roundstr(coords['input']['outer'])
-    print( '<path style="stroke:grey; stroke-width:2; fill:' + colour +';"' )
+    print( '<path style="stroke:grey; stroke-width:2; fill:' + get_colour() +';"' )
     print( 'd="M' + coords['p1']['xy'] )
     r = inner + ',' + inner
     print( 'A' + r + ' 0 0 1 ' + coords['p2']['xy'] )
@@ -748,18 +761,11 @@ def output_a_slice( coords, colour ):
     #print( '<path d="M' + p3 + ' ' + p4 + '" style="stroke:red;" />' )
 
 
-def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
+def output_slices( gen, start_rotation, start_fam, degrees_per_slice, slice_extra, ring_data, diagram_data ):
     # each slice rotates around the center
     if debug:
        print( 'gen', gen, file=sys.stderr )
        print( '<!-- gen', gen, '-->' )
-
-    colour_index = start_colour
-
-    # colour skip is used so that children don't get the same colour as
-    # a parents sibling, but don't let it get too big
-    if colour_skip > 5:
-       colour_skip = 2
 
     # rotate it up from the x-axis
     rotation = start_rotation
@@ -793,8 +799,7 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
 
         slice_coords = compute_slice( slice_degrees, ring_inner, ring_outer )
 
-        colour_index = colour_index % n_colours
-        output_a_slice( slice_coords, colour_schemes[options['colour']][colour_index] )
+        output_a_slice( slice_coords )
 
         # a person with no families takes up the whole slice
         # but with families the person gets the upper half
@@ -837,15 +842,15 @@ def output_slices( gen, start_rotation, start_colour, colour_skip, start_fam, de
            child_rotation = rotation - slice_degrees / 2.0
            for next_fam_data in diagram_data[child]['fams']:
                next_fam = next_fam_data['fam']
-               output_slices( gen+1, child_rotation, colour_index, colour_skip+1, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
+               output_slices( gen+1, child_rotation, next_fam, degrees_per_slice, 0, ring_data, diagram_data )
                next_slices = next_fam_data['slices']
                child_rotation += next_slices * degrees_per_slice
+               # new colour at the end so that the first child
+               # is the same colour as parents
+               set_next_colour()
 
         # next child starts rotation where this child ended
         rotation += slice_degrees / 2.0
-        colour_index += colour_skip
-        if colour_index > n_colours:
-           colour_index = 1
 
 
 def output_start_names( fam, ring_outer ):
@@ -888,7 +893,11 @@ for c in char_width_factors:
 options = get_program_options()
 
 debug = options['debug'] #global
-n_colours = len( colour_schemes[options['colour']] ) #global
+
+# globals for colour picking
+colour_scheme = options['colour']
+n_colours = len( colour_schemes[colour_scheme] )
+
 
 if debug:
    print( 'version', get_version(), file=sys.stderr )
@@ -960,7 +969,6 @@ if len(id_match) == 1:
       # special case when start person has multiple families - handle in future
 
       # the first child starts at the top, so rotate it -90 deg from the x-axis
-      # need to do something with colours too, first child should match parents
 
       # translate everything to the center of the page
       g_trans = 'translate(' + roundstr(cx) + ',' + roundstr(cy) + ')'
@@ -975,7 +983,7 @@ if len(id_match) == 1:
 
       output_start_names( start_fam, ring_sizes[0]['outer'] )
 
-      output_slices( 1, -90.0, 0, 1, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
+      output_slices( 1, -90.0, start_fam, degrees_per_slice, slice_remainder, ring_sizes, diagram_data )
 
       # show the rings on top of the slices
       outline_generations( ring_sizes )
